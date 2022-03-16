@@ -1,0 +1,15 @@
+pl2-ovpn.dns2use.com
+ussf2-ovpn.dns2use.com
+za2-ovpn.dns2use.com
+bn2-ovpn-udp.dns2use.com
+jp2-ovpn.dns2use.com
+ru2-ovpn-udp.dns2use.com
+ua2-ovpn-udp.dns2use.com
+dk2-ovpn.dns2use.com
+fr2-ovpn-udp.dns2use.com
+br2-ovpn-udp.dns2use.com
+vlus-pa2-ovpn-udp.dns2use.com
+nz2-ovpn.dns2use.com
+
+ivacy0s10828011
+YJQyjq123@qq.com
