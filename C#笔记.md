@@ -1077,7 +1077,7 @@ File.ReadAllText();返回一整个字符串。
 
 File.ReadAllBytes();可以读取所有文件，并返回字节数组。
 `System.Text.Encoding.Default.GetString();`字节数组转字符串。
-打开和保存文件尽量用统一编码格式，如`Encoding.Default`或``这里输入代码`Encoding.UTF8`。
+打开和保存文件尽量用统一编码格式，如`Encoding.Default`或`Encoding.UTF8`。
 最终方式：`System.Text.Encoding.GetEncoding("GBK").GetString();`
 
 ##### 6.File类写入文件
