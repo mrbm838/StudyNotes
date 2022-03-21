@@ -1,0 +1,12 @@
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\bin\Debug\Weekly_Check_2.exe.config
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\bin\Debug\Weekly_Check_2.exe
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\bin\Debug\Weekly_Check_2.pdb
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.csproj.AssemblyReference.cache
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.csproj.SuggestedBindingRedirects.cache
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.Form1.resources
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.Properties.Resources.resources
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.csproj.GenerateResource.cache
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.csproj.CoreCompileInputs.cache
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.exe
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.pdb
+E:\Cowain\Exam\Week One\Weekly_Check_2\Weekly_Check_2\obj\Debug\Weekly_Check_2.Form2.resources

@@ -1,0 +1,226 @@
+;
+; Youjie USB Serial Driver CDC ACM and CDC Virtual Serial Port
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Ports
+ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
+Provider=%Mfg%
+DriverVer=01/13/2016,2.1.10.1
+CatalogFile=youjie_cdc.cat
+
+; ================= Device Install section =====================
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[Manufacturer]
+%Mfg%=DeviceList,NTx86,NTamd64
+
+[SourceDisksFiles]
+youjie_cdc.sys=1
+
+[SourceDisksNames]
+; diskid = disk-description[,[tag-or-cab-file],[unused,path][,flags]]
+1=%Disk_Description%,
+
+[DestinationDirs]
+DefaultDestDir=12
+
+; Windows 2000
+[DeviceList]
+"YJ4600" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0B94
+"YJ4600" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0B8A&MI_00
+"GS550" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BB4
+"GS550" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BAA&MI_00
+"YJHF600 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BF4
+"YJHF600 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BEA&MI_00
+"YJHH360" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C34
+"YJHH360" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C2A&MI_00
+"YJHF500" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C54
+"YJHF500" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C4A&MI_00
+"YJHH660 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C74
+"YJHH660 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C6A&MI_00
+
+; Windows XP and later
+[DeviceList.NTx86]
+"YJ4600" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0B94
+"YJ4600" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0B8A&MI_00
+"GS550" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BB4
+"GS550" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BAA&MI_00
+"YJHF600 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BF4
+"YJHF600 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BEA&MI_00
+"YJHH360" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C34
+"YJHH360" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C2A&MI_00
+"YJHF500" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C54
+"YJHF500" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C4A&MI_00
+"YJHH660 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C74
+"YJHH660 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C6A&MI_00
+
+
+; For XP and later x64
+[DeviceList.NTamd64]
+"YJ4600" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0B94
+"YJ4600" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0B8A&MI_00
+"GS550" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BB4
+"GS550" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BAA&MI_00
+"YJHF600 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BF4
+"YJHF600 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0BEA&MI_00
+"YJHH360" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C34
+"YJHH360" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C2A&MI_00
+"YJHF500" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C54
+"YJHF500" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C4A&MI_00
+"YJHH660 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C74
+"YJHH660 Area-Imaging Scanner" = Dev_w_CTS, USBCDCACM\VID_23D0&PID_0C6A&MI_00
+
+
+[Dev_w_CTS.NT]
+CopyFiles = Generic_CopyFiles
+AddReg = Generic_AddReg
+
+[Dev_w_CTS.NT.Services]
+AddService = %ServiceName%, 0x00000002, Generic_AddService 
+
+[Dev_w_CTS.NT.HW]
+AddReg = Generic_NT_HW_AddReg, Dev_w_CTS_NT_HW_AddReg
+
+[Dev_w_CTS.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[Dev_w_CTS.NT.Wdf]
+KmdfService = %ServiceName%, Generic_wdfsect
+
+[Dev_POSUSB1.NT]
+CopyFiles = Generic_CopyFiles
+AddReg = Generic_AddReg
+
+[Dev_POSUSB1.NT.Services]
+AddService = %ServiceName%, 0x00000002, Generic_AddService 
+
+[Dev_POSUSB1.NT.HW]
+AddReg = Generic_NT_HW_AddReg, Dev_POSUSB1_NT_HW_AddReg
+
+[Dev_POSUSB1.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[Dev_POSUSB1.NT.Wdf]
+KmdfService = %ServiceName%, Generic_wdfsect
+
+[Dev_POSUSB2.NT]
+CopyFiles = Generic_CopyFiles
+AddReg = Generic_AddReg
+
+[Dev_POSUSB2.NT.Services]
+AddService = %ServiceName%, 0x00000002, Generic_AddService 
+
+[Dev_POSUSB2.NT.HW]
+AddReg = Generic_NT_HW_AddReg, Dev_POSUSB2_NT_HW_AddReg
+
+[Dev_POSUSB2.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[Dev_POSUSB2.NT.Wdf]
+KmdfService = %ServiceName%, Generic_wdfsect
+
+[Dev_POSUSB2_w_CTS.NT]
+CopyFiles = Generic_CopyFiles
+AddReg = Generic_AddReg
+
+[Dev_POSUSB2_w_CTS.NT.Services]
+AddService = %ServiceName%, 0x00000002, Generic_AddService 
+
+[Dev_POSUSB2_w_CTS.NT.HW]
+AddReg = Generic_NT_HW_AddReg, Dev_POSUSB2_w_CTS_NT_HW_AddReg
+
+[Dev_POSUSB2_w_CTS.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[Dev_POSUSB2_w_CTS.NT.Wdf]
+KmdfService = %ServiceName%, Generic_wdfsect
+
+[Generic_CopyFiles]
+youjie_cdc.sys,,,0x20    ; Copy if newer
+
+[Generic_AddService]
+ServiceType   = 1                  ; SERVICE_KERNEL_DRIVER
+StartType     = 3                  ; SERVICE_DEMAND_START
+ErrorControl  = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary = %12%\youjie_cdc.sys
+Addreg = Generic_AddService_Addreg
+
+[Generic_AddService_Addreg]
+; Service parameters shouldn't override parameters that already exist in the registry
+HKR, Parameters, DebugLevel, 0x00010003, 2
+HKR, Parameters, ForceComPortsEnable, 0x00010003, 0
+HKR, Parameters, ForceComPortsList, 0x00000002, "4,5,6,7,8"
+
+[Generic_NT_HW_AddReg]
+HKR,,"DataInBuffers",0x00010001,0x80 ; Number of USB IN requests to be buffered
+HKR,,"ForceComPortsEnable",0x00010001,1 ; Enable ForceCom for this device
+HKR,,"MsCommFixEnabled", 0x00010001, 1
+
+; Youjie's CustomFlags bits:
+; POSUSB1_DEVICE_FLAG       0x01
+; CTS_IN_SERIAL_STATE_FLAG  0x02
+; LEGACY_HOOKS_FLAG         0x04
+; DSR_EMULATION_FLAG        0x08
+; DCD_EMULATION_FLAG        0x10
+
+[Dev_w_CTS_NT_HW_AddReg]
+; CustomFlags = CTS_IN_SERIAL_STATE_FLAG | DSR_EMULATION_FLAG
+HKR,,"CustomFlags",0x00010001,0x000A
+HKR,,"DataInPacketsPerXfer",0x00010001,32 ; USB packets per single IN request
+
+[Dev_POSUSB1_NT_HW_AddReg]
+; CustomFlags = POSUSB1_DEVICE_FLAG | LEGACY_HOOKS_FLAG | DSR_EMULATION_FLAG
+HKR,,"CustomFlags",0x00010001,0x000D
+HKR,,"DataInPacketsPerXfer",0x00010001,1 ; USB packets per single IN request
+
+[Dev_POSUSB2_NT_HW_AddReg]
+; CustomFlags = LEGACY_HOOKS_FLAG | DSR_EMULATION_FLAG
+HKR,,"CustomFlags",0x00010001,0x000C
+HKR,,"DataInPacketsPerXfer",0x00010001,1 ; USB packets per single IN request
+
+[Dev_POSUSB2_w_CTS_NT_HW_AddReg]
+; CustomFlags = CTS_IN_SERIAL_STATE_FLAG | LEGACY_HOOKS_FLAG | DSR_EMULATION_FLAG
+HKR,,"CustomFlags",0x00010001,0x000E
+HKR,,"DataInPacketsPerXfer",0x00010001,1 ; USB packets per single IN request
+
+;-------------- Add standard properties page (displayed in Device Manager)
+[Generic_AddReg]
+HKR,,PortSubClass,1,01 ; "01" stands for serial port
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+;
+;-------------- WDF Coinstaller installation
+;
+[DestinationDirs]
+CoInstaller_CopyFiles = 11
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, \
+    "wdfcoinstaller01009.dll,WdfCoInstaller", \
+    "acmfccoi.dll,acm_force_com_co_installer"
+
+[CoInstaller_CopyFiles]
+wdfcoinstaller01009.dll
+acmfccoi.dll
+
+[SourceDisksFiles]
+wdfcoinstaller01009.dll=1 ; make sure the number matches with SourceDisksNames
+acmfccoi.dll=1
+
+[Generic_wdfsect]
+KmdfLibraryVersion = 1.9
+
+[Strings]
+Mfg = "Youjie"
+;Disk_Description = "Youjie 2D product Serial Driver Installation Disk"
+Disk_Description = "Youjie Serial Driver Installation Disk"
+ServiceName = "youjie_cdc"
+

@@ -1,0 +1,22 @@
+E:\Study_Program\20220319\ClientProject\bin\Debug\ClientProject.exe.config
+E:\Study_Program\20220319\ClientProject\bin\Debug\ClientProject.exe
+E:\Study_Program\20220319\ClientProject\bin\Debug\ClientProject.pdb
+E:\Study_Program\20220319\ClientProject\obj\Debug\ClientProject.csproj.AssemblyReference.cache
+E:\Study_Program\20220319\ClientProject\obj\Debug\ClientProject.csproj.SuggestedBindingRedirects.cache
+E:\Study_Program\20220319\ClientProject\obj\Debug\_20220319.Client.resources
+E:\Study_Program\20220319\ClientProject\obj\Debug\ClientProject.Properties.Resources.resources
+E:\Study_Program\20220319\ClientProject\obj\Debug\ClientProject.csproj.GenerateResource.cache
+E:\Study_Program\20220319\ClientProject\obj\Debug\ClientProject.csproj.CoreCompileInputs.cache
+E:\Study_Program\20220319\ClientProject\obj\Debug\ClientProject.exe
+E:\Study_Program\20220319\ClientProject\obj\Debug\ClientProject.pdb
+E:\Cowain\Exam\Week Four\20220319\ClientProject\bin\Debug\ClientProject.exe.config
+E:\Cowain\Exam\Week Four\20220319\ClientProject\bin\Debug\ClientProject.exe
+E:\Cowain\Exam\Week Four\20220319\ClientProject\bin\Debug\ClientProject.pdb
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\ClientProject.csproj.AssemblyReference.cache
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\ClientProject.csproj.SuggestedBindingRedirects.cache
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\_20220319.Client.resources
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\ClientProject.Properties.Resources.resources
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\ClientProject.csproj.GenerateResource.cache
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\ClientProject.csproj.CoreCompileInputs.cache
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\ClientProject.exe
+E:\Cowain\Exam\Week Four\20220319\ClientProject\obj\Debug\ClientProject.pdb

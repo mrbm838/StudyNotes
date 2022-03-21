@@ -1,0 +1,142 @@
+;
+; Youjie USB Serial Transport Driver (enum)
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=USB
+ClassGUID={36FC9E60-C465-11CF-8056-444553540000}
+Provider=%Mfg%
+DriverVer=01/13/2016,2.1.10.1
+CatalogFile=youjie_enum.cat
+
+; ================= Device section =====================
+
+[Manufacturer]
+%Mfg%=DeviceList,NTx86,NTamd64
+
+; For Win2K
+[DeviceList]
+"YJ4600" = DevInstall, USB\VID_23D0&PID_0B94
+"YJ4600" = DevInstall, USB\VID_23D0&PID_0B8A&MI_00
+"GS550" = DevInstall, USB\VID_23D0&PID_0BB4
+"GS550" = DevInstall, USB\VID_23D0&PID_0BAA&MI_00
+"YJHF600 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0BF4
+"YJHF600 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0BEA&MI_00
+"YJHH360" = DevInstall, USB\VID_23D0&PID_0C34
+"YJHH360" = DevInstall, USB\VID_23D0&PID_0C2A&MI_00
+"YJHF500" = DevInstall, USB\VID_23D0&PID_0C54
+"YJHF500" = DevInstall, USB\VID_23D0&PID_0C4A&MI_00
+"YJHH660 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0C74
+"YJHH660 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0C6A&MI_00
+
+
+; For XP and later
+[DeviceList.NTx86]
+"YJ4600" = DevInstall, USB\VID_23D0&PID_0B94
+"YJ4600" = DevInstall, USB\VID_23D0&PID_0B8A&MI_00
+"GS550" = DevInstall, USB\VID_23D0&PID_0BB4
+"GS550" = DevInstall, USB\VID_23D0&PID_0BAA&MI_00
+"YJHF600 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0BF4
+"YJHF600 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0BEA&MI_00
+"YJHH360" = DevInstall, USB\VID_23D0&PID_0C34
+"YJHH360" = DevInstall, USB\VID_23D0&PID_0C2A&MI_00
+"YJHF500" = DevInstall, USB\VID_23D0&PID_0C54
+"YJHF500" = DevInstall, USB\VID_23D0&PID_0C4A&MI_00
+"YJHH660 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0C74
+"YJHH660 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0C6A&MI_00
+
+; For XP and later x64
+[DeviceList.NTamd64]
+"YJ4600" = DevInstall, USB\VID_23D0&PID_0B94
+"YJ4600" = DevInstall, USB\VID_23D0&PID_0B8A&MI_00
+"GS550" = DevInstall, USB\VID_23D0&PID_0BB4
+"GS550" = DevInstall, USB\VID_23D0&PID_0BAA&MI_00
+"YJHF600 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0BF4
+"YJHF600 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0BEA&MI_00
+"YJHH360" = DevInstall, USB\VID_23D0&PID_0C34
+"YJHH360" = DevInstall, USB\VID_23D0&PID_0C2A&MI_00
+"YJHF500" = DevInstall, USB\VID_23D0&PID_0C54
+"YJHF500" = DevInstall, USB\VID_23D0&PID_0C4A&MI_00
+"YJHH660 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0C74
+"YJHH660 Area-Imaging Scanner" = DevInstall, USB\VID_23D0&PID_0C6A&MI_00
+
+[DevInstall.NT]
+CopyFiles=DevInstall.Files.Ext
+
+[DevInstall.NT.Services]
+AddService = %ServiceName%, %SPSVCINST_ASSOCSERVICE%, DevInstall.AddService, DevInstall.EventLog
+
+[DevInstall.AddService]
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\youjie_enum.sys
+AddReg         = DevInstall.AddService.AddReg
+
+[DevInstall.AddService.AddReg]
+HKR, Parameters, DebugLevel, 0x00010003, 2
+HKR, Parameters, UseControlDevice, 0x00010001, 1
+
+[DevInstall.EventLog]
+AddReg=DevInstall.AddEventLog.Reg
+
+[DevInstall.AddEventLog.Reg]
+HKR, , EventMessageFile, 0x00020000, "%%SystemRoot%%\system32\drivers\youjie_enum.sys"
+HKR, , TypesSupported,   0x00010001, 7
+
+[DevInstall.NT.HW]
+AddReg = DevInstall_NT_HW_AddReg
+
+[DevInstall_NT_HW_AddReg]
+; If enabled (0x1), child device under Control device, will not be removed
+; when usb device is unplugged and there is an open handle to the child device
+HKR,,"CtrlDevHoldChildIfInUse",0x00010001,0x1
+; If enabled (0x1), reset events will be logged in the event viewer
+HKR,,"EnableLogEvent",0x00010001,0x1
+
+[DevInstall.Files.Ext]
+youjie_enum.sys,,,0x6 ; COPYFLG_NOSKIP | COPYFLG_NOVERSIONCHECK
+
+[SourceDisksNames]
+1=%Disk_Description%,,,
+
+[SourceDisksFiles]
+youjie_enum.sys = 1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+;-------------- WDF Coinstallers installation
+
+[DestinationDirs]
+CoInstaller_CopyFiles = 10,System32
+
+[DevInstall.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CoInstaller_CopyFiles]
+wdfcoinstaller01009.dll
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "wdfcoinstaller01009.dll,WdfCoInstaller"
+
+[SourceDisksFiles]
+wdfcoinstaller01009.dll=1 ; make sure the number matches with SourceDisksNames
+
+[DevInstall.NT.Wdf]
+KmdfService = %ServiceName%, DevInstall_wdfsect
+
+[DevInstall_wdfsect]
+KmdfLibraryVersion = 1.9
+
+;---------------------------------------------------------------;
+
+[Strings]
+Mfg = "Youjie"
+;Disk_Description = "Youjie 2D product Serial Driver Installation Disk"
+Disk_Description = "Youjie Serial Driver Installation Disk"
+ServiceName = "youjie_enum"
+SPSVCINST_ASSOCSERVICE = 0x00000002
+

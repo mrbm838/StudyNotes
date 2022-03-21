@@ -837,7 +837,7 @@ Console.ReadKey();
    string s = string.Join("|", 1, 3.14, true, 'c', "param_obj");
    ```
 
-2. 如果父类引用指向子类对象，那么可以将这个父类强制转换为子类对象。
+2. 如果父类引用指向子类对象，那么可以将这个父类强制转换为子类对象。（**意味着强制转换要求是继承关系）**
 
    ```C#
    Person p = new Student();
@@ -1140,7 +1140,7 @@ File.ReadAllBytes();可以读取所有文件，并返回字节数组。
 5. Path.GetFullPath();获取绝对路径
 6. Path.Combine();拼接路径
 
-Path只能操作路径的字符串，并不能造成实际影响。
+Path类只能操作路径的字符串，并不能造成实际影响。
 `Path.ChangExtensionName(@"D:\A\1.txt", "jpg");`实际文件扩展名并未改变。
 
 以上路径使用相对路径的话，是程序的Debug目录。
@@ -1657,7 +1657,133 @@ sealed：修饰密封类，表示该类不能被继承（可以实例化）。
 partial：修饰部分类，同名部分类组成一个完整的类。
 		 适合多人协同所有同一个类。
 
+##### 8.控件的简单属性
 
+1. BackgroundImage: 控件背景图片，保存在.resx文件下
+2. BackgroundImageLayout: 背景图片的布局方式
+3. Cursor: 鼠标样式
+4. Enable: 控件能否使用
+5. Dock: 控件在窗体的位置
+6. FlatStyle: 使用控件时不同的表现
+7. StartPosition: 窗体出现的位置
+8. Opacity: 控件的不透明度
+9. WordWarp: 自动换行
+10. ScrollBars: 滚动条
+11. PasswordChar: 密码
+12. AllowDrop: 拖拽文件至控件
+
+##### 9.控件的事件
+
+`Point p = MousePosition;`屏幕坐标
+
+`Point p1 = this.PointToClient(MousePosition);`窗体坐标
+
+控件在窗体内活动的范围
+`int maxWidth = this.ClientSize.Width - button.Width;`
+`int maxHeight = this.ClientSize.Height - button.Height;`
+`button.Location = new Point(x, y);`
+
+RadioButton: 通过容器实现多选
+
+MenuStrip: 菜单栏
+`frm2.MdiParent = this;`form2的父窗体是当前窗体，form2窗体只能在父窗体内。
+`LayoutMdi(MdiLayout.TileVertical);`在多文档界面父窗体内垂直排列子窗体。
+`LayoutMdi(MdiLayout.TileHorizontal);`在多文档界面父窗体内水平排列子窗体。
+
+PictureBox: 图片窗体
+`pictureBox1.Image = Image.FromFile("C:\1.jpg");`加载一张图片
+
+ComboBox: 下拉框
+`comboBox1.Items.Add("0");`添加一个下拉项
+`comboBox1.SelectedIndex = 0;`设置第一项显示
+DropDownStyle: 下拉样式
+	simple:全部显示
+	DropDown:正常下拉样式
+	DropDownList:类表形式，框内无法编辑
+
+```C#
+// Show the number days of each month
+switch(month)
+{
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        days = 31;
+        break;
+    case 2:
+        if ((year % 400 == 0) || (year % 4 == 0 && year % 100 != 0))
+        {
+            days = 29;
+        }
+        else
+        {
+            days = 28;
+        }
+        break;
+    default:
+        days = 30;
+        break;
+}
+```
+
+WebBrowser: 浏览器控件使用Uri
+
+```C#
+// Go to a web address
+string str = "http://" + textBox1.Text;
+Uri uri = new Uri(str);
+webBrowser1.Uri = uri;
+```
+
+listBox: 列表框播放wav
+
+```C#
+// Play .wav type musics
+private void listBox1_DoubleClick(object sender, EventArgs e)
+{
+    SoundPlayer sp = new SoundPlayer();
+    sp.SoundLocation = list[listBox1.SelectedIndex];
+    sp.Play();
+}
+```
+
+OpenFileDialog: 打开文件对话框
+
+1. 通过代码添加
+
+   ```C#
+   OpenFileDialog ofd = new OpenFileDialog();
+   ofd.Title = "Please select files";
+   ofd.Multiselect = true;
+   ofd.InitialDirectory = @"D:\";
+   ofd.Filter = "All files|*.*|Text files|*.txt";
+   ofd.ShowDialog();
+   ```
+
+2. 通过工具箱OpenFileDialog控件添加
+
+   只需要调用ShowDialog()方法将它显示出来。
+
+   参数可以通过代码添加，也可以通过属性进行修改。
+
+   ```C#
+   private void button1_Click(object sender, EventArgs e)
+   {
+   	openFileDialog1.ShowDialog();
+   }
+   private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+   {
+   
+   }
+   ```
+
+3. ShowHelp属性
+
+   默认为false，当置为true时，弹窗样式将改变并且增加帮助按钮，此时可以触发HelpRequest事件，即点击帮助按钮后的事件。
 
 
 
@@ -2295,6 +2421,8 @@ public int CopyFolder(string sourceFolder, string destFolder)
 
 [C# 中的delegate、event、Action、Func_|刘钊|的博客-CSDN博客](https://blog.csdn.net/weixin_40200876/article/details/89335598)
 
+==可以通过`action()`或者`action.Invoke()`两种方式调用方法。==
+
 ##### 11.线程同步
 
 [C# EventWaitHandle类解析 - 冬音 - 博客园 (cnblogs.com)](https://www.cnblogs.com/wintertone/p/11657334.html)
@@ -2324,3 +2452,17 @@ char(13)回车键
 ##### 16.序列化
 
 [C# 序列化和反序列化 详解 - Ryan_zheng - 博客园 (cnblogs.com)](https://www.cnblogs.com/ryanzheng/p/11075105.html)
+
+##### 17.客户端和服务器问题
+
+1. 要接收多个客户端信息，服务器接收函数必须将监听到套接字用新套接字接收
+   `Socket server = listen.Accept();`
+2. 检查客户端有没有退出用Poll()
+   `bool b = server.Poll(5000, SelectMode.SelectRead)`
+3. System.Windows.Forms.Timer触发Tick()
+   ①通过窗体添加事件，timer_Tick()
+   ②通过代码添加，timer.Tick += Timer_Tick()
+
+##### 18.定时器
+
+[C#里面的三种定时计时器：Timer - .NET开发菜鸟 - 博客园 (cnblogs.com)](https://www.cnblogs.com/dotnet261010/p/7113523.html)

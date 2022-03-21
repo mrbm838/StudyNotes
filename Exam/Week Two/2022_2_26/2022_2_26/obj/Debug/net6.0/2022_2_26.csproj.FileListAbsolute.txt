@@ -1,0 +1,15 @@
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\bin\Debug\net6.0\2022_2_26.exe
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\bin\Debug\net6.0\2022_2_26.deps.json
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\bin\Debug\net6.0\2022_2_26.runtimeconfig.json
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\bin\Debug\net6.0\2022_2_26.dll
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\bin\Debug\net6.0\2022_2_26.pdb
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.csproj.AssemblyReference.cache
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.GeneratedMSBuildEditorConfig.editorconfig
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.AssemblyInfoInputs.cache
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.AssemblyInfo.cs
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.csproj.CoreCompileInputs.cache
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.dll
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\refint\2022_2_26.dll
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.pdb
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\2022_2_26.genruntimeconfig.cache
+E:\Cowain\Exam\Week Two\2022_2_26\2022_2_26\obj\Debug\net6.0\ref\2022_2_26.dll
