@@ -1159,7 +1159,7 @@ int r = fs.Read(bufferRead, 0 , bufferRead.Length);
 // Put valid bytes of array convert to string
 string str = System.Text.Encoding.Default.GetString(buffer, 0 , r);
 
-string str = "Todat is nice";
+string str = "Today is nice";
 byte[] bufferWrite = Encoding.Default.GetBytes(str);
 fs.Write(bufferWrite, 0 , bufferWrite.Length);
 ```
@@ -1172,7 +1172,7 @@ fs.Dispose();	// Dispose the object
 // Equal to
 using (Create the stream object)
 {
-    Reading or writing.
+    //Reading or writing.
 }
 ```
 
@@ -1671,6 +1671,27 @@ partial：修饰部分类，同名部分类组成一个完整的类。
 10. ScrollBars: 滚动条
 11. PasswordChar: 密码
 12. AllowDrop: 拖拽文件至控件
+13. Controls: 获取改控件内的控件集合
+
+**窗体间的控件移动**
+
+```C#
+// label controler move between form1 and form2
+Form2 form2 = new Form2();
+private void label_Click(object sender, EventArgs e)
+{
+    if (this.label.Parent == this)
+    {
+        form2.Controls.Add(this.label);
+    }
+    else
+    {
+        this.Controls.Add(this.label);
+    }
+}
+```
+
+
 
 ##### 9.控件的事件
 
@@ -1762,6 +1783,8 @@ OpenFileDialog: 打开文件对话框
    ofd.InitialDirectory = @"D:\";
    ofd.Filter = "All files|*.*|Text files|*.txt";
    ofd.ShowDialog();
+   // Get file's path which selected
+   string path = ofd.FileName;
    ```
 
 2. 通过工具箱OpenFileDialog控件添加
@@ -1784,6 +1807,53 @@ OpenFileDialog: 打开文件对话框
 3. ShowHelp属性
 
    默认为false，当置为true时，弹窗样式将改变并且增加帮助按钮，此时可以触发HelpRequest事件，即点击帮助按钮后的事件。
+
+MenuStrip: 菜单栏控件
+
+Validating和Validated: 在控件失去焦点后触发的事件。
+
+ItemCheck和ItemChecked: 在选中一项前/后，根据事件内方法体检查值，前者可通过e.Cancel()撤销改值的						传入。
+
+### 第十六天
+
+##### 1.GDI
+
+CLR: 公共语言运行时
+当我们运行程序时，CLR加载所有类文件到内存，找到主函数，从上到下一行一行执行。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
