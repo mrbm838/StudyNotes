@@ -1691,8 +1691,6 @@ private void label_Click(object sender, EventArgs e)
 }
 ```
 
-
-
 ##### 9.控件的事件
 
 `Point p = MousePosition;`屏幕坐标
@@ -1814,22 +1812,73 @@ Validating和Validated: 在控件失去焦点后触发的事件。
 
 ItemCheck和ItemChecked: 在选中一项前/后，根据事件内方法体检查值，前者可通过e.Cancel()撤销改值的						传入。
 
-### 第十六天
+### 第十七天
 
 ##### 1.GDI
 
 CLR: 公共语言运行时
 当我们运行程序时，CLR加载所有类文件到内存，找到主函数，从上到下一行一行执行。
 
+画线
 
+<details>
+    <summary>画线</summary>
+    <code>
+    void DrawStraightLine()<br>
+    {<br>
+&emsp;        Graphics g = this.CreateGraphics();<br>
+&emsp;        Point p1 = new Point(50, 50);<br>
+&emsp;        Point p2 = new Point(250, 250);<br>
+&emsp;        Pen pen = new Pen(Brushes.Black);<br>
+&emsp;        g.DrawLine(pen, p1, p2);<br>
+    }<br>
+    // Repaint event follow OS<br>
+    private void Form1_Paint(object sender, PaintEventArgs e)<br>
+    {<br>
+&emsp;        DrawStraightLine();<br>
+    }<br>
+    </code>
+</details>
 
+<details>
+  <summary>展开查看</summary>
+  <pre><code> 
+     void DrawStraightLine()
+    {
+        Graphics g = this.CreateGraphics();
+        Point p1 = new Point(50, 50);
+        Point p2 = new Point(250, 250);
+        Pen pen = new Pen(Brushes.Black);
+        g.DrawLine(pen, p1, p2);
+    }
+    // Repaint event follow OS
+    private void Form1_Paint(object sender, PaintEventArgs e)
+    {
+        DrawStraightLine();
+    }
+  </code></pre>
+</details>
+##### 2.多线程
 
+1. 进程
 
+   ```C#
+   // Get all processes
+   Process[] pros = Process.GetProcesses();
+   // Get current process
+   Console.WtiteLine(Process.GetCurrentProcess().ToString());
+   ```
 
+2. 代码的形式启动进程
 
+   ```C#
+   Process.Start("calc");// calculater
+   Process.Start("mspaint");// calculater
+   Process.Start("iexplore", "http://www.baidu.com");
+   Process.Start("devenv");// VS
+   ```
 
-
-
+   
 
 
 
