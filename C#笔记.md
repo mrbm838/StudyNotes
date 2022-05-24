@@ -72,13 +72,14 @@ Console.WriteLine("num={0}", num);
 num = DoubleNum(num);
 ```
 
-②使用ref关键字，侧重于将变量带入方法内进行改变，使得函数处理的变量和调用的变量相同
+②使用ref关键字，将值传递变成引用传递。侧重于将变量带入方法内进行改变，使得函数处理的变量和调用的变量相同
 
 ```c#
 ShowDouble(ref num);
 //使用条件
 //1.改变量（num）不能是常量（const）
 //2.必须使用初始化的变量
+//此时实参num和形参num在栈上的地址是一样的，因此两个参数的值也是一样的
 ```
 
 ③out关键字
@@ -146,119 +147,116 @@ while(true)
 
 ##### 11.枚举类型
 
-```c#
- public enum QQState
- {
-     OnLine,
-     OffLine = 5,
-     Leave,
-     Busy,
-     QMe
- }
-
-/// <summary>
-/// enum convery to int 
-/// </summary>
-int n = (int)QQState.OnLine;
-Console.WriteLine(n);
-Console.WriteLine(QQState.OffLine); 
-Console.WriteLine((int)QQState.Leave);
-//输出： 0  OffLine  6
-
-/// <summary>
-/// int convery to enum
-/// </summary>
-int a = 1;
-QQState qQState = new QQState();
-qQState = (QQState)a;
-Console.WriteLine(qQState);
-QQState qQState1 = (QQState)5;
-Console.WriteLine(qQState1);
-//输出： 1  OffLine
-//因为从OffLine就是从5开始，顾没有1，原样输出
-
-/// <summary>
-/// Type enum to string
-/// </summary>
-string str1 = QQState.OnLine.ToString();
-Console.WriteLine(str1);
-//输出：OnLine
-//所有类型都能转换为string类型
-Console.WriteLine(QQState.Leave.ToString());
-Console.WriteLine(QQState.Leave);//隐式转换
-
-/// <summary>
-/// Type string to enum
-/// </summary>
-QQState q = (QQState)Enum.Parse(typeof(QQState), "0");
-Console.WriteLine(q);
-//输出：OnLine
-QQState q = (QQState)Enum.Parse(typeof(QQState), "10");
-Console.WriteLine(q);
-//输出：10
-//没有10，原样输出
-QQState q = (QQState)Enum.Parse(typeof(QQState), "OnLine");
-Console.WriteLine(q);
-//输出：OnLine
-QQState q = (QQState)Enum.Parse(typeof(QQState), "Hello");
-//抛出异常，枚举内无Hello
-```
+<details>
+    <summary>枚举</summary>
+    <pre><code>
+     public enum QQState
+     {
+         OnLine,
+         OffLine = 5,
+         Leave,
+         Busy,
+         QMe
+     }
+    /// <summary>
+    /// enum convery to int 
+    /// </summary>
+    int n = (int)QQState.OnLine;
+    Console.WriteLine(n);
+    Console.WriteLine(QQState.OffLine); 
+    Console.WriteLine((int)QQState.Leave);
+    //输出： 0  OffLine  6
+    /// <summary>
+    /// int convery to enum
+    /// </summary>
+    int a = 1;
+    QQState qQState = new QQState();
+    qQState = (QQState)a;
+    Console.WriteLine(qQState);
+    QQState qQState1 = (QQState)5;
+    Console.WriteLine(qQState1);
+    //输出： 1  OffLine
+    //因为从OffLine就是从5开始，顾没有1，原样输出
+    /// <summary>
+    /// Type enum to string
+    /// </summary>
+    string str1 = QQState.OnLine.ToString();
+    Console.WriteLine(str1);
+    //输出：OnLine
+    //所有类型都能转换为string类型
+    Console.WriteLine(QQState.Leave.ToString());
+    Console.WriteLine(QQState.Leave);//隐式转换
+    /// <summary>
+    /// Type string to enum
+    /// </summary>
+    QQState q = (QQState)Enum.Parse(typeof(QQState), "0");
+    Console.WriteLine(q);
+    //输出：OnLine
+    QQState q = (QQState)Enum.Parse(typeof(QQState), "10");
+    Console.WriteLine(q);
+    //输出：10
+    //没有10，原样输出
+    QQState q = (QQState)Enum.Parse(typeof(QQState), "OnLine");
+    Console.WriteLine(q);
+    //输出：OnLine
+    QQState q = (QQState)Enum.Parse(typeof(QQState), "Hello");
+    //抛出异常，枚举内无Hello
+    </code></pre>
+</details>
 
 ##### 12.结构体
 
 字段与变量的区别在于，字段能存储多个值，例如下面的性别。
 
-```c#
-public struct Person
-{
-    public string _name;
-    public int _age;
-    public Sex _sex;
-}
-public enum Sex
-{
-    man,
-    woman
-}
-class Program
-{
-    static void Main(string[] args)
+<details>
+    <pre><code>
+    public struct Person
     {
-        Person person = new Person();
-        person._name = "Kobe";
-        person._age = 11;
-        person._sex = Sex.man;
-
-        Console.WriteLine(person);
-        
-        FieldInfo[] fieldInfos = typeof(Person).GetFields();
-        foreach (FieldInfo fieldInfo in fieldInfos)
-        {
-            Console.WriteLine(fieldInfo.Name);
-            Console.WriteLine(fieldInfo.GetValue(person));
-            Console.WriteLine(fieldInfo.FieldType);
-        }
-        
-        Console.ReadLine();
+        public string _name;
+        public int _age;
+        public Sex _sex;
     }
-}
-//输出：
-Person
-_name
-Kobe
-System.String
-_age
-11
-System.Int32
-_sex
-man
-Sex
-
-```
+    public enum Sex
+    {
+        man,
+        woman
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Person person = new Person();
+            person._name = "Kobe";
+            person._age = 11;
+            person._sex = Sex.man;
+            Console.WriteLine(person);
+            FieldInfo[] fieldInfos = typeof(Person).GetFields();
+            foreach (FieldInfo fieldInfo in fieldInfos)
+            {
+                Console.WriteLine(fieldInfo.Name);
+                Console.WriteLine(fieldInfo.GetValue(person));
+                Console.WriteLine(fieldInfo.FieldType);
+            }
+            Console.ReadLine();
+        }
+    }
+    //输出：
+    Person
+    _name
+    Kobe
+    System.String
+    _age
+    11
+    System.Int32
+    _sex
+    man
+    Sex
+    </code></pre>
+</details>
 
 ### 第六天
 
-##### 1.升序和降序
+##### 1.数组升序、降序和求平均
 
 ```c#
 string[] arr = { "abc", "ghi", "def", "bbb", "waa","a11","acd" ,"66666","11a","11b"};
@@ -300,6 +298,8 @@ for (int i = 0; i < num.Length; i++)
 //输出
 //366 87 42 9 5 2 1 0 -100
 ```
+
+`doublenum.Average();`实现求数组平均值，返回double类型数据。
 
 ##### 2.调用方法
 
@@ -447,6 +447,8 @@ Console.ReadKey(true);
 ##### 3.面对对象
 
 * 程序中，描述一个对象（被操作的事物），描述的是对象的属性和方法
+* 类中成员：字段、属性、方法、构造函数
+* 字段：类中唯一用于存储数据
 * 属性即对象具有的各种特征
 * 方法即对象能进行的行为
 * 类是模板、标准，确定对象拥有的特征和行为
@@ -479,7 +481,7 @@ public void set_Name(string value)
 }
 ```
 
-**属性的本质是方法，是为了保护字段，对字段的取值和设置进行限定。**字段在类内使用，属性供类外部访问。
+**属性的本质是方法，是为了保护字段，对字段的取值和设置进行限定。字段在类内使用，属性供类外部访问。**
 
 ```C#
 int _age;
@@ -508,7 +510,8 @@ public char Gender
     }
     set { _gender = value; }
 }
-// Equal to automatic attribute, but it can't add condition
+// Equal to automatic attribute, but the bottom one can't add condition。
+// In addition, automatic attribute still implicit creation of field.
 public int Age
 {
 	get;
@@ -562,9 +565,21 @@ new关键字的作用：
 ##### 4.C#数据类型
 
 1. 值类型（int,double,char,bool,decimal,struct,enum...）
-   值类型的值存储在栈中。
-2. 引用类型（string,数组,类对象）
-   引用类型的值存储在堆中，栈中存储指向堆的地址。
+   
+   * 值类型的值存储在栈中，继承与System.ValueType(依然继承object)。
+   * ValueType重写了Equals()方法，故值类型只比较地址上的值
+   * 值类型之间赋值只是传递值，即两个不同地址存储相同的值。
+   * 值类型是密封的（seal），不能派生新的类型。
+   * 值类型不能包含null值，但是可空类型允许将null赋值给值类型`int? a = null;`
+2. 引用类型（string,数组,集合,类,接口,委托）
+   
+   * 引用类型的值存储在堆中，栈中存储指向堆的地址，均继承于System.Object。
+   
+   * `Person person = null;`此语句在栈上开辟一个内存空间用于容纳一个地址。
+     `person = new Person();`此语句在堆上开辟一个内存空间存储对象，并将堆地址存储在栈上。
+   * 引用类型之间的赋值是传递引用，即传递堆的地址，改变栈存储的地址，不会回收释放原先对象的内存空间；只复制对象的引用，而不复制对象本身。
+   * 引用类型可以派生新的类型。
+   * 引用类型可以包含null值。
 3. 指针类型
 
 ##### 5.静态类
@@ -583,9 +598,20 @@ new关键字的作用：
 **静态成员和实例成员**
 
 1. 被static修饰的成员是静态成员，是属于类的，==通过类名访问==。不被static修饰的成员是实例成员，是属于对象的，==通过对象名访问==。
+
 2. 静态成员创建在静态存储区。实例成员随对象创建在堆中。（C#中内存分为堆、栈、自由存储区、全局/静态存储区和常量存储区5个区）
-3. 静态成员只在类第一次访问时创建一次。实例成员数量和对象数量一致。
+
+3. 静态成员只在类第一次访问时创建一次。~~实例成员数量和对象数量一致。~~
+
 4. 静态成员一旦创建就不会被回收，直到程序结束。实例成员随对象一起回收。
+
+5. |          静态          |          实例          |
+   | :--------------------: | :--------------------: |
+   |    static关键字修饰    |     无static关键字     |
+   |      使用类名调用      |      使用对象调用      |
+   | 方法中可以访问静态成员 | 方法中可以访问静态成员 |
+   |  通过对象访问实例成员  | 方法中可以访问实例成员 |
+   |   调用前就已经初始化   |   实例化对象时初始化   |
 
 ##### 6.不同项目之间类的应用
 
@@ -633,11 +659,38 @@ Console.WriteLine(sw.Elapsed);
 Console.ReadKey();
 ```
 
-##### 8.操作字符串的方法
+##### 8.StringBuilder和String的性能比较
+
+```
+|                   Method |      Mean | Allocated |
+|------------------------- |----------:|----------:|
+|  AppendWithStringBuilder |  38.05 μs |     40 KB |
+|         AppendWithString | 411.68 μs |  2,791 KB |
+|  InsertWithStringBuilder | 116.05 μs |    100 KB |
+|         InsertWithString | 179.68 μs |  1,004 KB |
+|  RemoveWithStringBuilder |  90.62 μs |     12 KB |
+|         RemoveWithString | 139.29 μs |    382 KB |
+| ReplaceWithStringBuilder | 571.77 μs |     12 KB |
+|        ReplaceWithString | 106.71 μs |    137 KB |
+```
+
+时间上，StringBuilder方法快于String方法，**除了Replace()方法**。
+
+空间上，StringBuilder方法比String占用少得多的空间。
+
+##### 9.使用StringBuilder地方
+
+- We expect a lot of operations on a string
+- We need to perform a lot of search operations (StringBuilder doesn’t have the `Contains()`, `IndexOf()`, or `StartsWith()` methods)
+- There’s an indefinite number of operations (e.g., using a while loop)
+
+On the other hand, if we have to perform a few operations or a fixed number of operations on a string literal, we’ll be better off using the plain old `String` class.
+
+##### 10.操作字符串的方法
 
 1. ToCharArray()
 
-   因为String的不可变性，故String可看作char的只读数组。
+   因为String的不可变性，故String可看作char的==只读==数组。
 
    ```C#
    string str = "abcd";
@@ -662,6 +715,8 @@ Console.ReadKey();
    char[] ch = str.ToCharArray();
    // Equal to
    char[] ch1 = str.ToArray<char>();
+   // Equal to
+   char[] ch1 = str.ToArray();
    ch[0] = "b";
    // char数组转换为字符串
    str = new String(ch);
@@ -677,30 +732,36 @@ Console.ReadKey();
 
    2. 对于值类型，==与Equals作用相同，都是判断值是否相等。
 
-   3. 对于引用类型，==比较两个地址是否相等，Equals比较两个对象在堆中的值是否相等。
+   3. 对于引用类型，==比较两个堆地址是否相等，Equals比较两个对象在堆中的值是否相等。
 
-   4. String类型虽然是引用类型，但对String对象的赋值是按值类型的操作
+   4. ~~String类型虽然是引用类型，但对String对象的赋值是按值类型的操作~~
 
       ```C#
-      String s1 = "hell0";
-      String s2 = "hell0";
+      String s1 = "hello";
+      String s2 = "hello";
       Console.Write(s1 == s2); // true
       Console.write(s1.Equals(s2)); // true
       ```
 
-      对s2初始化时，没有在堆中开辟内存地址，而是在栈中存储指向s1内容的堆地址,故相等。
+      因为赋值给s2的对象的值与s1相等，在对s2初始化时，没有在堆中开辟内存地址，而是在栈中存储指向s1内容的堆地址，故相等。
 
-      两个String类型做“==”，先判断栈中存储的内存地址是否相等，不等则再比较值是否相等。
+      ~~两个String类型做“==”，先判断栈中存储的内存地址是否相等，不等则再比较值是否相等。~~
+      
+   5. 重写Equals()方法
+      使用Equals()比较两个对象时，字段、属性等存储在堆上，方法存储在方法表里，只有在比较同一个对象才能返回true。因此只需要比较两个对象内的字段或属性时，需要重写
 
-   在做比较时，要考虑将比较方转为统一格式
+   6. 在做比较时，要考虑将比较方转为统一格式时，需要忽略大小写。
 
-   ```C#
-   s1.ToUpper() == s2.ToUpper();
-   s1.ToLower() == s2.ToLower();
-   // Or
-   s1.Equals(s2, StringComparison.OrdinalIgnoreCase);
-   ```
+      ```C#
+      s1.ToUpper() == s2.ToUpper();
+      s1.ToLower() == s2.ToLower();
+      // Or
+      s1.Equals(s2, StringComparison.OrdinalIgnoreCase);
+      ```
 
+   
+   Equals()方法内参数有的是object类型，需要进行转换，专门的字符串比较函数有CompareTo()\string.Equals()\string.Compare()\string.CompareOrdinal()等等。
+   
 3. Split()
 
    ```c#
@@ -709,9 +770,18 @@ Console.ReadKey();
    // s3: a,b,cd
    ```
 
-4. Join(char, object[])
+4. String.Join(char, object[])
    在数组元素中插入字符。
 
+   eg.将字符串"  hello      world,你  好 世界   !    "两端空格去掉，并且将其中的所有其他空格都替换成一个空格，输出结果为："hello world,你 好 世界 !"。
+   
+   ```C#
+   string str = "  hello      world,你  好 世界   !    ";
+   string[] strings = str.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+   str = String.Join(" ", strings);
+   Console.WriteLine(str);
+   ```
+   
 4. Replace()
 
 5. Substring(int startIndex, int length)
@@ -724,85 +794,104 @@ Console.ReadKey();
    字符串以什么开头/结尾。
 
 8. IndexOf(char index, int startIndex)/LastIndexOf()
-   返回第一个/最后一个出现字符的索引。
-
-   ```C#
-   // Finding all char in a string
-   // Circular method
-   string a = "abcdabcda";
-   int temp = 0;
-   int num = 0;
-   for (int i = 0; i < a.Length; i++)
-   {
-       temp = a.IndexOf('a', temp);
-       if (temp != -1)
-       {
-           temp++;
-           num++;
-       }
-       else
-       {
-           break;
-       }
-   }
-   // Or
-   do
-   {
-       num++;
-       temp = a.IndexOf('a', temp + 1);
-   }
-   while (temp != -1);
-   num--;
-   Console.WriteLine("There has {0} pieces of 'a'", num);
    
-   // Recursion method
-   int temp = 0;
-   int num = 0;
-   CountChar(temp, ref num);
-   Console.WriteLine("There has {0} pieces of 'a'", num);
-   static void Addd(int temp, ref int num)
-   {
+   <details>
+       <summary>返回第一个/最后一个出现字符的索引</summary>
+       <pre><code>
+       // Finding all char in a string
+       // Circular method
        string a = "abcdabcda";
-       temp = a.IndexOf('a', temp);
-       if (temp != -1)
+       int temp = 0;
+       int num = 0;
+       for (int i = 0; i < a.Length; i++)
+       {
+           temp = a.IndexOf('a', temp);
+           if (temp != -1)
+           {
+               temp++;
+               num++;
+           }
+           else
+           {
+               break;
+           }
+       }
+       // Or
+       do
        {
            num++;
-           CountChar(++temp, ref num);
-       }    
-   }
-   
-   string path = @"c:\windds\saf\dfadfd\3oitj\yjq.cs";
-   int index = path.LastIndexOf('\\');
-   string name = path.SubString(index + 1);
-   ```
+           temp = a.IndexOf('a', temp + 1);
+       }
+       while (temp != -1);
+       num--;
+       Console.WriteLine("There has {0} pieces of 'a'", num);
+       // Recursion method
+       int temp = 0;
+       int num = 0;
+       CountChar(temp, ref num);
+       Console.WriteLine("There has {0} pieces of 'a'", num);
+       static void Addd(int temp, ref int num)
+       {
+           string a = "abcdabcda";
+           temp = a.IndexOf('a', temp);
+           if (temp != -1)
+           {
+               num++;
+               CountChar(++temp, ref num);
+           }    
+       }
+       string path = @"c:\windds\saf\dfadfd\3oitj\yjq.cs";
+       int index = path.LastIndexOf('\\');
+       string name = path.SubString(index + 1);
+       </code></pre>
+   </details>
    
 9. Trim()/TrimStart()/TrimEnd()
    去掉字符串左右两边/左边/右边的空格。
    
 11. ToArray<T>()
     转换为一个数组。
+    
+12. string.IsNullOrEmpty()
+
+    ```C#
+    string str = "123";
+    if (string.IsNullOrEmpty(str)) {}
+    // Equal to
+    if (str == null || str == "") {}
+    ```
+    
+13. Select<>
+    根据条件返回新的序列。
+
+14. Single<>
+    根据返回符合条件的一个值。
 
 ### 第十天
 
-##### 1.继承
+##### 1.封装
+
+将重复代码封装成一个方法；将私有字段封装到属性；将事物的行为和特征封装到类中；将能实现一套流程的数个类封装到一个程序集里；以上都是封装的体现。
+
+##### 2.继承
 
 1. 继承是为了解决多个类中相同属性和方法的冗余。 
-2. ==子类继承父类除私有和构造函数外的实例成员==。
-3. 子类的构造函数会默认调用父类的无参构造函数。
-   当父类存在带参构造函数替换了无参构造函数时
+2. ==子类继承父类除私有成员和构造函数外的其它实例成员==。
+3. 由于子类继承父类的成员，因此需要初始化父类成员。故在默认情况下，子类在执行构造函数前，会生成一个父类对象，并调用父类的无参构造函数。
+   当父类存在带参构造函数替换了无参构造函数时，以下解决办法：
    1. 在父类中创建一个无参构造函数
    2. 在子类构造函数后使用`base()`显示调用父类构造函数
 4. ==在子类中，通过`base`只能调用父类的公有和保护的实例成员==。
-5. 继承特性
+5. 继承的特性
    1. 单根性
    2. 传递性：可以继承父类的父类
 
-##### 2.`new`关键字
+##### 3.`new`关键字
 
 1. 创建对象
 2. 在子类中，隐藏从父类继承来的同名函数。（不用new效果一样）
 
-##### 3.`this`键字
+##### 4.`this`键字
 
 1. 代表当前类对象
 
@@ -822,9 +911,9 @@ Console.ReadKey();
    {}
    ```
 
-##### 4.里氏转换
+##### 5.里氏转换
 
-1. 子类对象可以赋值给父类。
+1. 子类对象可以赋值给父类引用。
 
    ```C#
    Person s = new Student();
@@ -844,9 +933,9 @@ Console.ReadKey();
    Student s = (Student)p;
    ```
 
-##### 5.`as is` 关键字
+##### 6.`as is` 关键字
 
-1. `is`：类型转换，转换成功返回true，否则返回false。
+1. `is`：能否类型转换，转换成功返回true，否则返回false。
 
    ```C#
    if (p is Student)
@@ -855,7 +944,7 @@ Console.ReadKey();
    }
    ```
 
-2. `as`：类型转换，转换成功返回转换后的对象，否则返回null。
+2. `as`：进行类型转换，转换成功返回转换后的对象，否则返回null。
    object = 类型；          
 
    类型 = (类型)object;    ==>    类型 = object as 类型；
@@ -920,7 +1009,7 @@ Console.ReadKey();
 
    `arrayList.Add()`给集合添加单个元素。
 
-   `arrayList.AddRange()`给集合添加集合，以单个元素添加进去。
+   `arrayList.AddRange()`给集合添加集合，以类似单个元素添加进去。
 
    ```C#
    list.AddRange(new int[] { 1, 2, 3, 4, 5 });
@@ -963,7 +1052,7 @@ Console.ReadKey();
 
    `arrayList.Capacity`允许包含的元素个数，2的次方增长。
 
-   数组集合创建时(0,0)，
+   数组集合创建时(0,0)，(Count,Capacity)
 
    存在1个元素时(1,4)，存在4个元素时(4,4)，
 
@@ -1056,9 +1145,14 @@ File类一次性将数据加载至内存，故其适合操作小文件。
 
 ##### 4.File类读取txt文本
 
-File.ReadAllLine();返回字符串数组。
+File.ReadAllLines();返回字符串数组。
 
 File.ReadAllText();返回一整个字符串。
+
+File.ReadAllBytes();以二进制的形式读取一个文件，返回二进制数组。
+`string text = Encoding.Default.GetString(ArrayBytes);`将二进制转换为字符。
+
+以上三个读文件方法有对应的WriteAllLines()\WriteAllText()\WriteAllBytes()三个写方法，但是这三个写方法会覆盖原有文件。
 
 ##### 5.File类读取所有文件
 
@@ -1153,7 +1247,7 @@ FileStream是操作字节的,因此可以操作所有类型的文件，适合操
 
 ```C#
 FileStream fs = new FileStream(@"D:\A\1.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-bytep[] bufferRead = new byte[1024];
+byte[] bufferRead = new byte[fs.Length];
 // Read data to array buffer, from 0 to the max buffer's length; return valid quantity.
 int r = fs.Read(bufferRead, 0 , bufferRead.Length);
 // Put valid bytes of array convert to string
@@ -1190,24 +1284,30 @@ using (FileStream fsRead = new FileStream(source, FileMode.OpenOrCreate, FileAcc
         while (true)
         {
             int r = fsRead.Read(buffer, 0, buffer.Length);
+            // --------First type---------
             if (r == 0) // Break when no data
             {
                 break;
             }
-            fsWrite.Write(buffer, 0,r);
+            fsWrite.Write(buffer, 0, r);
+            // --------Second type--------
+            fsWrite.Write(buffer, 0, r);
+            if (r < buffer.Length)
+            {
+                break;
+            }
         }
     }
 }
 ```
 
-##### 2.StreamWriter\StreamReader是操作字符的，适合操作大文件
+##### 2.StreamWriter\StreamReader是操作字符的，适合操作小文件
 
 ```c#
 using (StreamReader sr = new StreamReader(@"C:\抽象类特点.txt", Encoding.Default))
 {
     //string s = sr.ReadToEnd();
-    //int i = 0;
-    //while((i = sr.Read()) != -1)
+    //while(sr.Read() != -1)
     while (!sr.EndOfStream)
     {
         string str = sr.ReadLine();
@@ -1223,7 +1323,7 @@ using (StreamWriter sw = new StreamWriter(@"C:\Users\SpringRain\Desktop\ooo.txt"
 }
 ```
 
-读文件结束时，FileStream.Read()返回0，StreamReader.Read()/ReadLine()返回-1.
+==读文件结束时，FileStream.Read()返回0，StreamReader.Read()/ReadLine()返回-1。==
 
 ##### 3.拆箱和装箱
 
@@ -1236,7 +1336,7 @@ using (StreamWriter sw = new StreamWriter(@"C:\Users\SpringRain\Desktop\ooo.txt"
 int a = 0;
 object obj = a;
 int b = (int)obj;
-// The follow is not accord with. Inheritance relationship is not exist.
+// The following does not match. Inheritance relationship is not exist.
 string  s = "11";
 int n = Convert.ToInt32(s);
 ```
@@ -1246,6 +1346,14 @@ int n = Convert.ToInt32(s);
 ##### 4.泛型集合
 
 **`List<T> list = new List<T>();`**
+
+字符串数组转集合：
+
+```c#
+List<string> list = new List<string>(strings);
+// Equal to
+List<string> list = strings.ToList<string>();
+```
 
 1. list.Add();添加单个元素
 
@@ -1257,12 +1365,12 @@ int n = Convert.ToInt32(s);
 
    ```C#
    list.ForEach(item =>
-             {
-                 if(item=1)
-                 {
-                     return;
-                 }
-             });
+   {
+      if (item = 1)
+   	{
+       	return;
+   	}
+   });
    // Equal to
    foreach(int item in list)
    {
@@ -1270,9 +1378,19 @@ int n = Convert.ToInt32(s);
    }
    void test(int item)
    {
-       if(item==1)
+       if (item == 1)
        {
            return;
+       }
+   }
+   
+   // e.g. count if the first char is '王' in the list of string type
+   for (int i = 0; i < list.Count; i++)
+   {
+       Console.WriteLine(list[i]);
+       if (list[i][0] == '王')
+       {
+           count++;
        }
    }
    ```
@@ -1283,12 +1401,45 @@ int n = Convert.ToInt32(s);
 
 7. list.RemoveRange();删除从指定索引开始的数个元素
 
-8. list.RemoveAll(Predicate<T>);删除匹配的结果，返回删除元素的个数
+8. list.RemoveAll(Predicate<T>);lamda表达式，删除匹配的结果，返回删除元素的个数
 
    ```C#
    // Remove the same elements of list1 from list
    list.RemoveAll(item => list1.Contains(item));
    ```
+   
+9. `List<List<int>> list = new List<List<int>>;`
+
+10. list.Select<>/SelectMany<>;根据表达式获取一个新集合/将子集合成一个集合
+
+    ```C#
+    public void SecteTest()
+    {
+        var initList = new List<Select>();
+        initList.Add(new Select("s1", "s2"));
+        initList.Add(new Select("s11", "s22"));
+        initList.Add(new Select("s111", "s222"));
+    
+        var firstList = initList.Select(x => x.Attrs).ToList();
+        var secondList = initList.SelectMany(x => x.Attrs).ToList();
+    }
+    public class Select
+    {
+        public Select(params string[] str)
+        {
+            str?.ToList()?.ForEach(x => Attrs.Add(x));
+        }
+        public List<string> Attrs { get; set; } = new List<string>();
+    }
+    // Output
+    Select 						firstList		secondList
+    [0] Attr:[0] s1 [1] s2		[0]{s1, s2}		[0]s1
+    [1] Attr:[0] s11 [1] s22	[1]{s11, s22}	[1]s2
+    [2] Attr:[0] s111 [1] s222	[2]{s111, s222}	[2]s11
+    											[3]s22    
+    											[4]s111
+    											[5]s222
+    ```
 
 **`Dictionary<T, T> dic = new Dictionary<T, T>();`**
 
@@ -1334,11 +1485,11 @@ int n = Convert.ToInt32(s);
 
 实现多态有虚方法、抽象类和接口等方法。
 
-==当父类的成员有实际意义，方法有默认的实现，类对象需要被实例化，使用虚方法实现多态。反之，用抽象类。==
+==当父类的成员有实际意义，方法有默认的实现，且父类对象需要被实例化，使用虚方法实现多态。反之，用抽象类。==
 
 **虚方法**
 
-将父类的方法用virtual修饰为虚方法，意味着该方法可以被子类覆盖。
+1. 将父类的方法用virtual修饰为虚方法，意味着该方法可以被子类覆盖。
 
 ```C#
 Chinese cn = new Chinese("yjq");
@@ -1362,6 +1513,46 @@ for (int i = 0; i < per.Length; i++)
 }
 ```
 
+2. 当子类方法没有被覆盖时，父类引用调用的是父类方法。
+
+<details>
+    <summary>虽然指向的子类对象，但是仍表现为父类类型</summary>
+    <pre><code>
+    public class RealDuck
+    {
+        public virtual void Bark()
+        {
+            Console.WriteLine("gg");
+        }
+    }
+    public class WoodDuck : RealDuck
+    {
+        public override void Bark()
+        {
+            Console.WriteLine("zz");
+        }
+    }
+    public class RubberDuck : RealDuck
+    {
+        public (new) void Bark()
+        {
+            Console.WriteLine("jj");
+        }
+    }
+    static void Main(string[] args)
+    {
+        RealDuck rd = new WoodDuck();
+        rd.Bark();
+        RealDuck rd2 = new RubberDuck();
+        rd2.Bark();
+        Console.Read();
+    }
+    // Output
+    zz
+    gg
+    </code></pre>
+</details>
+
 **抽象类**
 
 抽象类有构造函数但是不能实例化，因此抽象类中的实例成员对父类没有意义，但其子类依旧可以继承，==抽象类的意义就是给子类重写==。抽象方法必须声明在抽象类中，且抽象类的子类必须覆盖(override)抽象方法，相同的参数和返回类型。
@@ -1379,19 +1570,18 @@ for (int i = 0; i < per.Length; i++)
 
 1、public : 公开的， 公共的
 
-2、private : 私有的 （只能在当前类的内部访问，类中的成员们，如果不加上访问修饰符的话，哪默认的就是 private）
+2、private : 私有的 （只能在当前类的内部访问，类中的成员们，如果不加上访问修饰符的话，默认的就是 private）
 
 3、protected : 受保护的，可以在当前类的内部访问，也可以该类的子类中访问
 
-4、internal : 只能在当前项目中可以访问，如果一个类不手动加上访问修饰符的话，那默认的就是internal。 在同一个项目中 internal 和 public的访问权限是一样的
+4、internal : 只能在当前项目中可以访问，如果一个类不手动加上访问修饰符的话，那默认的就是internal。 在同一个项目中 internal 和 public 的访问权限是一样的
 
-5、protected internal ： 只能在当前项目或子类中访问。
+5、protected internal : 既可以在继承链上的其子类里面被访问，也可以在同一个项目中使用。与internal的区别在于，其修饰的成员可以跨程序集被访问，只要在另一个程序集中声明一个属于继承链上的类并且使用protected internal修饰。
 
-注意: （1）能修饰类的访问修饰符只有 public 和 internal
-
-　　  （2）可访问性不一致：子类的访问权限不能高于父类的访问权限，会暴漏父类的成员。
-
-　　  （3）在同一个项目中，internal的权限要大于protected, 而如果出了此项目那 protected的权限要大于internal。
+（1）能修饰类的访问修饰符只有 public 和 internal
+（2）可访问性不一致：子类的访问权限不能高于父类的访问权限，会暴漏父类的成员。
+（3）在同一个项目中，internal的权限要大于protected, 而如果出了此项目那 protected的权限要大于internal。
+（4）子类的访问权限不能高于父类，因为子类可能暴露父类的成员。
 
 ##### 2.序列化与反序列化
 
@@ -1429,7 +1619,7 @@ using (FileStream fs = new FileStream(@"D\1.txt", FileMode.OpenOrCreate, FileAcc
 }
 ```
 
-##### 3.存货物
+##### 3.简单工厂模式
 
 货物数量不断变化
 `List<Product> listProduct = new List<Product>();`
@@ -1503,7 +1693,8 @@ CBAPlayer cba = new Student();
 cba.Dunk();
 ```
 
-接口命名以I开头，以able结尾：实现了我的接口，即具备了我的==能力==。
+接口命名以I开头，以able结尾：实现了我的接口，即具备了我的==能力==。故，可以将某种能力封装成接口。
+例如，飞的能力。并非所有鸟都能飞，则将能飞声明成接口，所有鸟的共同特征和行为封装成鸟这个父类，具体种类的鸟的子类继承鸟这个父类并根据是否具有飞行能力来是否继承能飞的接口。
 
 接口与接口之间可以继承，也可以多继承，并且具有传递性；类可以继承接口，接口不能继承类。
 类同时继承类和接口时，语法上类在前，接口在后。
@@ -1528,7 +1719,7 @@ public class Student
         // Interface eat
     }
     string Eat(string name)
-    {
+    { 
         // Function overload
     }
 }
@@ -1553,7 +1744,7 @@ public interface IFlyable
 {
     void Fly();
 }
-public abstract class Person:M
+public abstract class Person : M
 {
     public void Fly()
     {
@@ -1629,7 +1820,7 @@ string GetMD5(string str)
     byte[] buffer = Encoding.Default.GetBytes(str);
     byte[] md5Buffer = md5.ComputeHash(buffer);
     // Print string after encryted
-    string md5Str;
+    string md5Str = string.Empty;
     for (int i = 0; i < md5Buffer.Length; i++)
     {
         md5Str += md5Buffer[i].ToString("X2");
@@ -1641,8 +1832,9 @@ string GetMD5(string str)
 因为MD5格式是十六位或者三十二位，所以将每个字符转换为十六进制打印显示。
 X2 指将十六进制数以两位数显示。如：0x0A
 
-| C    | 货币     | 2.5.ToString("C")     | ￥2.50        |
+| 标志 | 转换对象 | 代码                  | 结果          |
 | ---- | -------- | --------------------- | ------------- |
+| C    | 货币     | 2.5.ToString("C")     | ￥2.50        |
 | D    | 十进制数 | 25.ToString("D5")     | 00025         |
 | E    | 科学型   | 25000.ToString("E")   | 2.500000E+005 |
 | F    | 固定点   | 25.ToString("F2")     | 25.00         |
@@ -1672,6 +1864,9 @@ partial：修饰部分类，同名部分类组成一个完整的类。
 11. PasswordChar: 密码
 12. AllowDrop: 拖拽文件至控件
 13. Controls: 获取改控件内的控件集合
+13. HideSelection: 控件内项目失去焦点后是否高亮
+13. Tag: 用户自定义数据关联该控件
+13. ContextMenuStrip: 右键快捷菜单，需添加该组件
 
 **窗体间的控件移动**
 
@@ -1780,7 +1975,7 @@ OpenFileDialog: 打开文件对话框
    ofd.Multiselect = true;
    ofd.InitialDirectory = @"D:\";
    ofd.Filter = "All files|*.*|Text files|*.txt";
-   ofd.ShowDialog();
+   ofd.ShowDialog();// or (this);
    // Get file's path which selected
    string path = ofd.FileName;
    ```
@@ -1812,14 +2007,32 @@ Validating和Validated: 在控件失去焦点后触发的事件。
 
 ItemCheck和ItemChecked: 在选中一项前/后，根据事件内方法体检查值，前者可通过e.Cancel()撤销改值的						传入。
 
+ComboBox: 下拉框，添加数据源。
+
+```C#
+comboBox.DataBindings.Clear();
+// Add array
+comboBox.DataSource = (Array)T[];
+// Add enum
+comboBox.DataSource = Enum.GetNames(typeof(EMethod));
+// Clear
+comboBox.DataSource = null;
+comboBox.SelectedIndex = -1;
+comboBox.Items.Clear();
+comboBox.Items.Add("");
+comboBox.Text = "";
+comboBox.Items.Clear();
+
+comboBox.Items.Add(object);//赋值
+comboBox.SelectedIndex = 0;//设置选中项的下标
+```
+
 ### 第十七天
 
 ##### 1.GDI
 
 CLR: 公共语言运行时
 当我们运行程序时，CLR加载所有类文件到内存，找到主函数，从上到下一行一行执行。
-
-画线
 
 <details>
     <summary>画线</summary>
@@ -1839,7 +2052,6 @@ CLR: 公共语言运行时
     }<br>
     </code>
 </details>
-
 <details>
   <summary>展开查看</summary>
   <pre><code> 
@@ -1858,6 +2070,42 @@ CLR: 公共语言运行时
     }
   </code></pre>
 </details>
+
+<details>
+  <summary>画验证码</summary>
+  <pre><code> 
+    private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Random r = new Random();
+            string str = "";
+            for (int i = 0; i < 5; i++)
+            {
+                int rNumber = r.Next(0, 10);
+                str += rNumber;
+            }
+            <!--创建一个图片对象-->
+            Bitmap bmp=new Bitmap(120,25);
+            //创建GDI对象
+            Graphics g = Graphics.FromImage(bmp);
+            string[] fonts = { "黑体", "楷体", "微软雅黑", "宋体", "隶书" };
+            Color[] colors = { Color.Red, Color.Yellow, Color.Blue, Color.Black, Color.Green };
+            {
+                Point p1=new Point(r.Next(0,bmp.Width),r.Next(0,bmp.Height));
+                Point p2=new Point(r.Next(0,bmp.Width),r.Next(0,bmp.Height));
+                g.DrawLine(new Pen(Color.Green), p1, p2);
+            }
+            //画像素颗粒
+            for (int i = 0; i < 100; i++)
+            {
+                 Point p=new Point(r.Next(0,bmp.Width),r.Next(0,bmp.Height));
+                 bmp.SetPixel(p.X, p.Y, Color.Black);
+            }
+            <!--把画好的图片放到PictureBox上-->
+            pictureBox1.Image = bmp;           
+        }
+  </code></pre>
+</details>
+
 ##### 2.多线程
 
 1. 进程
@@ -1869,78 +2117,201 @@ CLR: 公共语言运行时
    Console.WtiteLine(Process.GetCurrentProcess().ToString());
    ```
 
-2. 代码的形式启动进程
+2. 代码的形式启动进程或者打开文件
 
    ```C#
    Process.Start("calc");// calculater
    Process.Start("mspaint");// calculater
    Process.Start("iexplore", "http://www.baidu.com");
    Process.Start("devenv");// VS
+   // Anther way abort open file
+   ProcessStartInfo psi = new ProcessStartInfo(@"D:\1.txt");
+   Process.Start(psi);
+   // Equal to
+   ProcessStartInfo psi = new ProcessStartInfo(@"D:\1.txt");
+   Process p = new Process();
+   p.StartInfo = psi;
+   p.Start();
    ```
 
+3. 前台线程：只有所有前台线程都关闭才能关闭应用程序。
+
+   后台线程：只要所有前台线程结束，后台线程自动结束。
+
+   线程一旦中止，就不能再被开启。
+
+##### 3.跨线程访问控件
+
+1. 调用控件的invoke()方法
+
+   ```C#
+   // Include parameter
+   Action<string> actionDelegate = delegate(string str)
+   {
+       textBox1.Text = str;
+   };
+   textBox1.Invoke(actionDelegate, txt);
+   // Simplify
+   Action<string> actionDelegate = (x) =>
+   {
+       textBox1.Text = x.ToString();
+   };
+   Invoke(actionDelegate, txt);
+   // Or
+   textBox1.Invoke(new Action<string>((x) =>
+   {
+   	textBox1.Text = x;
+   }));
+   
+   // No parameter
+   Action actionDelegate = delegate()
+   {
+       textBox1.Text = str;
+   };
+   Action action = () =>
+   {
+       textBox1.Text = "kxc";
+   };
+   Invoke(actionDelegate);
+   textBox1.Invoke(new Action(() =>
+   {
+       textBox1.Text = "kxc";
+   }));
+   ```
+
+2. 最简化
+
+   ```C#
+   Invoke((EventHandler)delegate
+   {
+       textBox1.Text = str;
+   });
+   ```
+
+3. 取消检查
+
+   ```C#
+   Control.CheckForIllegalCrossThreadCalls = false;
+   ```
+
+4. BackgroundWorker组件
+
+   ```C#
+   private void button1_Click(object sender, EventArgs e)
+   {
+       using(BackgroundWorker bw = new BackgroundWorker())
+       {
+           bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+           bw.RunWorkerAsync("tank");
+           bw.DoWork += Bw_DoWork;//new DoWorkEventHandler(Bw_DoWork);
+       }    
+   }
+   private void Bw_DoWork(object sender, DoWorkEventArgs e)
+   {
+       Thread.Sleep(2000);
+       e.Result = e.Argument + " work ";
+   }
+   private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+   {
+       textBox1.Text = e.Result + "kxc";
+   }
+   // Output
+   tank work kxc
+   ```
    
 
+### 第二十天
 
+##### 1.窗体Show()和ShowDialog()
 
+* Show():可打开多个窗体，且主窗体可以访问。
+* ShowDialog():只能打开一个窗体，且主窗体不能访问。
 
+##### 2.单例模式
 
+实现只打开一个窗体，且同时主窗体可以访问。
 
+```C#
+// Form1
+private void button1_Click(object sender, EventArgs e)
+{
+    Form2 frm2 = Form2.GetSingle();
+    frm2.Show();
+}
 
+// Form2
+private static Form2 _frmSingle = null;
+public static Form2 GetSingle()
+{
+    if (_frmSingle == null)
+    {
+        _frmSingle = new Form2();
+    }
+    return _frmSingle;
+}
+```
 
+##### 3.索引器
 
+作用：方便使用类内的集合。
 
+```C#
+public class ID
+{
+    int[] nums = new int[10];
+    public int this[int index]
+    {
+        get { return nums[index]; }
+        set { nums[index] = value; }
+    }
+}
+static void Main(string[] args)
+{
+    Person p = new Person();
+    p[0] = 0;
+    p[1] = 1;
+    Console.WriteLine(p[0] + " " + p[1]);
+    Console.Read();
+}
+// Output
+0 1
+// If use properties, only operate entire array.
+public int[] Nums { get => nums; set => nums = value; }
+```
 
+##### 4.格式化数值结果表(不区分大小写)
 
+| **字符** | **说明**         | **示例**                               | **输出**   |
+| -------- | ---------------- | -------------------------------------- | ---------- |
+| C        | 货币             | **string.Format**("{0:C3}", 2)         | ￥2.000    |
+| D        | 十进制           | **string.Format**("{0:D3}", 2)         | 002        |
+| E        | 科学计数法       | 1.20E+001                              | 1.20E+001  |
+| F        | 定点数           | **string.Format**("{0:F3}", 2)         | 2.000      |
+| G        | 常规             | **string.Format**("{0:G}", 2)          | 2          |
+| N        | 用分号隔开的数字 | **string.Format**("{0:N}", 250000)     | 250,000.00 |
+| X        | 十六进制         | **string.Format**("{0:X}", 12)         | C          |
+|          |                  | **string.Format**("{0:000.000}", 12.2) | 012.200    |
 
+```C#
+System.Globalization.CultureInfo myCulture = new System.Globalization.CultureInfo("en-GB");
+System.Globalization.CultureInfo myCulture1 = new System.Globalization.CultureInfo("en-US");
+System.Globalization.CultureInfo myCulture2 = new System.Globalization.CultureInfo("zh-CN");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Console.WriteLine(string.Format(myCulture, "{0:C}", 100));
+// Output
+￡100.00
+$100.00
+￥100.00
+```
 
 ### 第二十一天
 
-##### 8.创建XML文档
+##### 1.对象初始化器
+
+[c#对象初始化器_Maybe_ch的博客-CSDN博客_c#对象初始化器](https://blog.csdn.net/Maybe_ch/article/details/81332662)
+类似`List<int> list = new List<int>() { 1, 2, 3, 4, 5 };`
+
+##### 2.创建XML文档
 
 ```C#
 using System.Xml;
@@ -1994,7 +2365,7 @@ price.AppendChild(item);
 </Price>
 ```
 
-##### 9.读取XML文档
+##### 3.读取XML文档
 
 [C#读取XML的三种实现方式_C#教程_脚本之家 (jb51.net)](https://www.jb51.net/article/105265.htm)
 
@@ -2002,18 +2373,20 @@ price.AppendChild(item);
 
 ##### 1.委托\匿名函数\lamba表达式 语法
 
+声明的委托必须跟指向方法具有同样的签名。
+
 ```c#
 public delegate string DelTest(string name);
 public static void Main(string[] args)
 {
     //Demo for delegate
-    DelTest del = Test;
+    DelTest del = Test;// new DelTest(Test);
     Console.WriteLine(del("YJQ"));    
     //Demo for anonymous
     DelTest ano = delegate(string name) { return name; };
     Console.WriteLine(ano("YJQ11"));
     //Demo for lamda
-    DelTest lam = (string name) => { return name; };
+    DelTest lam = (name) => { return name; };
     Console.WriteLine(lam("YJQ22"));
 
     Console.Read();
@@ -2057,10 +2430,8 @@ public class Program
         del += fun3;
         del -= fun2;
         del();
-
         Console.Read();
     }
-
     static void fun1()
     {
         Console.WriteLine("fun1");
@@ -2081,59 +2452,157 @@ public class Program
 
 ##### 4.泛型委托
 
-```C#
-public delegate int DelCompare<T>(T t1, T t2);
-
-public class Person
-{
-    public int Age
+<details>
+    <summary>泛型委托</summary>
+    <pre><code>
+    public delegate int DelCompare<T>(T t1, T t2);
+    public class Person
     {
-        get;
-        set;
+        public int Age
+        {
+            get;
+            set;
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Person[] pers = { new Person() { Age = 18 }, new Person() { Age = 29 } };
+            Person p = GetMax<Person>(pers, Compare3);
+            Console.WriteLine(p.Age);
+            Console.ReadKey();
+        }
+        public static T GetMax<T>(T[] nums, DelCompare<T> del)
+        {
+            T max = nums[0];
+            for (int i = 0; i < nums.Length; i++)
+            {
+                if (del(max, nums[i]) < 0)
+                {
+                    max = nums[i];
+                }
+            }
+            return max;
+        }
+        public static int Compare1(int n1, int n2)
+        {
+            return n1 - n2;
+        }
+        public static int Compare2(string s1, string s2)
+        {
+            return s1.Length - s2.Length;
+        }
+        public static int Compare3(Person p1, Person p2)
+        {
+            return p1.Age - p2.Age;
+        }
+    }
+    //输出
+    //29
+    </code></pre>
+</details>
+##### 5.播放器
+
+1. Windows Media Player 组件可播放音频。
+
+```C#
+// Turn off auto play
+axWindowsMediaPlayer1.settings.autoStart = false;
+axWindowsMediaPlayer1.URL = @"F:\music\1.mp3";
+// Play
+axWindowsMediaPlayer1.Ctlcontrols.play();
+// Pause
+axWindowsMediaPlayer1.Ctlcontrols.pause();
+// Stop
+axWindowsMediaPlayer1.Ctlcontrols.stop();
+// Volume up
+axWindowsMediaPlayer1.setting.volume += 5;
+// Mute
+axWindowsMediaPlayer1.setting.mute = true;
+// Audio duration, total / minutes and seconds
+axWindowsMediaPlayer1.currentMedia.duration / durationString;
+// Current play time, total / minutes and seconds
+axWindowsMediaPlayer1.Ctlcontrol.currentPosition / currentPositionString;
+```
+
+2. 根据播放器状态实现自动播放
+
+```C#
+private void axWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        { 
+if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsMediaEnded)
+    {
+        int index = listBox1.SelectedIndex;
+        listBox1.SelectedIndices.Clear();
+        if (++index == listBox1.Items.Count)
+        {
+            index = 0;
+        }
+        listBox1.SelectedIndex = index;
+        axWindowsMediaPlayer1.URL = list[index];
+    }
+    if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsReady)
+    {
+        try
+        {
+            axWindowsMediaPlayer1.Ctlcontrols.play();
+        }
+        catch { }
     }
 }
-class Program
-{
-    static void Main(string[] args)
+```
+
+3. 根据属性实现显示歌词
+
+<details>
+    <summary>显示歌词</summary>
+    <pre><code>
+    void IsExistLrc(string songPath)
     {
-        Person[] pers = { new Person() { Age = 18 }, new Person() { Age = 29 } };
-        Person p = GetMax<Person>(pers, Compare3);
-        Console.WriteLine(p.Age);
-        Console.ReadKey();
-    }
-    public static T GetMax<T>(T[] nums, DelCompare<T> del)
-    {
-        T max = nums[0];
-        for (int i = 0; i < nums.Length; i++)
+        songPath += ".lrc";
+        //如果歌词存在
+        if (File.Exists(songPath))
         {
-            if (del(max, nums[i]) < 0)
+            string[] lrcText = File.ReadAllLines(songPath, Encoding.Default);
+            FormatLrc(lrcText);
+        }
+        else//歌词不存在
+        {
+            lblLrc.Text = "-------歌词未找到---------";
+        }
+    }
+    List<double> listTime = new List<double>();//存储时间
+    List<string> listLrc = new List<string>();//存储歌词
+    //[00:15.57]当我和世界不一样  15.57
+    void FormatLrc(string[] lrcText)  
+    {
+    	//清除上一个音频的歌词
+    	listTime.Clear();
+    	listLrc.Clear();
+        for (int i = 0; i < lrcText.Length; i++)
+        {
+            string[] temp = lrcText[i].Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] newTemp = temp[0].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            //01
+            double time = double.Parse(newTemp[0]) * 60 + double.Parse(newTemp[1]);
+            listTime.Add(time);
+            listLrc.Add(temp[1]);
+        }
+    }
+    //播放歌词
+    private void timer2_Tick(object sender, EventArgs e)
+    {
+        for (int i = 0; i < listTime.Count; i++)
+        {
+            if (musicPlayer.Ctlcontrols.currentPosition >= listTime[i] && musicPlayer.Ctlcontrols.currentPosition <= listTime[i + 1])
             {
-                max = nums[i];
+                lblLrc.Text = listLrc[i];
             }
         }
-        return max;
     }
-
-
-    public static int Compare1(int n1, int n2)
-    {
-        return n1 - n2;
-    }
-
-    public static int Compare2(string s1, string s2)
-    {
-        return s1.Length - s2.Length;
-    }
-
-
-    public static int Compare3(Person p1, Person p2)
-    {
-        return p1.Age - p2.Age;
-    }
-}
-//输出
-//29
-```
+    </code></pre>
+</details>
 
 ### 第N天
 
@@ -2236,7 +2705,7 @@ public int CopyFolder(string sourceFolder, string destFolder)
 3. 重载的方法用相同对象调用；重写方法是不同对象调用。
 4. 重载的编译时的多态；重写是运行时的多态。
 
-##### 5.运算符
+##### 5.与空相关的运算符
 
 1. 可空运算符（?）
    引用类型可以有空值（null），而值类型通常不能为空。
@@ -2246,7 +2715,7 @@ public int CopyFolder(string sourceFolder, string destFolder)
    int? i = null; // Allowed
    ```
 
-2. 三元运算符（?:）
+2. 三元运算符（? :）
 
 3. 空合并运算符（??, ??=）
    如果左操作数不为空则返回左操作数，否则返回右运算符。
@@ -2370,82 +2839,80 @@ public int CopyFolder(string sourceFolder, string destFolder)
 2. checked, unchecked
    在编译器运行时，checked检查整数类型操作或转换出现的溢出。
 
-   ```C#
-   class OverFlowTest
-   {
-       // Set maxIntValue to the maximum value for integers.
-       static int maxIntValue = 2147483647;
-   
-       // Using a checked expression.
-       static int CheckedMethod()
+   <details>
+       <summary>在编译器运行时，checked检查整数类型操作或转换出现的溢出。</summary>
+       <pre><code>
+       class OverFlowTest
        {
-           int z = 0;
-           try
+           // Set maxIntValue to the maximum value for integers.
+           static int maxIntValue = 2147483647;
+           // Using a checked expression.
+           static int CheckedMethod()
            {
-               // The following line raises an exception because it is checked.
-               z = checked(maxIntValue + 10);
+               int z = 0;
+               try
+               {
+                   // The following line raises an exception because it is checked.
+                   z = checked(maxIntValue + 10);
+                   // Equal to
+                   checked
+                   {
+                       z = maxIntValue + 10;
+                   }
+               }
+               catch (System.OverflowException e)
+               {
+                   // The following line displays information about the error.
+                   Console.WriteLine("CHECKED and CAUGHT:  " + e.ToString());
+               }
+               // The value of z is still 0.
+               return z;
+           }
+           // Using an unchecked expression.
+           static int UncheckedMethod()
+           {
+               int z = 0;
+               try
+               {
+                   // The following calculation is unchecked and will not
+                   // raise an exception.
+                   z = maxIntValue + 10;
+               }
+               catch (System.OverflowException e)
+               {
+                   // The following line will not be executed.
+                   Console.WriteLine("UNCHECKED and CAUGHT:  " + e.ToString());
+               }
                // Equal to
-               checked
+               unchecked
                {
                    z = maxIntValue + 10;
                }
+               // Equal to
+               z = unchecked(maxIntValue + 10);
+               // Because of the undetected overflow, the sum of 2147483647 + 10 is
+               // returned as -2147483639.
+               return z;
            }
-           catch (System.OverflowException e)
+           static void Main()
            {
-               // The following line displays information about the error.
-               Console.WriteLine("CHECKED and CAUGHT:  " + e.ToString());
+               Console.WriteLine("\nCHECKED output value is: {0}",
+                                 CheckedMethod());
+               Console.WriteLine("UNCHECKED output value is: {0}",
+                                 UncheckedMethod());
            }
-           // The value of z is still 0.
-           return z;
+           /*
+          Output:
+          CHECKED and CAUGHT:  System.OverflowException: Arithmetic operation resulted
+          in an overflow.
+             at ConsoleApplication1.OverFlowTest.CheckedMethod()
+          CHECKED output value is: 0
+          UNCHECKED output value is: -2147483639
+           */
        }
+       </code></pre>
+   </details>
    
-       // Using an unchecked expression.
-       static int UncheckedMethod()
-       {
-           int z = 0;
-           try
-           {
-               // The following calculation is unchecked and will not
-               // raise an exception.
-               z = maxIntValue + 10;
-           }
-           catch (System.OverflowException e)
-           {
-               // The following line will not be executed.
-               Console.WriteLine("UNCHECKED and CAUGHT:  " + e.ToString());
-           }
-           // Equal to
-           unchecked
-           {
-               z = maxIntValue + 10;
-           }
-           // Equal to
-           z = unchecked(maxIntValue + 10);
-           
-           // Because of the undetected overflow, the sum of 2147483647 + 10 is
-           // returned as -2147483639.
-           return z;
-       }
-   
-       static void Main()
-       {
-           Console.WriteLine("\nCHECKED output value is: {0}",
-                             CheckedMethod());
-           Console.WriteLine("UNCHECKED output value is: {0}",
-                             UncheckedMethod());
-       }
-       /*
-      Output:
-      CHECKED and CAUGHT:  System.OverflowException: Arithmetic operation resulted
-      in an overflow.
-         at ConsoleApplication1.OverFlowTest.CheckedMethod()
-   
-      CHECKED output value is: 0
-      UNCHECKED output value is: -2147483639
-    	*/
-   }
-   ```
-
 3. lock
    当不同线程需要访问某个资源时，需要用到同步机制，即对同一个资源进行读写操作时，保证同一时刻只能被一个线程操作。
 
@@ -2530,8 +2997,6 @@ public int CopyFolder(string sourceFolder, string destFolder)
 
 [C# 常用快捷键 - Lee597 - 博客园 (cnblogs.com)](https://www.cnblogs.com/Lee597/p/14975587.html)
 
-
-
 ##### 10.跨线程访问控件
 
 [C#多线程 - 跨线程访问控件_道可盗经常盗-CSDN博客_c跨线程访问控件](https://blog.csdn.net/sy95122/article/details/110071147)
@@ -2553,20 +3018,24 @@ public int CopyFolder(string sourceFolder, string destFolder)
 ##### 13.多线程
 
 1. Thread.ThreadState:显示线程状态。
-2. Thread.Join():等待线程执行完成再继续往下运行
+2. Thread.Join():当前线程等待新加入的线程执行完成后再继续往下运行。
 3. Thread.Abort():引发ThreadAborting异常，中止线程
+4. Thread.Suspend()：该方法并不终止未完成的线程，它仅仅挂起线程，以后还可恢复； 
+   Thread.Resume()：恢复被Suspend()方法挂起的线程的执行；
 
 ##### 14.常用字符
 
-char(9)水平制表符
+char(9)水平制表符 "\t"
 
-char(10)换行键
+char(10)换行键 "\n"
 
-char(13)回车键
+char(13)回车键 "\r"
 
 ##### 15.深浅拷贝
 
 [C#基础：C#中的深拷贝和浅拷贝 - .NET开发菜鸟 - 博客园 (cnblogs.com)](https://www.cnblogs.com/dotnet261010/p/12329220.html)
+
+Type对象可通过IsValueType\IsGenericType等等判断对象类型。
 
 ##### 16.序列化
 
@@ -2585,3 +3054,230 @@ char(13)回车键
 ##### 18.定时器
 
 [C#里面的三种定时计时器：Timer - .NET开发菜鸟 - 博客园 (cnblogs.com)](https://www.cnblogs.com/dotnet261010/p/7113523.html)
+
+##### 19.弃元，元组，switch语法糖
+
+[C#中的弃元_xinyue_htx的博客-CSDN博客_c# 弃元](https://blog.csdn.net/htxhtx123/article/details/104306675)
+
+[c#语法糖模式匹配【switch 表达式】_dotNET跨平台的博客-CSDN博客](https://blog.csdn.net/sd7o95o/article/details/124287006)
+
+```C#
+public static string RockPaperScissors(string first, string second)
+    => (first, second) switch
+    {
+        ("rock", "paper") => "rock is covered by paper. Paper wins.",
+        ("rock", "scissors") => "rock breaks scissors. Rock wins.",
+        ("paper", "rock") => "paper covers rock. Paper wins.",
+        ("paper", "scissors") => "paper is cut by scissors. Scissors wins.",
+        ("scissors", "rock") => "scissors is broken by rock. Rock wins.",
+        ("scissors", "paper") => "scissors cuts paper. Scissors wins.",
+        (_, _) => "tie"
+    };
+```
+
+##### 20.整洁式写法
+
+```C#
+string str = "";
+// Equal to
+string str = string.Empty;
+
+List<string> list = new List<string>();
+string str1 = list[0];
+// Equal to
+string str1 = list.First();
+// Addition, the two statements above will throw exceptions cause they have not been initialized.
+string str1 = list.FirstOrDefault();
+// The following one is used only in arrays.
+string str1 = array?.First();
+```
+
+##### 21.字符串的比较
+
+[c#中字符串的比较方法-详解_玉珂鸣响的博客-CSDN博客_c#字符串比较](https://blog.csdn.net/m0_52390420/article/details/111233489)
+
+##### 22.根据类名获取类和方法
+
+[C#-反射-根据传入的类名，方法名，执行此方法，或者反射赋值给委托_HOLD ON!的博客-CSDN博客](https://blog.csdn.net/cxu123321/article/details/107711209)
+
+<details>
+    <summary>传递类</summary>
+    <pre><code>
+    public delegate bool shuchu(string addr, int port, string format);//定义的委托
+    void Test()
+    {
+        // 传入的类全名称
+        string className = "MyProgram.OmronFinsTcpClass";
+        // 得到此类的类型
+        Type type = Type.GetType(className);
+        // 获取当前程序集
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        // 动态创建当前类型的对象
+        dynamic obj = assembly.CreateInstance(type.FullName);
+        // 根据传入的方法名获取当前类型的方法
+        MethodInfo mthof = type.GetMethod("Connect", new Type[] { typeof(string), typeof(int), typeof(string) });
+        // 执行此方法，如果此方法有参数，则传入参数
+        bool b1 = mthof.Invoke(obj, new object[] { "1", 2, "3" });//输出“hello”
+        // 两种方法动态赋值给委托。
+        Delegate myshuchu1 = mthof.CreateDelegate(typeof(shuchu), obj);
+        Delegate myshuchu2 = Delegate.CreateDelegate(typeof(shuchu), obj, mthof);
+        bool b2 = (bool)myshuchu1.DynamicInvoke(new object[] { "1", 2, "3" });
+        bool b3 = (bool)myshuchu2.DynamicInvoke(new object[] { "1", 2, "3" });
+    }
+    namespace MyProgram
+    {
+        class OmronFinsTcpClass
+        {
+            public bool Connect(string ip, int port, string format)
+            {
+                omronFinsNet = new OmronFinsNet();
+                omronFinsNet.IpAddress = ip;
+                omronFinsNet.Port = port;
+                omronFinsNet.ByteTransform.DataFormat = (DataFormat)Enum.Parse(typeof(DataFormat), format);
+                connected = omronFinsNet.ConnectServer().IsSuccess;
+                return connected;
+            }
+        }
+    }
+    </code></pre>
+</details>
+##### 23.根据类获取其命名空间、方法等属性
+
+[C#获取类的名字、属性名字、方法名字的方式_C#气氛组队员的博客-CSDN博客_c# 获取类名](https://blog.csdn.net/ni996570734/article/details/123028203)
+
+```C#
+// Get the full name of all classes from the namespace of "MyProgram" in current assembly.
+Assembly assembly = Assembly.GetExecutingAssembly();
+Type[] typeArray = assembly.GetTypes().Where(t => String.Equals(t.Namespace, "MyProgram")).ToArray();
+String[] strClassName = typeArray.Select(t => t.FullName).ToArray();
+// Get the full name of assigned class
+Type typeName = typeof(OmronFinsTcpClass);
+string strName = typeName.FullName;// or Name(Exclude namespace)
+
+// Get the name of current class
+System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name;//or FullName(Include namespace)
+// Get the name of current method
+System.Reflection.MethodBase.GetCurrentMethod().Name;
+```
+
+根据对象名称获取类名
+
+```C#
+public PLCParams plc = new PLCParams();
+string name = plc.GetType().Name;
+```
+
+##### 24.类中访问控件
+
+[C# winform中一个类中如何调用另一个窗体的控件或方法_ichenqingyun的博客-CSDN博客_winform调用其他窗口控件](https://blog.csdn.net/ichenqingyun/article/details/52622340?spm=1001.2014.3001.5502)
+
+##### 25.将泛型解析为数组
+
+```C#
+public bool Write<T>(string address, T value)
+{
+    // Convert to a array.
+    if (value is Boolean)
+    {
+        bool b = Convert.ToBoolean(value);
+    }
+    else if (value is Boolean[])
+    {
+        var array = value as Array;
+        bool[] bools = new bool[array.Length];
+        int i = 0;
+        foreach (var item in array)
+            bools[i++] = Convert.ToBoolean(item);
+    }
+    // Convert to a object.
+    if (value is Int16)
+    {
+        short num = Convert.ToInt16(value);
+    }
+    else if (value is Int16[])
+    {
+        Int16[] int16s = (Int16[])(object)value;
+    }
+}
+```
+
+##### 26.防止应用重复开启的方法（单例）
+
+[(C#)Application.Exit()、Environment.Exit（0）区别 - 跟着阿笨一起玩.NET - 博客园 (cnblogs.com)](https://www.cnblogs.com/51net/p/10984923.html)
+
+[C# Mutex类_zls365365的博客-CSDN博客](https://blog.csdn.net/zls365365/article/details/124207303)
+
+```c#
+System.Threading.Mutex mutex = new System.Threading.Mutex(true, "OnlyRun_上位机");
+// Determining whether a mutual exclusion is in use
+if (mutex.WaitOne(0, false))
+{
+    try
+    {
+        Application.Run(new MainForm());
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.ToString());
+    }
+    try { Application.Exit(); } catch { }
+    try 
+    { 
+        System.Diagnostics.Process process = System.Diagnostics.Process.GetProcessById(System.Diagnostics.Process.GetCurrentProcess().Id);
+        process.Kill();
+    } catch { }
+    try { Environment.Exit(0); } catch { }
+}
+else
+{
+    MessageBox.Show("上位机 已经在运行！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    Application.Exit();
+}
+```
+
+```c#
+new Mutex(true, Application.ProductName, out bool create);
+if(create)
+{
+    Application.EnableVisualStyles();
+    Application.SetCompatibleTextRenderingDefault(false);
+    Application.Run(new Form2());
+}
+else
+{
+    MessageBox.Show("程序已打开");
+    System.Environment.Exit(0);
+}
+```
+
+##### 27.控件大小随窗口大小改变等比例变化
+
+[02--C#Winform--控件大小随窗口大小改变等比例变化_奔跑的花儿的博客-CSDN博客_c#控件随窗体大小变化](https://blog.csdn.net/TheBeauty_/article/details/121994376)
+
+##### 28.字符串转字节
+
+[C#中如何将字符串的“32”装换成字节0x32-CSDN社区](https://bbs.csdn.net/topics/391955315)
+
+##### 29.二维数组和交错数组
+
+[c#中的二维数组和交错数组的区别_牛掰是怎么形成的的博客-CSDN博客_交错数组和二维数组的区别](https://blog.csdn.net/qq_33060405/article/details/78463896)
+
+[C# 二维数组行列遍历_十五啊十五的博客-CSDN博客_c#遍历二维数组](https://blog.csdn.net/zhangl15/article/details/104159941)
+
+##### 30.在方法调用时显示形参
+
+```c#
+StreamWrite write = new StreamWriter(basepath, append: true);
+```
+
+##### 31.变量、数组、结构体、类
+
+当一个程序需要很多类型一样的变量的时候，
+用数组，反之用单个变量；
+当数据是定长的时候，
+用数组，反之用链表或有序集合；
+当元素比较简单且无需多层分割时，
+用数组，反之用集合或结构体；
+当数据功能非常单一且执行次序非常严格时才会用栈。
+
+[C#中类与结构体的区别_我是谁_谁是我的博客-CSDN博客_c# 结构体和类有什么区别](https://blog.csdn.net/wcx1293296315/article/details/112940875)
