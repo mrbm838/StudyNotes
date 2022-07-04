@@ -2304,6 +2304,37 @@ $100.00
 ￥100.00
 ```
 
+##### 5.进制转换
+
+1. 二进制和十六进制的表示
+
+   ```C#
+   int binary = 0b10;
+   int hex = 0x10;
+   ```
+
+2. 十进制转其它
+
+   ```C#
+   string strhex = Convert.ToString(hex, 16);
+   string strhex2 = Convert.ToString(hex, 10);
+   string strhex3 = Convert.ToString(hex, 8);
+   string strhex4 = Convert.ToString(hex, 2);
+   // Output
+   10 16 20 10000
+   ```
+
+3. 其它转十进制
+
+   ```C#
+   int digital = Convert.ToInt32(strhex, 16);
+   int digital2 = Convert.ToInt32(strhex2, 10);
+   int digital3 = Convert.ToInt32(strhex3, 8);
+   int digital4 = Convert.ToInt32(strhex4, 2);
+   // Output
+   16
+   ```
+
 ### 第二十一天
 
 ##### 1.对象初始化器
@@ -3035,6 +3066,8 @@ char(13)回车键 "\r"
 
 [C#基础：C#中的深拷贝和浅拷贝 - .NET开发菜鸟 - 博客园 (cnblogs.com)](https://www.cnblogs.com/dotnet261010/p/12329220.html)
 
+[(1条消息) C#四种深拷贝方法_xyx_0300的博客-CSDN博客_c# 深拷贝](https://blog.csdn.net/xyx_0300/article/details/118179940)
+
 Type对象可通过IsValueType\IsGenericType等等判断对象类型。
 
 ##### 16.序列化
@@ -3281,3 +3314,18 @@ StreamWrite write = new StreamWriter(basepath, append: true);
 当数据功能非常单一且执行次序非常严格时才会用栈。
 
 [C#中类与结构体的区别_我是谁_谁是我的博客-CSDN博客_c# 结构体和类有什么区别](https://blog.csdn.net/wcx1293296315/article/details/112940875)
+
+##### 32.计算时间间隔
+
+[C#中如何使用TimeSpan_未来无限的博客-CSDN博客_c# timespan](https://blog.csdn.net/qq_30725967/article/details/86502877)
+
+##### 33.获取文件夹下的文件
+
+```C#
+// Get string names of files
+string[] s1 = Directory.GetFiles("D:\\DATA");
+// Get all information of files
+DirectoryInfo directoryInfo = new DirectoryInfo("D:\\DATA");
+FileInfo[] fileInfos = directoryInfo.GetFiles();
+```
+
