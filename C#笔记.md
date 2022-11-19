@@ -3042,6 +3042,8 @@ public int CopyFolder(string sourceFolder, string destFolder)
 
 [C# EventWaitHandle类解析 - 冬音 - 博客园 (cnblogs.com)](https://www.cnblogs.com/wintertone/p/11657334.html)
 
+[ManualResetEvent、AutoResetEvent和Mutex - 走看看 (zoukankan.com)](http://t.zoukankan.com/newton-p-2793928.html)
+
 ##### 12.DataGridView导出EXCEL
 
 [C# DataGridView直接导出EXCEL 的两种方法_爱家的技术博客_51CTO博客
@@ -3329,3 +3331,151 @@ DirectoryInfo directoryInfo = new DirectoryInfo("D:\\DATA");
 FileInfo[] fileInfos = directoryInfo.GetFiles();
 ```
 
+
+
+
+
+
+
+
+
+
+
+### 11.异常处理
+
+##### 1. 捕捉错误
+
+* try块后必须跟着一个或多个catch块或/和一个finally块
+* catch块必须从最具体到最不具体排列，`System.Exception`最不具体，所以它放在最后
+* 无论try块是否抛出异常，只要控制离开try块，finally块就会执行。finally块的作用是提供一个最终位置，放入一定会执行的代码。finally块最适合用来执行资源清理。
+
+| 异常类型                         | 描述                                         |
+| -------------------------------- | -------------------------------------------- |
+| System.Exception                 | 最基本的异常，其它所有异常类型都由它派生     |
+| System.ArgumentException         | 传给方法的参数无效                           |
+| System.ArgumentNullException     | 不应该为null的参数为null                     |
+| System.ApplicationException      | 避免使用。区分系统异常和应用程序异常。       |
+| System.FormatException           | 实参类型不符合形参规范                       |
+| System.IndexOutOfRangeExcetion   | 试图服务不存在的数组或其他集合元素           |
+| System.InvalidCastException      | 无效类型转换                                 |
+| System.InvalidOperationException | 发生非预期情况，应用程序不再处于有效工作状态 |
+| System.NotImplementedException   | 该方法未实现                                 |
+
+| 异常类型                          | 描述                           |
+| --------------------------------- | ------------------------------ |
+| System.NullReferenceException     | 引用为空，未指向实例           |
+| System.ArithmeticException        | 无效数学运算                   |
+| System.ArrayTypeMismatchException | 试图将类型有误的元素加入到数组 |
+| System.StackOverflowException     | 发生非预期的深递归             |
+
+### 12.泛型
+
+##### 1.可空类型是作为泛型类型Nullable\<T>实现的
+
+##### 2.泛型的优点
+
+* 促进了类型安全。只要成员明确的数据类型才能使用，减小了在运行时发生InvalidCastException异常几率
+* 为泛型类成员使用值类型，不再造成到object的装箱转换，减少了内存消耗
+* 增加了代码的可读性
+* 允许使用代码来实现模式，为反复出现模式提供了单一的实现。
+
+##### 3.泛型接口和结构
+
+声明泛型接口
+
+```C#
+internal interface IPair<Test>
+{
+    Test First { get; set; }
+    Test Second { get; set; }
+}
+
+internal class Class1<T> : IPair<T>
+{
+    public T First { get; set; }
+    public T Second { get; set; }
+}
+```
+
+避免在类型中实现同一泛型接口的多个构造，如下
+
+```C#
+internal class Class1<T> : IPair<int>, IPair<float>
+{
+    int IPair<int>.First { get; set; }
+    float IPair<float>.First { get; set; }
+    int IPair<int>.Second { get; set; }
+    float IPair<float>.Second { get; set; }
+}
+```
+
+##### 4.指定默认值
+
+使用`default`操作符初始化部分字段。因为不知道T的数据类型。引用类型能初始化成null。但如果T是不允许为空的值类型，null就不合适。为应对这样的局面，C#提供了default操作符。只要能推断出数据类型，使用default时就可不指定参数。
+
+```C#
+struct Pair<T> : IPair<T>
+{
+    public T First { get; set; }
+    public T Second { get; set; }
+    public Pair(T first)
+    {
+        First = first;
+        Second = default(T);
+    }
+}
+```
+
+##### 5.元组
+
+实现元组的底层类型实际是泛型，System.ValueTuple。可在TRest中存储另一个ValueTuple。这样元数实际就是无限的。![元组](E:\Gitee\Backup\元组.png)
+
+##### 6.约束
+
+1. 接口约束
+
+   为了使T类型参数有`CompareTo()`方法，必须实现`IComparable<T>`接口
+
+   ```C#
+   class BinaryTree<T> where T: System.Comparable<T> {}
+   ```
+
+2. 类类型约束
+
+   如果同时指定多个约束，类类型约束必须第一个出现。
+   语法和接口约束基本相同，但是不允许多个类类型约束，因为不可能从多个不相关的类派生。
+   类类型约束不能指定密封类，不允许是`string`或`System.Nullable<T>`。
+
+   ```C#
+   class Entity<TKey, TValue> : 
+   	System.Collections.Generic.Dictionary<Tkey, TValue>
+       where TValue : EntityBase
+   {}
+   ```
+
+3. struct/class约束
+
+   将类型参数限制为任何非可空类型或任何引用类型
+   `struct`约束：可空值类型不符合条件
+
+   `class`约束：类型参数限制为引用类型，类、接口、委托、数组符合条件
+
+   ```C#
+   struct Nullable<T> : IFormattablem, IComparable<Nullable<T>>
+       where T : struct
+   {}
+   ```
+
+4. 多个约束
+
+   可以为任意类型参数指定任意数量的接口约束，但类类型约束只能指定一个（即同类可实现任意数量的接口，但只能从一个类派生）。如果有多个3类型参数，每个类型参数前都要使用`where`关键字。一个类型参数的多个约束默认存在AND关系。
+
+   ```c#
+   class Entity<TKey, TValue> : 
+   	System.Collections.Generic.Dictionary<Tkey, TValue>
+       where TKey : IComparable<TKey>, IFormattable
+       where TValue : EntityBase
+   {}
+   ```
+
+   
