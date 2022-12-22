@@ -2639,6 +2639,79 @@ if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsMediaEnded)
 
 ##### 1.读取txt文件行数和内容
 
+1. FileStream.Read()
+
+   ```C#
+   FileStream fs = new FileStream(@"C:\Users\27652\Desktop\新建文本文档.txt", FileMode.Open, File.Access.Read );
+   int length = (int)fs.Length;
+   byte[] bytes = new byte[length];
+   int reads = fs.Read(bytes, 0, n);
+   string str = Encoding.UTF8.GetString(bytes, 0, reads);
+   ```
+
+2. FileStream.ReadByte()
+
+   ```C#
+   FileStream fs = new FileStream(@"C:\Users\27652\Desktop\新建文本文档.txt", FileMode.Open, File.Access.Read );
+   long length = fs.Length;
+   byte[] bytes = new byte[length];
+   int index = 0;
+   int data = fs.ReadByte();
+   while(data != -1)
+   {
+       bytes[index++] = Convert.ToByte(data);
+       data = fs.ReadByte();
+   }
+   string str = Encoding.UTF8.GetString(bytes);
+   ```
+
+3. StreamReader.ReadLine()
+
+   ```C#
+   StreamReader sr = new StreamReader(@"C:\Users\27652\Desktop\新建文本文档.txt", Encoding.UTF8);
+   string line = sr.ReadLine();
+   string content;
+   while(line != null)
+   {
+       content += line;
+       line = sr.ReadLine();
+       if (line != null)
+           content += "\r\n";
+   }
+   //-----------Or-------------
+   StreamReader sr = new StreamReader(@"C:\Users\27652\Desktop\新建文本文档.txt", Encoding.UTF8);
+   string content;
+   while(!sr.EndOfStream)
+   {
+       content += sr.ReadLine();
+       if (!sr.EndOfStream)
+           content += "\r\n";
+   }
+   ```
+
+4. StreamReader.ReadToEnd()
+
+   ```C#
+   StreamReader sr = new StreamReader(@"C:\Users\27652\Desktop\新建文本文档.txt", Encoding.UTF8);
+   string str = sr.ReadToEnd();
+   ```
+
+5. StreamReader(FileStream)
+
+   ```C#
+   FileStream fs = new FileStream(@"C:\Users\27652\Desktop\新建文本文档.txt", FileMode.Open, File.Access.Read );
+   StreamReader sr = new StreamReader(fs, Encoding.UTF8);
+   string str = sr.ReadToEnd();
+   ```
+
+6. File
+
+   ```C#
+   string str = File.ReadAllText(@"C:\Users\27652\Desktop\新建文本文档.txt", Encoding.UTF8);
+   ```
+
+   
+
 ```C#
 //Method one
 string[] str = File.ReadAllLines(@"C:\Users\27652\Desktop\新建文本文档.txt");
@@ -2650,7 +2723,7 @@ StreamReader sr = File.OpenText(@"C:\Users\27652\Desktop\新建文本文档.txt"
 //StreamReader sr = new StreamReader(@"C:\Users\27652\Desktop\新建文本文档.txt");
 string content = sr.ReadToEnd();
 int num = 0;
-string temp = null;
+string temp = cxnull;
 while ((temp = sr.ReadLine()) != null)
 {
     str[num++] =  temp;
@@ -2673,7 +2746,6 @@ sr.Close();
 Console.WriteLine(num);
 
 Console.Read();
-
 ```
 
 ##### 2.拷贝整个文件夹
@@ -3331,9 +3403,33 @@ DirectoryInfo directoryInfo = new DirectoryInfo("D:\\DATA");
 FileInfo[] fileInfos = directoryInfo.GetFiles();
 ```
 
+##### 34.volatile关键字
 
+`volatile`是C#用于控制同步的关键字，其意义是针对程序中一些敏感数据，不允许多线程同时访问，保证数据的完整性，是修饰**变量的修饰符**。多线程访问一个变量时，CLR为了效率允许每个线程进行本地缓存，导致了变量的不一致性。而`volatile`解决了这个问题，其修饰的变量不允许本地缓存，每个线程的都是直接操作在共享内存上，保证了变量始终一致。
 
+`synchronized`则作用与一段代码或方法，获得并释放监视器，保证其修饰的内容只允许一个线程访问。
 
+```C#
+int i1;              int geti1() {return i1;}
+volatile int i2;     int geti2() {return i2;}
+int i3;              synchronized int geti3() {return i3;}
+```
+
+##### 35.C#define条件编译
+
+[C#---#define条件编译 - 我喜欢大白 - 博客园 (cnblogs.com)](https://www.cnblogs.com/woxihuadabai/p/8005892.html)
+
+##### 36.C#特性
+
+[(2条消息) C#之特性_lz无痕的博客-CSDN博客_c# 特性](https://blog.csdn.net/weixin_39520967/article/details/122676703)
+
+##### 37.获取程序当前路径
+
+[C#获取当前程序所在路径的各种方法 - 一年变大牛 - 博客园 (cnblogs.com)](https://www.cnblogs.com/adamgq/p/16580480.html)
+
+##### 38.文件的BuildAction属性
+
+[ VS2010文件的BuildAction属性介绍_三五月儿的博客-CSDN博客_build action](https://blog.csdn.net/yl2isoft/article/details/16918299)
 
 
 
