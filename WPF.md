@@ -1,4 +1,4 @@
-# WPF
+# PF
 
 ## 控件部分
 
@@ -1200,9 +1200,9 @@ x:FieldModify ，指定控件的访问修饰符
 
 ##### 6MVVM图览
 
-![1-1-1](E:\Gitee\Backup\Image\WPF\1-1-1.png)
+![1-1-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/WPF_MVVM1-1.png)
 
-![1-1-2](E:\Gitee\Backup\Image\WPF\1-1-2.png)
+![1-1-2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/WPF_MVVM1-2.png)
 
 是否需要继承NotificationObject类看对象是否要通知UI，即是否需要作为Binding的Source，且值发生变化
 
@@ -1215,6 +1215,8 @@ Binding即要指定Path和Source，没有指定Source的话会往父标签一层
 ##### 11.MVVM和Prism的关系
 
 [WPF框架Prism中使用MVVM架构_实用技巧_脚本之家 (jb51.net)](https://www.jb51.net/article/237149.htm)
+
+![](https://gitee.com/mrbm868/graphic-bed/raw/master/img/WPF_MVVM1-4.png)
 
 ##### 12.简单MVVM
 
@@ -1282,6 +1284,8 @@ this.AddCommand = new DelegateCommand { ExecuteAction = this.Add };
 
 
 ##### 13.Prism-Region
+
+![](https://gitee.com/mrbm868/graphic-bed/raw/master/img/WPF_MVVM-Region.png)
 
 定义Region的两种方式
 

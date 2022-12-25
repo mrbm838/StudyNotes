@@ -3164,6 +3164,8 @@ Type对象可通过IsValueType\IsGenericType等等判断对象类型。
 
 ##### 19.弃元，元组，switch语法糖
 
+![](https://gitee.com/mrbm868/graphic-bed/raw/master/img/CSharp_元组.png)
+
 [C#中的弃元_xinyue_htx的博客-CSDN博客_c# 弃元](https://blog.csdn.net/htxhtx123/article/details/104306675)
 
 [c#语法糖模式匹配【switch 表达式】_dotNET跨平台的博客-CSDN博客](https://blog.csdn.net/sd7o95o/article/details/124287006)

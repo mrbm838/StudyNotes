@@ -111,7 +111,7 @@ CogBlobTool blob = (CogBlobTool)toolGroup.Tools["myBlobTool"];
 
 当ToolBlock有图像输入时，可通过CogRecord加入到记录并本地显示。
 
-![图像本地显示](E:\Gitee\Backup\Image\VisionPro\图像本地显示.png)
+![图像本地显示](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_1-4-1.png)
 
 <details>
     <summary>Show Image</summary>
@@ -178,7 +178,7 @@ System.Windows.Forms.MessageBox.Show("");
 
 将RunParams.ExpectedCircularArc.CenterX/Y作为输入。
 
-![1-6-1图像](E:\Gitee\Backup\Image\VisionPro\1-6-1图像.png)
+![1-6-1图像](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_1-6-1.png)
 
 ②卡尺设置
 
@@ -267,7 +267,7 @@ myLabel1.SelectedSpaceName = "#";
 
 使用PatMaxc（基于边缘的模板匹配）技术探测缺陷。将输入图像区域中包含的特性与经过训练的图像中存储的特征进行比较，生成凸显差异的输出图像。
 
-![1-16-1](E:\Gitee\Backup\Image\VisionPro\1-16-1.png)
+![1-16-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_1-16-1.png)
 
 统计训练当前模式：可训练多个模板
 
@@ -332,7 +332,7 @@ foreach (CogBlolbResult item in blob.Results.GetBlobs())
 
 ②Blob工具的输出图像
 
-![2-6-1](E:\Gitee\Backup\Image\VisionPro\2-6-1.png)
+![2-6-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_2-6-1.png)
 
 ③获取Blob识别的边界最小外接矩形
 
@@ -480,7 +480,7 @@ copyCir.Radius = radius;
 
 ①使用CogRecord为CogPMAlignTool1的InputImage创建图层
 
-![3-4-1图像](E:\Gitee\Backup\Image\VisionPro\3-4-1图像.png)
+![3-4-1图像](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_3-4-1.png)
 
 ```C#
 // Variables
@@ -512,7 +512,7 @@ foreach(CogGraphicLabel t in listLabel)
 
 ②使用CogGraphicCollection将多钟多个图形或文本输出到图像，使用脚本给工具输入值。
 
-![3-4-2图像](E:\Gitee\Backup\Image\VisionPro\3-4-2图像.png)
+![3-4-2图像](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_3-4-2.png)
 
 ```C#
 // Variables
@@ -589,7 +589,7 @@ foreach(ICogGraphic item in list)
 </details>
 ③CogCaliperTool动态调整位置
 
-![3-4-3图像](E:\Gitee\Backup\Image\VisionPro\3-4-3图像.png)
+![3-4-3图像](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_3-4-3.png)
 
 ```C#
 //--------------Variable----------------
@@ -665,7 +665,7 @@ foreach(CogGraphicLabel  label  in  labels )
    注：当不同图像零件个数变化时，通过ToolBlock脚本生成多个颜色匹配工具，并设置识别区域，此时可不用Fixture工具；或者使用一个颜色匹配工具对通过模板匹配到的区域进行多次颜色匹配
 5. DataAnalysis
 
-![3-5-1](E:\Gitee\Backup\Image\VisionPro\3-5-1.png)
+![3-5-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_3-5-1.png)
 
 ```C#
 //--------------Variable----------------
@@ -721,7 +721,7 @@ mToolBlock.AddGraphicToRunRecord(label, lastRecord, "CogImageConvertTool1.InputI
 
 7. FindLine找到胶路，根据每个卡纸的Found属性确认是否断胶或偏移
 
-   ![3-6-1](E:\Gitee\Backup\Image\VisionPro\3-6-1.png)
+   ![3-6-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_3-6-1.png)
 
 ##### 7.齿轮齿数检测
 
@@ -735,7 +735,7 @@ mToolBlock.AddGraphicToRunRecord(label, lastRecord, "CogImageConvertTool1.InputI
 
 4. Blob筛选出轮齿
 
-   ![3-7-1](E:\Gitee\Backup\Image\VisionPro\3-7-1.png)
+   ![3-7-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_3-7-1.png)
 
 ##### 8.检测缺陷
 
@@ -747,7 +747,7 @@ mToolBlock.AddGraphicToRunRecord(label, lastRecord, "CogImageConvertTool1.InputI
 
 4. Blob标识缺陷
 
-   ![3-8-1](E:\Gitee\Backup\Image\VisionPro\3-8-1.png)
+   ![3-8-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/VPP_3-8-1.png)
 
 ### 四、Tips
 

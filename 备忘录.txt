@@ -1,3 +1,12 @@
-①MySQL
-学习视频：B站黑马程序员
-安装协助：百度网盘-实用软件
+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
+
+GitHub图床token
+
+dcd431f0a9e8eee0fde0a7661de393d6
+
+Gitee图床token
+
+[PicGo安装与配置-Gitee图床 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/567668223)
+
+（[(7条消息) Typora如何把图片上传到图床smms.app_黯然神伤888的博客-CSDN博客_smms.app不能使用了](https://blog.csdn.net/dante1987/article/details/127706832))
+
