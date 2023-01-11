@@ -3433,6 +3433,39 @@ int i3;              synchronized int geti3() {return i3;}
 
 [ VS2010文件的BuildAction属性介绍_三五月儿的博客-CSDN博客_build action](https://blog.csdn.net/yl2isoft/article/details/16918299)
 
+##### 39.读取CSV文件时跳过标题栏
+
+```C#
+bool IsFirst = true;//标示是否是读取的第一行
+string strLine = "";//记录每次读取的一行记录
+string[] aryLine = null;//记录每行记录中的各字段内容
+//逐行读取CSV中的数据
+while ((strLine = sr.ReadLine()) != null)
+{
+    if (IsFirst == true)
+    {
+        IsFirst = false;
+    }
+    else
+    {
+        aryLine = strLine.Split(',');
+        dic.Add(aryLine[1], aryLine[0]);
+    }
+}
+
+int iReadNum = 0;
+String line;
+if (strFilePath.Contains(".csv"))
+{
+    sr.ReadLine();//去掉表头
+}
+while ((line = sr.ReadLine()) != null)
+{
+    strPramData[iReadNum] = line;
+    iReadNum++;
+}
+```
+
 
 
 
