@@ -94,7 +94,7 @@ Console.ReadKey();
 //输出结果：0  false
 ```
 
-out的执行方式与ref一样，区别在于：out让方法返回多个值，且可以使用未赋值的变量，但必须在方法内赋值，执行失败时，使用其修饰的变量的值会丢失，重新赋值为0。
+out的执行方式与ref一样，区别在于：out让方法返回多个值，且可以使用未赋值的变量，但必须在方法内赋值。
 
 ```c#
 int result;
@@ -3432,6 +3432,39 @@ int i3;              synchronized int geti3() {return i3;}
 ##### 38.文件的BuildAction属性
 
 [ VS2010文件的BuildAction属性介绍_三五月儿的博客-CSDN博客_build action](https://blog.csdn.net/yl2isoft/article/details/16918299)
+
+##### 39.读取CSV文件时跳过标题栏
+
+```C#
+bool IsFirst = true;//标示是否是读取的第一行
+string strLine = "";//记录每次读取的一行记录
+string[] aryLine = null;//记录每行记录中的各字段内容
+//逐行读取CSV中的数据
+while ((strLine = sr.ReadLine()) != null)
+{
+    if (IsFirst == true)
+    {
+        IsFirst = false;
+    }
+    else
+    {
+        aryLine = strLine.Split(',');
+        dic.Add(aryLine[1], aryLine[0]);
+    }
+}
+
+int iReadNum = 0;
+String line;
+if (strFilePath.Contains(".csv"))
+{
+    sr.ReadLine();//去掉表头
+}
+while ((line = sr.ReadLine()) != null)
+{
+    strPramData[iReadNum] = line;
+    iReadNum++;
+}
+```
 
 
 
