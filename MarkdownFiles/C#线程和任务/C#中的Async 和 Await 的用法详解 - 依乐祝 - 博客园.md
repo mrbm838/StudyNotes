@@ -29,7 +29,7 @@ author: 依乐祝
 
 自从C# 5.0时代引入async和await关键字后，异步编程就变得流行起来。尤其在现在的.NET Core时代，如果你的代码中没有出现async或者await关键字，都会让人感觉到很奇怪。
 
-想象一下当我们在处理UI和按钮单击时，我们需要运行一个长时间运行的方法，比如读取一个大文件或其他需要很长时间的任务，在这种情况下，整个应用程序必须等待这个长时间运行的任务完成才算完成整个任务。
+想象一下当我们***在处理UI和按钮单击时，我们需要运行一个长时间运行的方法***，比如读取一个大文件或其他需要很长时间的任务，在这种情况下，整个应用程序必须等待这个长时间运行的任务完成才算完成整个任务。
 
 换句话说，如果同步应用程序中的任何进程被阻塞，则整个应用程序将被阻塞，我们的应用程序将停止响应，直到整个任务完成。
 
@@ -236,6 +236,62 @@ Console.WriteLine(" After work 2");
 **输出**
 
 **![img](https://img2018.cnblogs.com/blog/1377250/201903/1377250-20190318225204721-965583889.jpg)**
+
+### await 和task.Wait()
+
+await 和task.Wait()的相同点都是等待函数执行完后，才能执行后续的代码。不同点是：await是异步等待，而Wait()是同步等待，比如在winform程序中，await是可以立即拖动窗体，继续点击其他按钮的，Wait是不可以立即拖动窗体等操作，但是可以有后续操作，等执行完后，再执行。
+
+```C#
+// task.WhenAll()
+using System;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class Example
+{
+   public static void Main()
+   {
+      int failed = 0;
+      var tasks = new List<Task>();
+      String[] urls = { "www.adatum.com", "www.cohovineyard.com",
+                        "www.cohowinery.com", "www.northwindtraders.com",
+                        "www.contoso.com" };
+      
+      foreach (var value in urls) {
+         var url = value;
+         tasks.Add(Task.Run( () => { var png = new Ping();
+                                     try {
+                                        var reply = png.Send(url);
+                                        if (! (reply.Status == IPStatus.Success)) {
+                                           Interlocked.Increment(ref failed);
+                                           throw new TimeoutException("Unable to reach " + url + ".");
+                                        }
+                                     }
+                                     catch (PingException) {
+                                        Interlocked.Increment(ref failed);
+                                        throw;
+                                     }
+                                   }));
+      }
+      Task t = Task.WhenAll(tasks);
+      try {
+         t.Wait();
+      }
+      catch {}   
+
+      if (t.Status == TaskStatus.RanToCompletion)
+         Console.WriteLine("All ping attempts succeeded.");
+      else if (t.Status == TaskStatus.Faulted)
+         Console.WriteLine("{0} ping attempts failed", failed);      
+   }
+}
+// The example displays output like the following:
+//       5 ping attempts failed
+```
+
+
 
 ## 最后
 
