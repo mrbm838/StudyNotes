@@ -1,12 +1,3 @@
----
-created: 2023-01-23T16:35:56 (UTC +08:00)
-tags: []
-source: https://www.cnblogs.com/zh7791/p/11369020.html
-author: 痕迹g
-            粉丝 - 2350
-            关注 - 4
----
-
 # WPF布局介绍(1) 
 
 ---
@@ -54,25 +45,27 @@ ___
     
     > StackPanel主要用于垂直或水平排列元素、在容器的可用尺寸内放置有限个元素，元素的  
     > 尺寸总和(长/高)不允许超过StackPanel的尺寸, 否则超出的部分不可见。  
-    > ![布局介绍1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/%E5%B8%83%E5%B1%80%E4%BB%8B%E7%BB%8D1.png)
+    > ![布局介绍1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/布局介绍1.png)
     
 -   WrapPanel
     
     > WrapPanel默认排列方向与StackPanel相反、WrapPanel的Orientation默认为Horizontal。  
     > WrapPanel具备StackPanel的功能基础上具备在尺寸变更后自动适应容器的宽高进行换行换列处理。  
-    > ![布局介绍2](E:\Gitee\Image\WPF\布局介绍2.png)DockPanel
+    > ![布局介绍2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/布局介绍2.png)
     
+-   DockPanel
+
     > 默认DockPanel中的元素具备DockPanel.Dock属性, 该属性为枚举具备: Top、Left、Right、Bottom。  
     > 默认情况下, DockPanel中的元素不添加DockPanel.Dock属性, 则系统则会默认添加 Left。  
     > DockPanel有一个LastChildFill属性, 该属性默认为true, 该属性作用为, 当容器中的最后一个元素时, 默认该元素填充DockPanel所有空间。  
-    > ![布局介绍3](E:\Gitee\Image\WPF\布局介绍3.png)
-    
+    > ![布局介绍3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/布局介绍3.png)
+
 -   Grid
     
     > 学过web的老弟应该知道table表格, 而Grid与其类似, Grid具备分割空间的能力。  
     > RowDefinitions / ColumnDefinitions 用于给Grid分配行与列。  
     > ColumnSpan / RowSpan 则用于设置空间元素的 跨列与阔行。  
-    > ![](E:\Gitee\Image\WPF\布局介绍4.png)[![](E:\Gitee\Image\WPF\布局介绍5.png)
+    > ![](https://gitee.com/mrbm868/graphic-bed/raw/master/img/布局介绍4.png)[![](https://gitee.com/mrbm868/graphic-bed/raw/master/img/布局介绍5.png)
     
 -   Canvas
     
@@ -86,49 +79,49 @@ ___
 
 ## WPF的控件结构
 
-![控件介绍1](E:\Gitee\Image\WPF\控件介绍1.png)
+![控件介绍1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍1.png)
 
 ## 各种控件类型详解
 
 -   ContentControl 类
 
     > 设置内容的属性为 Content, 例如  
-    > ![控件介绍2](E:\Gitee\Image\WPF\控件介绍2.png)
+    > ![控件介绍2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍2.png)
 
     > 控件目录下只允许设置一次Content, 如下演示给按钮添加一个Image和一个文本显示Label, 错误如下:  
-    > ![控件介绍3](E:\Gitee\Image\WPF\控件介绍3.png)
+    > ![控件介绍3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍3.png)
 
     正确的使用方式:  
     <!利用我们上一章说讲到的布局容器装载在其中, 则可避免这种情形>  
-    ![控件介绍4](E:\Gitee\Image\WPF\控件介绍4.png)
+    ![控件介绍4](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍4.png)
 
 -   HeaderedContentControl 类
 
     > 相对于ContentControl来说、这类控件即可设置Content, 还有带标题的Header。  
     > 像比较常见的分组控件GroupBox、TabControl子元素TabItem、它们都是具备标题和内容的控件。  
-    > ![控件介绍5](E:\Gitee\Image\WPF\控件介绍5.png)
+    > ![控件介绍5](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍5.png)
 
     > 同样,该类控件目录下只允许设置一次Conent和Header, 如下错误所示, 出现2次设置Header与Content报错:  
-    > ![控件介绍6](E:\Gitee\Image\WPF\控件介绍6.png)
+    > ![控件介绍6](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍6.png)
 
 -   ItemsControl 类
 
     > 此类控件大多数属于显示列表类的数据、设置数据源的方式一般通过 ItemSource 设置。如下所示:  
-    > ![控件介绍7](E:\Gitee\Image\WPF\控件介绍7.png)
+    > ![控件介绍7](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍7.png)
 
 -   重点常用的控件介绍:
 
     > TextBlock: 用于显示文本, 不允许编辑的静态文本。 Text设置显示文本的内容。  
-    > ![控件介绍8](E:\Gitee\Image\WPF\控件介绍8.png)
+    > ![控件介绍8](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍8.png)
 
     > TextBox: 用于输入/编辑内容的控件、作用与winform中TextBox类似, Text设置输入显示的内容。  
-    > ![控件介绍9](E:\Gitee\Image\WPF\控件介绍9.png)
+    > ![控件介绍9](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍9.png)
 
     > Button: 简单按钮、Content显示文本、Click可设置点击事件、Command可设置后台的绑定命令  
-    > ![控件介绍10](E:\Gitee\Image\WPF\控件介绍10.png)
+    > ![控件介绍10](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍10.png)
 
     > ComboBox: 下拉框控件, ItemSource设置下拉列表的数据源, 也可以显示设置, 如下  
-    > ![控件介绍11](E:\Gitee\Image\WPF\控件介绍11.png)
+    > ![控件介绍11](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件介绍11.png)
 
 # WPF样式(3)
 
@@ -151,9 +144,9 @@ WPF中的各类控件元素, 都可以自由的设置其样式。 诸如:
 #### 下面的例子中, 给4个TextBlock设置同样的样式: 字体、字体大小、字体颜色、加粗设置。
 
 效果图与实际代码如下所示:
-![样式1](E:\Gitee\Image\WPF\样式1.png)
+![样式1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/样式1.png)
 
-![样式2](E:\Gitee\Image\WPF\样式2.png)
+![样式2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/样式2.png)
 
 - 上面有讲到, 样式是组织和重用的工具。 而上面的代码, 由于每个元素都是相同的, 但是每个元素XAML都重复定义。 下面将介绍通过样式如何优化上面的代码。
 
@@ -161,10 +154,10 @@ WPF中的各类控件元素, 都可以自由的设置其样式。 诸如:
 
   > Style结构定义了一个 x:key 这点类似于Html中定义id和class, 然后css即可对相应的class和id样式生效。
   > TargetType 的设置为类型TextBlock, 设置目标类型静态文本TextBlock。
-  > ![样式3](E:\Gitee\Image\WPF\样式3.png)
+  > ![样式3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/样式3.png)
 
   - 第二步:通过控件的Style属性 来引用x:key 的样式, 代码如下:
-    ![样式4](E:\Gitee\Image\WPF\样式4.png)
+    ![样式4](https://gitee.com/mrbm868/graphic-bed/raw/master/img/样式4.png)
 
 注意: 
 
@@ -186,9 +179,9 @@ WPF中的各类控件元素, 都可以自由的设置其样式。 诸如:
 
 - 当控件引用了某个样式, 在控件本身并没有定义该属性的情况下,优先使用样式中的定义,否则优先控件本身的定义。如下所示, 样式中设置了颜色为 Red, 但是控件本身又设置了Green, 那么控件的最终效果 Green。
 
-  ![样式5](E:\Gitee\Image\WPF\样式5.png)
+  ![样式5](https://gitee.com/mrbm868/graphic-bed/raw/master/img/样式5.png)
 
-![样式6](E:\Gitee\Image\WPF\样式6.png)
+![样式6](https://gitee.com/mrbm868/graphic-bed/raw/master/img/样式6.png)
 
 # [WPF控件模板(6)](https://www.cnblogs.com/zh7791/p/11421386.html)
 
@@ -199,47 +192,47 @@ ControlTemplate(控件模板)不仅是用于来定义控件的外观、样式, �
 通过剖析控件了解ControlTemplate的组成:
 
 - 首先,创建一个WPF项目, 创建一个Button按钮, 然后选中该按钮, 右键选择编辑模板>编辑副本:
-  ![控件模板1](E:\Gitee\Image\WPF\控件模板1.png)
+  ![控件模板1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板1.png)
 
 - 创建完成后, 会在当前页面<Windows.Resources> 键下面生成一些样式片段 , 一个key为ButtonStyle1的样式:
 
-  ![控件模板2](E:\Gitee\Image\WPF\控件模板2.png)
+  ![控件模板2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板2.png)
 
   - 在看到该样式定义了一些基础的样式, 背景颜色、字体颜色、边框大小、垂直水平位置等, 除此之外, 下方则有一个Template的对象, 其中则就是ControlTemplate, 可以看到, ControlTemplate定义了一个Border ,然后其中定义了一个内弄呈现的控件, ContentPresenter则主要用于呈现按钮的显示内容主体, 如下标记:
-    ![控件模板3](E:\Gitee\Image\WPF\控件模板3.png)
+    ![控件模板3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板3.png)
   - 我们可以进行一些尝试, 试图修改border的属性, 观察Button会发生怎样的变化, 通过为Border 添加一个 圆角矩形参数， 将背景颜色设置成固定的值, 如下:
-    ![控件模板4](E:\Gitee\Image\WPF\控件模板4.png)
+    ![控件模板4](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板4.png)
 
 > 通过简单的尝试,可以观察到, 该Border 作为Button按钮的边缘样式和整体的外观控制。
 > \- 接下来, 我们可以通过修改ContentPresenter 中的一些参数, 看看该控件是怎样的一个存在。 修改其中的垂直位置为居下, 为Button设置一个固定Content的值 “Hello”, 观察Hello的位置:
-> ![控件模板5](E:\Gitee\Image\WPF\控件模板5.png)
+> ![控件模板5](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板5.png)
 > 通道实践, 可以了解到, 该内容呈现控件(ContentPresenter) 负责了内容的展示、和一部分属性的控制。
 
 ## ControlTemplate中的TemplateBinding 的作用?
 
 > 在ControlTemplate中, 可以看多多次有定义 TemplateBinding 的代码:
-> ![控件模板6](E:\Gitee\Image\WPF\控件模板6.png)
+> ![控件模板6](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板6.png)
 
 > TemplateBinding 可以理解为, 通过模板绑定关联到指定的样式、属性。 如此一来 , 当按钮通过显示设置该属性, 则最终会影响着Template绑定的属性值。
 
 > 下面将通过代码演示, 有 TemplateBinding 和 无TemplateBinding 的区别, 在Button按钮中, 显示定义 按钮的边框颜色为 “Blue”, 分别看两者中的影响:
 
 图(1), 有TemplateBinding :
-![控件模板7](E:\Gitee\Image\WPF\控件模板7.png)
+![控件模板7](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板7.png)
 
 图(2), 无TemplateBinding:
-![控件模板8](E:\Gitee\Image\WPF\控件模板8.png)
+![控件模板8](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板8.png)
 
 > 可以理解, TemplateBinding 主要的作用为, 与外部的属性关系起来, 使其达到改变样式属性的作用。
 
 ## ControlTemplate.Triggers 触发器
 
 展开ControlTemplate.Triggers 节点, 可以看到其中定义了一些触发条件和改变的样式。
-![控件模板9](E:\Gitee\Image\WPF\控件模板9.png)
+![控件模板9](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板9.png)
 
-> 可以看到, 定义了4个触发器, 分别满足条件之后, 改变Border的一些样式, 接下来, 通过一张图,来解释其影响的过程:![控件模板11](E:\Gitee\Image\WPF\控件模板11.png)
+> 可以看到, 定义了4个触发器, 分别满足条件之后, 改变Border的一些样式, 接下来, 通过一张图,来解释其影响的过程:![控件模板11](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板11.png)
 
-实际效果:<img src="E:\Gitee\Image\WPF\控件模板10.gif" alt="控件模板10"  />
+实际效果:<img src="https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板10.gif" alt="控件模板10"  />
 
 > 同样, 其他的触发器也是通过这样的操作, 来控制着控件的属性变化。
 
@@ -248,10 +241,10 @@ ControlTemplate(控件模板)不仅是用于来定义控件的外观、样式, �
 > 下面定义了一个EventTrigger 事件触发器,
 > 当鼠标进入按钮区域时, 执行一个0.5秒的动画, 将按钮的背景颜色设置为 pink,
 > 当鼠标离开按钮区域时, 执行一个0.5秒的动画,将按钮的背景颜色设置为Green:
-> ![控件模板12](E:\Gitee\Image\WPF\控件模板12.png)
+> ![控件模板12](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板12.png)
 
 实际效果:
-![控件模板13](E:\Gitee\Image\WPF\控件模板13.gif)
+![控件模板13](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板13.gif)
 
 ## 自定义ControlTemplate
 
@@ -261,7 +254,7 @@ ControlTemplate(控件模板)不仅是用于来定义控件的外观、样式, �
 - 2.创建一个Border 用于设置按钮边样式
 - 3.创建一个内容呈现的控件, 设置几个参数的TemplateBinding
 - 4.按钮的Template 绑定该模板
-  ![控件模板14](E:\Gitee\Image\WPF\控件模板14.png)
+  ![控件模板14](https://gitee.com/mrbm868/graphic-bed/raw/master/img/控件模板14.png)
 
 # WPF触发器
 
@@ -279,33 +272,33 @@ ControlTemplate(控件模板)不仅是用于来定义控件的外观、样式, �
 > 下面以Border为例, 演示一个简单的Trigger触发器。
 > 当鼠标进入Border的范围, 改变Border的背景颜色和边框颜色, 当鼠标离开Border的范围, 还原Border的颜色。
 > 代码如下所示:
-> ![触发器1](E:\Gitee\Image\WPF\触发器1.png)
+> ![触发器1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/触发器1.png)
 > 实际效果:
-> ![触发器2](E:\Gitee\Image\WPF\触发器2.gif)
+> ![触发器2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/触发器2.gif)
 
 ## MultiTrigger
 
 > 和Trugger类似, MultiTrigger可以设置多个条件满足时, 触发, 下面以TextBox为例, 做一个简单的Demo
 > 当鼠标进入文本框的范围, 并且光标设置到TextBox上, 则把TextBox的背景颜色改变成Red
-> ![触发器3](E:\Gitee\Image\WPF\触发器3.png)
+> ![触发器3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/触发器3.png)
 > 实际效果:
-> ![触发器4](E:\Gitee\Image\WPF\触发器4.gif)
+> ![触发器4](https://gitee.com/mrbm868/graphic-bed/raw/master/img/触发器4.gif)
 
 ## EventTrigger
 
 > 事件触发器, 当触发了某类事件, 触发器执行响应。
 > 当鼠标进入按钮的范围中, 在0.02秒内, 把按钮的字体变成18号
 > 当鼠标离开按钮的范围时, 在0.02秒内, 把按钮的字体变成13号 。 代码及效果如下所示:
-> ![触发器5](E:\Gitee\Image\WPF\触发器5.png)
+> ![触发器5](https://gitee.com/mrbm868/graphic-bed/raw/master/img/触发器5.png)
 > 实际效果:
-> ![触发器6](E:\Gitee\Image\WPF\触发器6.gif)
+> ![触发器6](https://gitee.com/mrbm868/graphic-bed/raw/master/img/触发器6.gif)
 
 结尾: 对于 DataTrigger / MultiDataTrigger 的功能类似, 只不过触发条件变成了以数据的方式为条件。
 
 # WPF数据模板(7) 
 
 > 数据模板常用在3种类型的控件, 下图形式:
-> ![数据模板1](E:\Gitee\Image\WPF\数据模板1.png)
+> ![数据模板1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/数据模板1.png)
 
 - 1.Grid这种列表表格中修改Cell的数据格式, CellTemplate可以修改单元格的展示数据的方式。
 - 2.针对列表类型的控件, 例如树形控件，下拉列表，列表控件, 可以修改其中的ItemTemplate。
@@ -347,7 +340,7 @@ gd.ItemsSource = students;
 ```
 
 > 最终的效果, 在数据的表格最后一列, 将会在一列中分别生成 两个普通按钮。
-> ![数据模板2](E:\Gitee\Image\WPF\数据模板2.png)
+> ![数据模板2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/数据模板2.png)
 
 ## ItemTemplate
 
@@ -388,7 +381,7 @@ lib.ItemsSource = ColorList;
 ```
 
 > 最终的测试效果如下所示:
-> ![数据模板3](E:\Gitee\Image\WPF\数据模板3.gif)
+> ![数据模板3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/数据模板3.gif)
 
 ## ItemsControl
 
@@ -422,16 +415,16 @@ tests.Add(new Test() { Code = "6" });
 ic.ItemsSource = tests;
 ```
 
-![数据模板4](E:\Gitee\Image\WPF\数据模板4.png)
+![数据模板4](https://gitee.com/mrbm868/graphic-bed/raw/master/img/数据模板4.png)
 
 **查看ItemsControl可视化树的结构组成?**
 
-![数据模板5](E:\Gitee\Image\WPF\数据模板5.png)
+![数据模板5](https://gitee.com/mrbm868/graphic-bed/raw/master/img/数据模板5.png)
 
 > 剖析该结构, 可以看到, 紫色的1处, 为最外层的WrapPanel容器, 用于容纳排列按钮, 由于该示例设置了 Orientation="Horizontal" , 所以按钮则按水平排列, 再看 橘色 2处, 可以看见子项外层由一个内容呈现包括着, 内容为一个按钮, 由于绑定搞得数据是5个, 所以分别生成了内容为1~6的5个按钮。
 
 - 说明: 那是不是以为则ItemsPanel 放置任何元素都行? 很明显是不行的。 ItemsPanel的容器需要满足一个条件, 则是属于Panel族的元素, 否则会提示以下错误:
-  ![数据模板6](E:\Gitee\Image\WPF\数据模板6.png)
+  ![数据模板6](https://gitee.com/mrbm868/graphic-bed/raw/master/img/数据模板6.png)
 
 > 关于每种元素的分类可以看关于控件介绍的文章: https://www.cnblogs.com/zh7791/p/11372473.html
 
@@ -481,7 +474,7 @@ private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs
 首先, 从一个简单的例子来理解什么是绑定。
 
 - 创建一个滑块控件, 并且希望在滑动的过程中, 把值更新到另外一个静态文本上。代码如下:
-  ![绑定(Binding)1](E:\Gitee\Image\WPF\绑定(Binding)1.png)
+  ![绑定(Binding)1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)1.png)
 
 在winform中, 我们常规的做法会给滑块创建一个值改变事件,同时将滑块的值赋值给文本。
 接下来, 我只需要在静态文本中添加一小段绑定的声明,即可完整原本很复杂的操作:
@@ -494,33 +487,33 @@ private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs
   - `StringFormat=f3 or StringFormat=0.000`值保留3位小数
 
 那么该如何理解整句话的意义, 翻译: 静态文本TextBlock的Text属性将通过绑定的方式关联到元素名'slider'的value属性上。
-![绑定(Binding)2](E:\Gitee\Image\WPF\绑定(Binding)2.png)
+![绑定(Binding)2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)2.png)
 
 效果图所示:
-![绑定(Binding)3](E:\Gitee\Image\WPF\绑定(Binding)3.gif)
+![绑定(Binding)3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)3.gif)
 可以看到,在滑块不断的滑动过程中, TextBlock也在不断的发生变化, 说明TextBlock已经得到了滑动滑动过程中的值变化, 这种关联, 我们称之为绑定, 在WPF当中, 绑定又分很多种, 而上面这种则是通过元素绑定的方式。
 理解了基础的绑定之后,然后就是理解绑定的模式。
 
 > 绑定的模式就类似我们商业中的合作, 是一次性回报还是持续获益, 是否可以单方面终止, 是否具有投票权等, 在WPF中绑定的模式又分为五种:
 
 - OneWay(单向绑定) : 当源属性发生变化更新目标属性, 类似上面的例子中, 滑动变化更新文本的数据。示例:
-  ![绑定(Binding)4](E:\Gitee\Image\WPF\绑定(Binding)4.png)
+  ![绑定(Binding)4](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)4.png)
   效果:
-  ![绑定(Binding)6](E:\Gitee\Image\WPF\绑定(Binding)6.gif)
+  ![绑定(Binding)6](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)6.gif)
 - TwoWay(双向绑定) : 当源属性发生变化更新目标属性, 目标属性发生变化也更新源属性。
   - 与单向绑定的区别可以理解为, 前者只能打你,被打者不能还手, 双向绑定的意思则是: 你敢打我一巴掌,我也能回你一巴掌。示例:
-    ![绑定(Binding)7](E:\Gitee\Image\WPF\绑定(Binding)7.png)
+    ![绑定(Binding)7](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)7.png)
     效果:
-    ![绑定(Binding)8](E:\Gitee\Image\WPF\绑定(Binding)8.gif)
+    ![绑定(Binding)8](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)8.gif)
 - OneTime(单次模式) : 根据第一次源属性设置目标属性, 在此之后所有改变都无效。
   - 如第一次绑定了数据源为0, 那么无论后面如何改变 2、3、4... 都无法更新到目标属性上。示例:
-    ![绑定(Binding)9](E:\Gitee\Image\WPF\绑定(Binding)9.png)
+    ![绑定(Binding)9](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)9.png)
     效果:
-    ![绑定(Binding)10](E:\Gitee\Image\WPF\绑定(Binding)10.gif)
+    ![绑定(Binding)10](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)10.gif)
 - OneWayToSource : 和OneWay类型, 只不过整个过程倒置。示例:
-  ![绑定(Binding)11](E:\Gitee\Image\WPF\绑定(Binding)11.png)
+  ![绑定(Binding)11](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)11.png)
   效果:
-  ![绑定(Binding)12](E:\Gitee\Image\WPF\绑定(Binding)12.gif)
+  ![绑定(Binding)12](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)12.gif)
 - Default : 既可以是双向,也可以是单项, 除非明确表明某种模式, 否则采用该默认绑定
 
 ## 控件绑定属性（非元素）
@@ -528,25 +521,25 @@ private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs
 上面的代码中,使用的绑定方式是根据元素的方式: ElementName=xxx, 如需绑定到一个非元素的对象, 则有一下几属性:
 
 - Source : 指向一个数据源, 示例, TextBox使用绑定的方式用Source指向一个静态资源ABC:
-  ![绑定(Binding)13](E:\Gitee\Image\WPF\绑定(Binding)13.png)
+  ![绑定(Binding)13](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)13.png)
 - RelativeSource : 使用一个名为RelativeSource的对象来根据不同的模式查找源对象,
 
 > 示例, 使用RelativeSource的FindAncestor模式, 查找父元素为StackPanel的Width值
-> ![绑定(Binding)14](E:\Gitee\Image\WPF\绑定(Binding)14.png)
+> ![绑定(Binding)14](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)14.png)
 
 - DataContext: 从当前的元素树向上查找到第一个非空的DataContext属性为源对象。
 
 > 示例, 该示例用后台代码创建一个只包含Name的类, Test, 通过绑定窗口的DataContext上下文:
-> ![绑定(Binding)15](E:\Gitee\Image\WPF\绑定(Binding)15.png)
+> ![绑定(Binding)15](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)15.png)
 
 **后台代码绑定简单文本与列表**
 
 > 创建一个PageModel类, 定一个ClassName为班级名称, 和一个Students学生列表, 后台代码:
-> ![绑定(Binding)16](E:\Gitee\Image\WPF\绑定(Binding)16.png)
+> ![绑定(Binding)16](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)16.png)
 > 窗口代码
-> ![绑定(Binding)17](E:\Gitee\Image\WPF\绑定(Binding)17.png)
+> ![绑定(Binding)17](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)17.png)
 > 效果预览
-> ![绑定(Binding)18](E:\Gitee\Image\WPF\绑定(Binding)18.png)
+> ![绑定(Binding)18](https://gitee.com/mrbm868/graphic-bed/raw/master/img/绑定(Binding)18.png)
 
 ------
 
