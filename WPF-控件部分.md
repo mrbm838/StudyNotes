@@ -857,6 +857,10 @@ if (cvTasks != null && cvTasks.CanSort)
 </Canvas>
 ```
 
+##### 6.UniformGrid
+
+在有限的空间内为子元素均分空间。
+
 ### 六、其它控件
 
 ##### 1.Calendar
