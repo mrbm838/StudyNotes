@@ -1,5 +1,3 @@
-# PF
-
 ## 控件部分
 
 ### 一、基本控件
@@ -1284,8 +1282,6 @@ private void Add(object parameter) => this.Result = this.Input1 + this.Input2;
 
 this.AddCommand = new DelegateCommand { ExecuteAction = this.Add };
 ```
-
-
 
 ##### 13.Prism-Region
 

@@ -544,3 +544,155 @@ private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs
 ------
 
 关于以上, 基本介绍了WPF元素绑定的方式与几种模式, 接下讲的是, WPF中的事件如果通过绑定的方式和UI分离。尽管WPF中仍然可以兼容winform中的事件模型, 而binding也是MVVM架构中的重要组成部分。
+
+# WPF命令(ICommand)
+
+> 命令的目的是为了使UI的变动不影响到业务，业务的变动不影响到UI
+>
+> 回调 就是委托或事件触发后 去执行先前绑定的一系列方法；回调有柱塞 和 非柱塞两种回调方式
+
+MainWindow.xaml
+
+```xaml
+<Button Height="10" Command="{Binding MainCommand}" CommandParameter="yjq"></Button>
+```
+
+MainWindow.xaml.cs
+
+```C#
+public partial class MainWindow : Window
+{
+    public MainWindow()
+    {
+        InitializeComponent();
+        this.DataContext = new MainViewModel();
+    }
+}
+```
+
+MainViewModel.cs
+
+```C#
+public class MainViewModel
+{
+    public MainCommand MainCommand { get; set; }
+
+    public MainViewModel()
+    {
+        MainCommand = new MainCommand(Show);
+    }
+
+    public void Show(string message)
+    {
+        MessageBox.Show(message);
+    }
+}
+```
+
+MainCommand.cs
+
+```C#
+public class MainCommand : ICommand
+{
+    Action<string> _action;
+
+    public MainCommand(Action<string> action)
+    {
+        _action = action;
+    }
+
+    public bool CanExecute(object? parameter)
+    {
+        return true;
+    }
+
+    public void Execute(object? parameter)
+    {
+        _action.Invoke(parameter.ToString());
+    }
+
+    public event EventHandler? CanExecuteChanged;
+}
+```
+
+# WPF通知属性(INotifyPropertyChanged)
+
+> 目的是实现当属性值改变后，及时更新到UI上
+>
+> 可以理解为  binding 把UI的一个Update 绑在了 event 上，所以值改变，就调用所有Update。
+
+MainViewModel.cs
+
+```C#
+public class MainViewModel : INotifyPropertyChanged
+{
+    public MainCommand MainCommand { get; set; }
+
+    private string _name;
+
+    public string Name
+    {
+        get { return _name;}
+        set
+        {
+            _name = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+        }
+    }
+
+    public MainViewModel()
+    {
+        Name = "mrbm";
+        MainCommand = new MainCommand(Show);
+    }
+
+    public void Show(string message)
+    {
+        Name = message;
+        MessageBox.Show(message);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+}
+```
+
+**单独创建一个类，简化属性set访问器**
+
+MainViewModel.cs
+
+```C#
+public string Name
+{
+    get { return _name;}
+    set
+    {
+        _name = value;
+        OnPropertyChanged();
+    }
+}
+```
+
+ViewModelBase.cs
+
+`[CallerMemberName]`该特性用于自动识别属性
+
+```C#
+public class ViewModelBase : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+}
+```
+
