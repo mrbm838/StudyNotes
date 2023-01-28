@@ -1,3 +1,5 @@
+
+
 # WPF布局介绍(1) 
 
 ---
@@ -161,7 +163,7 @@ WPF中的各类控件元素, 都可以自由的设置其样式。 诸如:
 
 注意: 
 
-- 当未指定`x:key:`样式名称时，即作用于此页面所有的目标控件
+- ==当未指定`x:key:`样式名称时，即作用于此页面所有的目标控件==
 
 - `BaseOn`表示继承某个样式，`TargetType="Button"`用了默认的隐式的方式，`TargetType="{x:Type Button}"`用了一个显式的命名空间引用，完全没区别。
 
@@ -694,5 +696,104 @@ public class ViewModelBase : INotifyPropertyChanged
         return true;
     }
 }
+```
+
+# Attention
+
+## x:Name和x:Key
+
+XAML的标签声明的是对象，一个XAML标签会对应着一个对象，这个对象一般是一个控件类的实例。
+
+### x:Name的作用有两个：
+
+（1）告诉XAML编译器，当一个标签带有x:Name时，除了为这个标签生成对应实例外，还要为这个实例声明一个引用变量，变量名就是x:Name的值。
+
+（2）将XAML标签所对应对象的Name属性（如果有）也设为x:Name的值，并把这个值注册到UI树上，以方便查找。
+
+Name属性定义在FrameworkElement类中，这个类是WPF控件的基类，所以所有WPF控件都具有Name这个属性。当一个元素具有Name属性时，使用Name或x:Name效果是一样的。Name和x:Name是可以互换的，只是不能同时出现在一个元素中。因为x:Name的功能涵盖了Name属性的功能，所以全部使用x:Name以增强代码的统一性和可读性。
+
+### x:Key的作用是为资源贴上用于检索的索引。
+
+在WPF中，几乎每个元素都有自己的Resources属性，这个属性是个“Key-Value”式的集合，只要把元素放进这个集合，这个元素就成为资源字典中的一个条目，当然，为了能够检索到这个条件，就必须为它添加x:Key。
+
+```xaml
+<Window .......>
+	<Window.Resources>
+        <sys:String x:Key="myString">Hello WPF Resource!</sys:String>
+    </Window.Resources>
+    <StackPanel>
+        <TextBox Text="{StaticResource ResourceKey=myString}"/>
+    </StackPanel>
+</Window >
+```
+
+区别：
+
+x:Key用在XAML Resources，ResourceDictionary需要key来访问。
+x:Name用在ResourceDictionary以外任何地方，可以使用x:Name在code-behind访问对象。
+x：Key唯一地标识作为资源创建和引用且存在于 ResourceDictionary 中的元素。
+x:Name 唯一标识对象元素，以便于从代码隐藏或通用代码中访问实例化的元素。 
+x:key和x:name的区别，前者是为XAML中定义的资源文件提供唯一的标识，后者是为XAML中定义的控件元素提供唯一标识。
+
+## 静态资源、动态资源和资源字典
+
+**静态资源(StaticResource)**指的是在程序载入[内存](https://so.csdn.net/so/search?q=内存&spm=1001.2101.3001.7020)时对资源的一次性使用，之后就不再访问这个资源了。
+
+**动态资源(DynamicResource)**指的是在程序运行过程中然会去访问资源。
+
+```xaml
+<StackPanel>
+    <Button x:Name="UpdateControl"  Margin="10"  Content="点击更新" Click="UpdateControl_Click"></Button>
+    <Button BorderThickness="5" x:Name="button1" Content="测试1" Height="40"  Margin="10" BorderBrush="{StaticResource SolidColor}"></Button>
+    <Button BorderThickness="5"  x:Name="button2" Content="测试1" Height="40"  Margin="10" BorderBrush="{DynamicResource SolidColor}"></Button>
+</StackPanel>
+```
+
+AppBrush.xaml
+
+```xaml
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ 
+    <SolidColorBrush x:Key="SolidColor" Color="Red"></SolidColorBrush>
+    <Style x:Key="DefaultButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="Blue"></Setter>
+        <Setter Property="FontSize" Value="15"></Setter>
+    </Style>
+</ResourceDictionary>
+```
+
+```c#
+private void UpdateControl_Click(object sender, RoutedEventArgs e)
+{
+    //动态改变资源的样式
+    this.Resources["SolidColor"] = new SolidColorBrush(Colors.Black);
+    //动态获取样式的详细信息
+    var solidColor = App.Current.FindResource("SolidColor");
+    var defaultButtonStyle = App.Current.FindResource("DefaultButtonStyle");
+}
+```
+
+**资源字典(ResourceDictionary)**只是XAML文档，如果希望在多个项目之间共享资源，可创建资源字典。除了存储希望使用的资源外，不做其他任何事情。
+
+如上新建的AppBrush.xaml。为了使用资源字典，需要将其合并到应用程序的资源集合中，如App.xaml。
+
+如果希望添加自己的资源并合并到资源字典中，只需要在MergedDictionaries部分之前或之后放置资源就可以了。
+
+```xaml
+<Application x:Class="Resources.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="Menu.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="AppBrushes.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <ImageBrush x:Key="GraphicalBrush1"></ImageBrush>
+            <ImageBrush x:Key="GraphicalBrush2"></ImageBrush>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
 ```
 
