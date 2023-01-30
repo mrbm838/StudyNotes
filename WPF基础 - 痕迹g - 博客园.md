@@ -698,6 +698,89 @@ public class ViewModelBase : INotifyPropertyChanged
 }
 ```
 
+# WPF动画
+
+## XAML创建动画
+
+```xaml
+<Window.Resources>
+    <Storyboard x:Key="Loading">
+        <ThicknessAnimation Duration="0:0:0.3" From="0,100,0,100"  To="0"
+                            Storyboard.TargetName="GridMain" Storyboard.TargetProperty="Margin" />
+    </Storyboard>
+    <Storyboard x:Key="Closing">
+        <ThicknessAnimation Duration="0:0:0.6" From="0" To="0,100,0,100" Storyboard.TargetName="GridMain" 
+                            Storyboard.TargetProperty="Margin" Completed="Timeline_OnCompleted"/>
+    </Storyboard>
+</Window.Resources>
+<Window.Triggers>
+    <EventTrigger RoutedEvent="Loaded" >
+        <BeginStoryboard Storyboard="{StaticResource Loading}"/>
+    </EventTrigger>
+    <EventTrigger RoutedEvent="TextBlock.MouseLeftButtonDown">
+        <BeginStoryboard Storyboard="{StaticResource Closing}"/>
+    </EventTrigger>
+</Window.Triggers>
+<Grid x:Name="GridMain">
+    <TextBlock Name="block" TextAlignment="Justify" Background="Beige">This is a Text</TextBlock>
+</Grid>
+```
+
+```C#
+private void Timeline_OnCompleted(object? sender, EventArgs e)
+{
+    block.Text = "Over";
+}
+```
+
+## 代码创建
+
+### Storyboard 
+
+1.创建 Storyboard 对象, 用于装配子动画对象和属性信息。
+2.由于控制Margin, 用到的属于 Thickness 结构的数据类型, 所以需要创建 ThicknessAnimation 对象。
+3.设置 ThicknessAnimation 其子属性的参数: 动画时间、 初始值、结束值。
+4.绑定其元素对象GridMain
+5.绑定依赖属性 Margin
+6.添加到 Storyboard 容器中
+7.运行动画
+
+```C#
+System.Windows.Media.Animation.Storyboard sb = new System.Windows.Media.Animation.Storyboard();
+System.Windows.Media.Animation.ThicknessAnimation dmargin = new System.Windows.Media.Animation.ThicknessAnimation();
+dmargin.Duration = new TimeSpan(0, 0, 0, 0, 300);
+dmargin.From = new Thickness(0, 300, 0, 300);
+dmargin.To = new Thickness(0, 0, 0, 0);
+System.Windows.Media.Animation.Storyboard.SetTarget(dmargin, GridMain);
+System.Windows.Media.Animation.Storyboard.SetTargetProperty(dmargin, new PropertyPath("Margin", new object[] { }));
+sb.Children.Add(dmargin);
+sb.Begin();
+```
+
+### DoubleAnimation
+
+- `From` `To` 可直接替换成值，因为BeginAnimation绑定了按钮的宽度属性，等价于`By`
+- `AutoReverse`表示是否往返，默认在指定时间内(`Duration`)往返一次
+- `RepeatBehavior`表示重复行为
+  - new(4)指重复4次，AutoReverse = true时，往返4次，每次时间为指定时间(`Duration`)
+  - new(TimeSpan.FromMilliseconds(800))指重复800ms，AutoReverse = true时，往返800ms，每次时间为指定时间(`Duration`)
+
+```C#
+private void Btn_OnClick(object sender, RoutedEventArgs e)
+{
+    DoubleAnimation animation = new DoubleAnimation
+    {
+        From = 60,//btn.Width,
+        To = 30,//btn.Height /2,
+        // By = -30,
+        Duration = TimeSpan.FromMilliseconds(200),
+        AutoReverse = true,
+        RepeatBehavior = new(4)// new(TimeSpan.FromMilliseconds(800)),
+    };
+    btn.BeginAnimation(Button.WidthProperty, animation);
+}
+```
+
 # Attention
 
 ## x:Name和x:Key
