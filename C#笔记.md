@@ -3466,9 +3466,116 @@ while ((line = sr.ReadLine()) != null)
 }
 ```
 
+##### 40.保存对象单例
 
+错误写法1
 
+```C#
+//错误 => 本质是 get set会一直创建新对象
+public static  SqlSugarScope  Db=> new  ...(); 
 
+//错误  不能get set
+public static  SqlSugarScope  Db{get{ retun new xxx}}  
+
+//错误 不能是方法，调一次方法会创建一次
+public static  SqlSugarScope  Db(){ return new xxx}
+
+//错误  SqlSugarClient不能单例只能用 SqlSugarScope  
+public static  SqlSugarClient Db=new  ...(); 
+
+//正确写法
+public static  SqlSugarScope  =  new  ...();
+```
+
+错误写法2：不能在泛型类中new
+
+```C#
+public class DbContext<T>  //错误原因:DbContext<T>.Db 随着T不同他的实例也会不同
+{ 
+   public static SqlSugarScope  Db=new  ...(); //应该提取到非泛型类或者IOC单例注入
+}
+ 
+//正确用法
+public class DbContext<T> 
+{ 
+   public static  SqlSugarScope Db  =  SqlSugarHelper.Db; //在建一个类
+}
+```
+
+错误写法3:不能在构造函数内部new
+
+```C#
+public class DbContext
+{
+   public DbContext()
+   {
+       Db=new SqlSugarScope..(); //new一次DbContext会创建一个实例
+    }
+    public static  SqlSugarScope  Db ;
+}
+
+//正确用法 
+public static  SqlSugarScope  Db= new xxxx();
+```
+
+例示1：继承方式单例
+
+```C#
+public class TestManager : DbContext
+{
+    public List<Order> Add()
+    {
+        return Db.Queryable<Order>().ToList();
+    }
+}
+public class DbContext  //如果是泛型类 Db要扔到外面 ,DbContext<T>.Db会导致产生多个实例
+{
+    protected  static SqlSugarScope Db = new SqlSugarScope(
+        new ConnectionConfig()
+        {
+            DbType = SqlSugar.DbType.SqlServer,
+            ConnectionString = Config.ConnectionString,
+            IsAutoCloseConnection = true
+        },
+        db => {
+            //单例参数配置，所有上下文生效
+            db.Aop.OnLogExecuting = (s, p) =>
+            {
+                Console.WriteLine(s);
+            };
+        });
+}
+```
+
+**示例2 类调用方式**
+
+```C#
+public class TestManager 
+{
+    public List<Order> Add()
+    {
+        return DbContext.Db.Queryable<Order>().ToList();
+    }
+}
+public class DbContext //如果是泛型类 Db要扔到外面 ,DbContext<T>.Db会导致产生多个实例
+{ 
+    //这里要public 
+    public static SqlSugarScope Db = new SqlSugarScope(
+        new ConnectionConfig()
+        {
+            DbType = SqlSugar.DbType.SqlServer,
+            ConnectionString = Config.ConnectionString,
+            IsAutoCloseConnection = true
+        },
+        db => {
+            //单例参数配置，所有上下文生效
+            db.Aop.OnLogExecuting = (s, p) =>
+            {
+                Console.WriteLine(s);
+            };
+        });
+}
+```
 
 
 
