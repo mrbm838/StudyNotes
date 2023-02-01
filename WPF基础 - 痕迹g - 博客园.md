@@ -1,5 +1,7 @@
 
 
+
+
 # WPF布局介绍(1) 
 
 ---
@@ -143,7 +145,7 @@ WPF中的各类控件元素, 都可以自由的设置其样式。 诸如:
 
 为了能够直观了解到样式(Style)的使用方法, 下面演示一个从传统的定义控件样式到使用Style组织样式的方法。
 
-#### 下面的例子中, 给4个TextBlock设置同样的样式: 字体、字体大小、字体颜色、加粗设置。
+下面的例子中, 给4个TextBlock设置同样的样式: 字体、字体大小、字体颜色、加粗设置。
 
 效果图与实际代码如下所示:
 ![样式1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/样式1.png)
@@ -163,7 +165,7 @@ WPF中的各类控件元素, 都可以自由的设置其样式。 诸如:
 
 注意: 
 
-- ==当未指定`x:key:`样式名称时，即作用于此页面所有的目标控件==
+- 当未指定`x:key:`样式名称时，即作用于此页面所有的目标控件
 
 - `BaseOn`表示继承某个样式，`TargetType="Button"`用了默认的隐式的方式，`TargetType="{x:Type Button}"`用了一个显式的命名空间引用，完全没区别。
 
@@ -781,6 +783,160 @@ private void Btn_OnClick(object sender, RoutedEventArgs e)
 }
 ```
 
+# WPF资源
+
+### 静态资源(StaticResource)
+
+指的是在程序载入内存时对资源的一次性使用，之后就不再访问这个资源了。
+
+### 动态资源(DynamicResource)
+
+指的是在程序运行过程中然会去访问资源。
+
+```xaml
+<StackPanel>
+    <Button x:Name="UpdateControl"  Margin="10"  Content="点击更新" Click="UpdateControl_Click"></Button>
+    <Button BorderThickness="5" x:Name="button1" Content="测试1" Height="40"  Margin="10" BorderBrush="{StaticResource SolidColor}"></Button>
+    <Button BorderThickness="5"  x:Name="button2" Content="测试1" Height="40"  Margin="10" BorderBrush="{DynamicResource SolidColor}"></Button>
+</StackPanel>
+```
+
+AppBrush.xaml
+
+```xaml
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ 
+    <SolidColorBrush x:Key="SolidColor" Color="Red"></SolidColorBrush>
+    <Style x:Key="DefaultButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="Blue"></Setter>
+        <Setter Property="FontSize" Value="15"></Setter>
+    </Style>
+</ResourceDictionary>
+```
+
+```c#
+private void UpdateControl_Click(object sender, RoutedEventArgs e)
+{
+    //动态改变资源的样式
+    this.Resources["SolidColor"] = new SolidColorBrush(Colors.Black);
+    //动态获取样式的详细信息
+    var solidColor = App.Current.FindResource("SolidColor");
+    var defaultButtonStyle = App.Current.FindResource("DefaultButtonStyle");
+}
+```
+
+### 资源字典(ResourceDictionary)
+
+单独的XAML文档，如果希望在多个项目之间共享资源，可创建资源字典。除了存储希望使用的资源外，不做其他任何事情。
+
+如上新建的AppBrush.xaml。为了使用资源字典，需要将其合并到应用程序的资源集合中。
+
+- App.xaml 即可全局引用
+- 具体的xaml 如Page\Window\UserControl，则包含在`<*.Resources>`标签内，只供该xaml引用
+
+如果希望添加自己的资源并合并到资源字典中，只需要在MergedDictionaries部分之前或之后放置资源就可以了。
+
+```xaml
+<Application x:Class="Resources.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="Menu.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary1.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <sys:String x:Key="txt" >I am ViewA</sys:String>
+            <sys:Double x:Key="textBlock">28</sys:Double>
+            <Color x:Key="GraphicalBrush1" >Blue</Color>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+```
+
+Dictionary1.xaml
+
+```xaml
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="styleBlock" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="38"/>
+    </Style>
+</ResourceDictionary>
+```
+
+View.xaml
+
+```xaml
+<TextBlock Text ="{StaticResource txt}" FontSize="{StaticResource textBlock}"></TextBlock>
+<TextBlock Text ="I am ViewC" Style="{StaticResource styleBlock}" ></TextBlock>
+```
+
+# Prism区域(Region)
+
+MainWindowView.xaml
+
+```xaml
+<WrapPanel>
+    <Button Content="OpenA" Command="{Binding OpenCommand}" CommandParameter="ViewA"/>
+    <Button Content="OpenB" Command="{Binding OpenCommand}" CommandParameter="B"/>
+    <Button Content="OpenC" Command="{Binding OpenCommand}" CommandParameter="C"/>
+</WrapPanel>
+<!--声明一个区域-->
+<ContentControl Grid.Row="1" prism:RegionManager.RegionName="ContentRegion"/>
+```
+
+创建ViewA,ViewB,ViewC三个用户控件
+
+App.xaml.cs
+
+```c#
+protected override Window CreateShell()
+{
+    return Container.Resolve<MainWindow>();
+}
+
+protected override void RegisterTypes(IContainerRegistry containerRegistry)
+{
+    //注册3个用户控件
+    containerRegistry.RegisterForNavigation<ViewA>();
+    containerRegistry.RegisterForNavigation<ViewB>("B");
+    containerRegistry.RegisterForNavigation<ViewC>("C");
+}
+```
+
+MainWindowVewModel.cs
+
+```C#
+public class MainWindowViewModel : BindableBase
+{
+    private readonly IRegionManager _regionManager;
+
+    private DelegateCommand<string> _openCommand;
+
+    public DelegateCommand<string> OpenCommand => _openCommand ??= new DelegateCommand<string>(ExecuteCommandName);
+
+
+    void ExecuteCommandName(string obj)
+    {
+        // 通过IRegionManager接口获取全局定义的可用区域
+        // 往这个区域以依赖注入的方式去动态设置内容
+        _regionManager.Regions["ContentRegion"].RequestNavigate(obj);
+        //等价于
+        _regionManager.RequestNavigate("ContentRegion", obj);
+    }
+
+    public MainWindowViewModel(IRegionManager regionManager)
+    {
+        _regionManager = regionManager;
+        _openCommand = new DelegateCommand<string>(ExecuteCommandName);
+    }
+}
+```
+
+
+
 # Attention
 
 ## x:Name和x:Key
@@ -817,66 +973,4 @@ x:Name用在ResourceDictionary以外任何地方，可以使用x:Name在code-beh
 x：Key唯一地标识作为资源创建和引用且存在于 ResourceDictionary 中的元素。
 x:Name 唯一标识对象元素，以便于从代码隐藏或通用代码中访问实例化的元素。 
 x:key和x:name的区别，前者是为XAML中定义的资源文件提供唯一的标识，后者是为XAML中定义的控件元素提供唯一标识。
-
-## 静态资源、动态资源和资源字典
-
-**静态资源(StaticResource)**指的是在程序载入[内存](https://so.csdn.net/so/search?q=内存&spm=1001.2101.3001.7020)时对资源的一次性使用，之后就不再访问这个资源了。
-
-**动态资源(DynamicResource)**指的是在程序运行过程中然会去访问资源。
-
-```xaml
-<StackPanel>
-    <Button x:Name="UpdateControl"  Margin="10"  Content="点击更新" Click="UpdateControl_Click"></Button>
-    <Button BorderThickness="5" x:Name="button1" Content="测试1" Height="40"  Margin="10" BorderBrush="{StaticResource SolidColor}"></Button>
-    <Button BorderThickness="5"  x:Name="button2" Content="测试1" Height="40"  Margin="10" BorderBrush="{DynamicResource SolidColor}"></Button>
-</StackPanel>
-```
-
-AppBrush.xaml
-
-```xaml
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
- 
-    <SolidColorBrush x:Key="SolidColor" Color="Red"></SolidColorBrush>
-    <Style x:Key="DefaultButtonStyle" TargetType="Button">
-        <Setter Property="Foreground" Value="Blue"></Setter>
-        <Setter Property="FontSize" Value="15"></Setter>
-    </Style>
-</ResourceDictionary>
-```
-
-```c#
-private void UpdateControl_Click(object sender, RoutedEventArgs e)
-{
-    //动态改变资源的样式
-    this.Resources["SolidColor"] = new SolidColorBrush(Colors.Black);
-    //动态获取样式的详细信息
-    var solidColor = App.Current.FindResource("SolidColor");
-    var defaultButtonStyle = App.Current.FindResource("DefaultButtonStyle");
-}
-```
-
-**资源字典(ResourceDictionary)**只是XAML文档，如果希望在多个项目之间共享资源，可创建资源字典。除了存储希望使用的资源外，不做其他任何事情。
-
-如上新建的AppBrush.xaml。为了使用资源字典，需要将其合并到应用程序的资源集合中，如App.xaml。
-
-如果希望添加自己的资源并合并到资源字典中，只需要在MergedDictionaries部分之前或之后放置资源就可以了。
-
-```xaml
-<Application x:Class="Resources.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="Menu.xaml">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="AppBrushes.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            <ImageBrush x:Key="GraphicalBrush1"></ImageBrush>
-            <ImageBrush x:Key="GraphicalBrush2"></ImageBrush>
-        </ResourceDictionary>
-    </Application.Resources>
-</Application>
-```
 
