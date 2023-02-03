@@ -2,6 +2,8 @@
 
 
 
+
+
 # WPF布局介绍(1) 
 
 ---
@@ -935,9 +937,130 @@ public class MainWindowViewModel : BindableBase
 }
 ```
 
+# Prism模块
 
+---
+
+在Prism区域程序上，创建模块（类库）ModuleA，ModuleA添加ModuleAProfile.cs，将ModuleA中的Views/ViewA注册到导航。
+
+```C#
+public class ModuleAProfile : IModule
+{
+    public void RegisterTypes(IContainerRegistry containerRegistry)
+    {
+        containerRegistry.RegisterForNavigation<ViewA>();
+    }
+
+    public void OnInitialized(IContainerProvider containerProvider)
+    {
+    }
+}
+```
+
+
+
+## 引用+代码的方式
+
+**缺点：耦合度较高，取消模块时，需要取消引用，再修改App.xaml.cs的代码**
+
+主项目添加ModuleA的项目引用
+
+![模块1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/%E6%A8%A1%E5%9D%971.jpg)
+
+MainWindow.xaml
+
+```xaml
+<WrapPanel>
+    <Button Content="OpenA" Command="{Binding OpenCommand}" CommandParameter="A"/>
+    <Button Content="OpenB" Command="{Binding OpenCommand}" CommandParameter="B"/>
+    <Button Content="OpenC" Command="{Binding OpenCommand}" CommandParameter="C"/>
+    <Button Content="OpenD" Command="{Binding OpenCommand}" CommandParameter="ViewA"/>
+</WrapPanel>
+
+<!--声明一个区域-->
+<ContentControl Grid.Row="1" prism:RegionManager.RegionName="ContentRegion"/>
+```
+
+App.xaml.cs，覆盖ConfigureModuleCatalog方法添加模块A
+
+```C#
+using ModuleA.Views;
+
+public partial class App
+{
+    protected override Window CreateShell()
+    {
+        return Container.Resolve<MainWindow>();
+    }
+
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
+    {
+        containerRegistry.RegisterForNavigation<ViewA>("A");
+        containerRegistry.RegisterForNavigation<ViewB>("B");
+        containerRegistry.RegisterForNavigation<ViewC>("C");
+    }
+
+    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    {
+        moduleCatalog.AddModule<ModuleAProfile>();
+        base.ConfigureModuleCatalog(moduleCatalog);
+    }
+}
+```
+
+*注意：先注册主项目的视图导航，ModuleA的视图ViewA最后注册进来。如果主程序的存在和模块同名的ViewA，则会被覆盖，可换名称或使用别名。*
+
+## DLL+配置方式
+
+优点：取消模块时将模块项目的生成后事件清空，再删除DLL所在的目录内对应模块的DLL
+
+App.xaml.cs，覆盖CreateModuleCatalog方法添加模块生成DLL所在的目录
+
+```C#
+public partial class App
+{
+    protected override Window CreateShell()
+    {
+        return Container.Resolve<MainWindow>();
+    }
+
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
+    {
+        containerRegistry.RegisterForNavigation<ViewA>("A");
+        containerRegistry.RegisterForNavigation<ViewB>("B");
+        containerRegistry.RegisterForNavigation<ViewC>("C");
+    }
+
+    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    {
+        //moduleCatalog.AddModule<ModuleAProfile>();
+        //base.ConfigureModuleCatalog(moduleCatalog);
+    }
+
+    protected override IModuleCatalog CreateModuleCatalog()
+    {
+        string projName = Assembly.GetExecutingAssembly().GetName().Name;
+        string directory = Environment.CurrentDirectory;
+        int removeIndex = directory.IndexOf(projName, StringComparison.Ordinal);
+        string path = directory.Remove(removeIndex, projName.Length + 1);
+
+        return new DirectoryModuleCatalog()
+        {
+            ModulePath = path + "\\Modules"
+        };
+    }
+}
+```
+
+在ModuleA项目属性的生成后事件添加下行代码，将其生成的DLL复制到解决方案目录下
+
+`xcopy "$(TargetDir)$(TargetName)*$(TargetExt)" "$(SolutionDir)\$(OutDir)Modules\" /Y /S`
+
+![模块2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/%E6%A8%A1%E5%9D%972.jpg)
 
 # Attention
+
+---
 
 ## x:Name和x:Key
 
