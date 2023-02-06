@@ -877,6 +877,8 @@ View.xaml
 
 # Prism区域(Region)
 
+---
+
 MainWindowView.xaml
 
 ```xaml
@@ -926,7 +928,7 @@ public class MainWindowViewModel : BindableBase
         // 往这个区域以依赖注入的方式去动态设置内容
         _regionManager.Regions["ContentRegion"].RequestNavigate(obj);
         //等价于
-        _regionManager.RequestNavigate("ContentRegion", obj);
+        //_regionManager.RequestNavigate("ContentRegion", obj);
     }
 
     public MainWindowViewModel(IRegionManager regionManager)
@@ -1012,7 +1014,7 @@ public partial class App
 
 ## DLL+配置方式
 
-优点：取消模块时将模块项目的生成后事件清空，再删除DLL所在的目录内对应模块的DLL
+优点：取消模块时，将模块项目的生成后事件清空，再删除DLL所在的目录内（Modules文件夹下）对应模块的DLL
 
 App.xaml.cs，覆盖CreateModuleCatalog方法添加模块生成DLL所在的目录
 
@@ -1057,6 +1059,29 @@ public partial class App
 `xcopy "$(TargetDir)$(TargetName)*$(TargetExt)" "$(SolutionDir)\$(OutDir)Modules\" /Y /S`
 
 ![模块2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/%E6%A8%A1%E5%9D%972.jpg)
+
+# Prism导航
+
+---
+
+## 约定大于配置
+
+prism中视图的主标签内有如下标签，可以自动建立起View和ViewModel的关系
+
+```xaml
+prism:ViewModelLocator.AutoWireViewModel="True"
+```
+
+但是约定大于配置，为了方便查找，通常显式建立View和ViewModel的对应关系
+
+```C#
+public void RegisterTypes(IContainerRegistry containerRegistry)
+{
+    containerRegistry.RegisterForNavigation<ViewA, ViewAViewModel>();
+}
+```
+
+
 
 # Attention
 
