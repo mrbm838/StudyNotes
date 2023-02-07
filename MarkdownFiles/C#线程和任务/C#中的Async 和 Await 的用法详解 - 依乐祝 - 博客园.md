@@ -130,7 +130,7 @@ class Program
     public static async Task<int> Method1()
     {  
         int count = 0;
-a		wait Task.Run(() =>
+        await Task.Run(() =>
             {  
                 for (int i = 0; i < 100; i++)
                 {  
@@ -259,21 +259,24 @@ public class Example
                         "www.cohowinery.com", "www.northwindtraders.com",
                         "www.contoso.com" };
       
-      foreach (var value in urls) {
+      foreach (var value in urls)
+      {
          var url = value;
-         tasks.Add(Task.Run( () => { var png = new Ping();
-                                     try {
-                                        var reply = png.Send(url);
-                                        if (! (reply.Status == IPStatus.Success)) {
-                                           Interlocked.Increment(ref failed);
-                                           throw new TimeoutException("Unable to reach " + url + ".");
-                                        }
-                                     }
-                                     catch (PingException) {
+         tasks.Add(Task.Run(() =>
+                            {
+                                var png = new Ping();
+                                try {
+                                    var reply = png.Send(url);
+                                    if (! (reply.Status == IPStatus.Success)) {
                                         Interlocked.Increment(ref failed);
-                                        throw;
-                                     }
-                                   }));
+                                        throw new TimeoutException("Unable to reach " + url + ".");
+                                    }
+                                }
+                                catch (PingException) {
+                                    Interlocked.Increment(ref failed);
+                                    throw;
+                                }
+                            }));
       }
       Task t = Task.WhenAll(tasks);
       try {
