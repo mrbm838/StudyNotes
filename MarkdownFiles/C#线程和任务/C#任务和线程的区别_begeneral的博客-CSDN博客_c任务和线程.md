@@ -104,7 +104,9 @@ var task1 = new Task(() => { });
 var task2 = new Task<int>(()=> 
 {
     return 0;
-});task1.Start();task2.Start();
+});
+task1.Start();
+task2.Start();
 ```
 
 　　2.使用任务工厂(任务需要长时间运行)
@@ -162,7 +164,7 @@ Task.Factory.StartNew(() =>
 创建的线程，如果需要等待线程执行完成在继续，那么可以使用 await 等待
 
 ```C#
-rivate static async void SeenereKousa()
+private static async void SeenereKousa()
 {
      Console.WriteLine("开始 线程"+Thread.CurrentThread.ManagedThreadId);
      await Task.Run(() =>
