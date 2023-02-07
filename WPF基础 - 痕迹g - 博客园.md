@@ -1072,12 +1072,68 @@ prism中视图的主标签内有如下标签，可以自动建立起View和ViewM
 prism:ViewModelLocator.AutoWireViewModel="True"
 ```
 
-但是约定大于配置，为了方便查找，通常显式建立View和ViewModel的对应关系
+但是约定大于配置，且为了方便查找，通常显式建立View和ViewModel的对应关系
 
 ```C#
 public void RegisterTypes(IContainerRegistry containerRegistry)
 {
     containerRegistry.RegisterForNavigation<ViewA, ViewAViewModel>();
+}
+```
+
+## 导航传参
+
+MainWindowViewModel.cs，在命令的执行函数中，向Message字段传“I am Main”字符串
+
+```C#
+void ExecuteCommandName(string obj)
+{    
+    //this.regionManager.RequestNavigate("ContentRegion", "WViewA");= {  }
+    NavigationParameters parameters = new NavigationParameters { { "Message", "I am Main" } };
+    // 等价于 parameters.Add("Message", "I am Main");
+	regionManager.Regions["ContentRegion"].RequestNavigate(obj, parameters);
+}
+```
+
+ModuleA.ViewAViewModel.cs
+
+```C#
+public class ViewAViewModel : BindableBase, INavigationAware
+{
+    private string message;
+
+    public ViewAViewModel()
+    {
+        Message = "View A from your Prism Module";
+    }
+
+    public string Message
+    {
+        get => message;
+        set => SetProperty(ref message, value);
+    }
+    
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        if (navigationContext.Parameters.ContainsKey("Message"))
+            this.Message = (string)navigationContext.Parameters["Message"];
+        // 等价于 Message = navigationContext.Parameters.GetValue<string>("Message");
+        
+        // 下式则减少了if判断
+        navigationContext.Parameters.TryGetValue("Message", out message);
+    }
+
+    /// <summary>
+    /// 每次重新导航时，是否重用原来的实例
+    /// </summary>
+    public bool IsNavigationTarget(NavigationContext navigationContext)
+    {
+        return true;
+    }
+
+    public void OnNavigatedFrom(NavigationContext navigationContext)
+    {
+    }
 }
 ```
 
