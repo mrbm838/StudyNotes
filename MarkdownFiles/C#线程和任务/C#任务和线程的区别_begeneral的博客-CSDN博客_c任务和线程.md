@@ -235,4 +235,66 @@ Task.Factory.StartNew(() =>
 Task.Factory.StartNew(foo, CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 ```
 
+#  [C# Task.Run() 启动方法总结](https://www.cnblogs.com/xunzf0402/p/16563390.html)
+
+Task 启动的线程默认为**线程池**里的，启动后默认为**后台线程**
+
+## 无参无返回值
+
+```csharp
+Task.Run(Test);
+
+public void Test()
+{
+    //...to...
+    
+}
+```
+
+## 无参有返回值
+
+```csharp
+//以string返回值为例,Task<string>中的<string>可省略
+//task前面的var也可以直接写Task<string>,这里如果直接写的话不能将<string>省略
+var task=Task.Run(Test);
+string result=task.Result;
+    
+public string Test()
+{
+    //...todo...
+    
+    return "str";
+}
+```
+
+## 有参无返回值
+
+```csharp
+//以string参数为例
+string str="str...";
+Task.Run(()=>Test(str));
+
+public void Test(string str)
+{
+    //...todo...
+    
+}
+```
+
+## 有参有返回值
+
+```csharp
+//这里以参数为int,返回值string为例
+int num = 10 ;
+var task = Task.Run(() => Test(num));
+string result = task.Result;
+
+public string Test(int n)
+{
+    //...todo...
+    
+    return "str...";
+}
+```
+
  

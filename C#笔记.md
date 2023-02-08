@@ -2327,7 +2327,10 @@ $100.00
 3. 其它转十进制
 
    ```C#
+   // 16进制转10进制
    int digital = Convert.ToInt32(strhex, 16);
+   int _digital = Int32.Parse(strhex, System.Globalization.NumberStyles.HexNumber);
+   
    int digital2 = Convert.ToInt32(strhex2, 10);
    int digital3 = Convert.ToInt32(strhex3, 8);
    int digital4 = Convert.ToInt32(strhex4, 2);

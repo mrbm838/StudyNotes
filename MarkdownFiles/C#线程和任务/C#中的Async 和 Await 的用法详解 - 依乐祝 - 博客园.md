@@ -37,6 +37,13 @@ author: 依乐祝
 
 在Async 和 await关键字的帮助下，使得异步编程变得很简单，而且我们将获得传统异步编程的所有好处。
 
+async/await的全称叫做 异步IO及等待 所以他跟线程没有任何关系，只是他们在单边输出的时候喜欢拽上task，所以在跟线程挂上了边。因为task才是线程的升级，async并不是。async只是异步IO的升级封装.
+
+1、异步 往往（不是一定） 需要多线程配合去完成不同的工作，比如Task实现了多线程。简单的说：异步需要多线程，但异步是不多线程 
+2、async和await不是多线程，是异步，所以你看到的async包含的代码中，线程id是一样的，因为它代码仍然运行在主线程中。 
+3、只有Task.Run()所包含的代码，才运行在另外一个线程中
+4、假设你的代码，使用async await模式能实现10万个并发，但为什么不是实现100万个并发，1000万个并发？是因为仍然有部分代码运行在主线程中，主线程仍然消耗了cpu资源，只不过较少。消耗cpu的，就是你async开始到Task.Run（）之间的那部分代码。
+
 ## 实例讲解
 
 假设我们分别使用了两种方法，即Method 1和Method 2，这两种方法不相互依赖，而Method 1需要很长时间才能完成它的任务。在同步编程中，它将执行第一个Method 1，并等待该方法的完成，然后执行Method 2。因此，这将是一个时间密集型的过程，即使这两种方法并不相互依赖。
@@ -330,3 +337,76 @@ public class Example
 1. `Task.WaitAll()` 会阻塞当前线程直到所有任务完成； `Task.WhenAll()` 会创建一个新的任务，此任务只有在其他所有任务完成后才完成。
 2. 由此可知，`Task.WaitAll()`是阻塞的方法，`Task.WhenAll()` 是非阻塞方法。
    [参考链接](https://www.tutorialspoint.com/what-is-the-difference-between-task-whenall-and-task-waitall-in-chash)
+
+## 声明方式
+
+异步方法的声明语法与其他方法完全一样, 只是需要包含 async 关键字。async可以出现在返回值之前的任何位置, 如下示例:
+
+```C#
+async public static void GetInfoAsync()
+{
+   //...
+}
+
+public async static void GetInfoAsync()
+{
+   //...
+}
+
+public static async void GetInfoAsync()
+{
+    //...
+}
+```
+
+## 异步方法的返回类型
+
+异步函数的返回类型只能为: void、Task、Task<TResult>。
+
+1. Task<TResult>: 代表一个返回值T类型的操作。
+
+2. Task: 代表一个无返回值的操作。
+
+3. void: 为了和传统的事件处理程序兼容而设计。
+
+
+## await(等待)
+
+await等待的是什么? 可以是一个异步操作(Task)、亦或者是具备返回值的异步操作(Task<TResult>)的值, 如下:
+
+```C#
+public async static void GetInfoAsync()
+{
+    await GetData(); // 等待异步操作, 无返回值
+    await GetData<int>(1); //等待异步操作, 返回值 int
+}
+
+static Task GetData()
+{
+    //...
+    return null;
+}
+
+static Task<T> GetData<T>(int a)
+{
+    //...
+    return null;
+}
+public async static void GetInfoAsync()
+{
+    await GetData(); // 等待异步操作, 无返回值
+    await GetData<int>(1); //等待异步操作, 返回值 int
+}
+static Task GetData()
+{
+    //...
+    return null;
+}
+
+static Task<T> GetData<T>(int a)
+{
+    //...
+    return null;
+}
+```
+注: await 最终操作的是一个值, 当然, 也可以是无值, 如上GetData() , 否则就是一个 Task<T> 如上: GetData<T>()
