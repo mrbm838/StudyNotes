@@ -1137,6 +1137,112 @@ public class ViewAViewModel : BindableBase, INavigationAware
 }
 ```
 
+## 导航请求
+
+ModuleA.ViewAViewModel.cs，**INavigationAware替换成IConfirmNavigationRequest**
+
+```C#
+public class ViewAViewModel : BindableBase, IConfirmNavigationRequest
+{
+    private string _message;
+    public string Message
+    {
+        get { return _message; }
+        set { SetProperty(ref _message, value); }
+    }
+
+    public ViewAViewModel()
+    {
+        Message = "View A from your Prism Module";
+    }
+
+    /// <summary>
+    /// 导航到本页面时触发
+    /// </summary>
+    /// <param name="navigationContext"></param>
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+
+    }
+
+    /// <summary>
+    /// 重新导航到本页面时触发，是否重用原来的实例
+    /// </summary>
+    /// <param name="navigationContext"></param>
+    /// <returns></returns>
+    public bool IsNavigationTarget(NavigationContext navigationContext)
+    {
+        return true;
+    }
+
+    /// <summary>
+    /// 从本页面重新导航时触发
+    /// </summary>
+    /// <param name="navigationContext"></param>
+    public void OnNavigatedFrom(NavigationContext navigationContext)
+    {
+    }
+
+    /// <summary>
+    /// 本页面接受导航请求时触发
+    /// </summary>
+    /// <param name="navigationContext"></param>
+    /// <param name="continuationCallback"></param>
+    public void ConfirmNavigationRequest(NavigationContext navigationContext, Action<bool> continuationCallback)
+    {
+        bool bResult = MessageBox.Show("是否确认导航？", "提示", MessageBoxButton.YesNo) != MessageBoxResult.No;
+        continuationCallback(bResult);
+    }
+}
+```
+
+## 导航日志
+
+MainWindow.xaml，添加按钮
+
+```xaml
+<Button Content="Back" Command="{Binding BackCommand}"/>
+```
+
+MainWindowViewModel.cs
+
+```C#
+private IRegionNavigationJournal _navigationJournal;
+
+private DelegateCommand _backCommand;
+public DelegateCommand BackCommand =>
+            _backCommand ??= new DelegateCommand(ExecuteBackCommand);
+
+void ExecuteBackCommand()
+{   
+    if (_navigationJournal is { CanGoBack: true })
+    {
+        _navigationJournal.GoBack();
+    }
+}
+
+public MainWindowViewModel(IRegionManager regionManager)
+{
+    _regionManager = regionManager;
+    _openCommand = new DelegateCommand<string>(ExecuteCommandName);
+    _backCommand = new DelegateCommand(ExecuteBackCommand);
+} 
+
+void ExecuteCommandName(string obj)
+ {
+     NavigationParameters parameters = new NavigationParameters();
+
+     _regionManager.RequestNavigate("ContentRegion", obj, callback =>
+                                    {
+                                        if ((bool)callback.Result)
+                                            _navigationJournal = callback.Context.NavigationService.Journal;
+                                    }, parameters);
+     // 通过IRegionManager接口获取全局定义的可用区域
+     // 往这个区域以依赖注入的方式去动态设置内容
+     //_regionManager.Regions["ContentRegion"].RequestNavigate("ViewA");
+ }
+```
+
 
 
 # Attention
