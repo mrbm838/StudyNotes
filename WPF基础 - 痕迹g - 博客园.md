@@ -1282,7 +1282,7 @@ public MainWindowViewModel(IRegionManager regionManager, IDialogService dialogSe
 }
 ```
 
-新建ViewDialog.xaml
+ModuleA新建ViewDialog.xaml
 
 ```xaml
 <UserControl.Resources>
@@ -1308,7 +1308,7 @@ public MainWindowViewModel(IRegionManager regionManager, IDialogService dialogSe
 </Grid>
 ```
 
-新建View DialogViewModel.cs
+ModuleA新建View DialogViewModel.cs
 
 ```C#
 internal class ViewDialogViewModel : BindableBase, IDialogAware
@@ -1356,6 +1356,15 @@ internal class ViewDialogViewModel : BindableBase, IDialogAware
         _concelCommand = new DelegateCommand(ExecuteConcelCommand);
         _confirmCommand = new DelegateCommand(ExecuteConfirmCommand);
     }
+}
+```
+
+ModuleAProfile.cs
+
+```C#
+public void RegisterTypes(IContainerRegistry containerRegistry)
+{
+    containerRegistry.RegisterDialog<ViewDialog, ViewDialogViewModel>();
 }
 ```
 
