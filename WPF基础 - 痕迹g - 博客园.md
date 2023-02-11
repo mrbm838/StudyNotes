@@ -1243,6 +1243,122 @@ void ExecuteCommandName(string obj)
  }
 ```
 
+# Prism对话
+
+MainWindow.xaml
+
+```xaml
+<Button Content="Dialog" Command="{Binding DialogCommand}" CommandParameter="ViewDialog"/>
+```
+
+MainWindowViewModel.cs
+
+```C#
+private string _value = "value";
+
+private IDialogService _dialogService;
+
+private DelegateCommand<string> _dialogCommand;
+public DelegateCommand<string> DialogCommand =>
+    _dialogCommand ??= new DelegateCommand<string>(ExecuteDialogCommand);
+
+void ExecuteDialogCommand(string obj)
+{
+    _dialogService.ShowDialog(obj, new DialogParameters{{nameof(Title), "parm"}}, callback =>
+                              {
+                                  if (callback.Result == ButtonResult.OK)
+                                      Title = "I get Dialog reply => OK" + callback.Parameters.GetValue<string>(_value);
+                                  if (callback.Result == ButtonResult.No)
+                                      Title = "I get Dialog reply => No" + callback.Parameters.GetValue<string>(_value);
+                                  if (callback.Result == ButtonResult.None)
+                                      Title = "I get Dialog reply => None" + callback.Parameters.GetValue<string>(_value);
+
+                              });
+}
+
+public MainWindowViewModel(IRegionManager regionManager, IDialogService dialogService)
+{
+    _regionManager = regionManager;
+}
+```
+
+新建ViewDialog.xaml
+
+```xaml
+<UserControl.Resources>
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Margin" Value="20, 10"/>
+    </Style>
+</UserControl.Resources>
+<Grid Background="Wheat" Height="176" Width="359">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"></RowDefinition>
+        <RowDefinition></RowDefinition>
+        <RowDefinition Height="Auto"></RowDefinition>
+    </Grid.RowDefinitions>
+
+    <TextBlock Text="I am Dialog"/>
+    <TextBlock Grid.Row="1" Text="{Binding Title}"/>
+    <DockPanel Grid.Row="2" LastChildFill="False" HorizontalAlignment="Right">
+        <Button Content="确定" Command="{Binding ConfirmCommand}"/>
+        <Button Content="取消" Command="{Binding ConcelCommand}"/>
+    </DockPanel>
+</Grid>
+```
+
+新建View DialogViewModel.cs
+
+```C#
+internal class ViewDialogViewModel : BindableBase, IDialogAware
+{
+    /// <summary>
+    /// 调用RequestClose后即需要弹窗关闭时触发
+    /// </summary>
+    public bool CanCloseDialog() { return true; }
+
+    public void OnDialogClosed()
+    {
+        RequestClose?.Invoke(new DialogResult(ButtonResult.None, new DialogParameters { { _value, "nope"}}));
+    }
+
+    public void OnDialogOpened(IDialogParameters parameters)
+    {
+        Title = parameters.GetValue<string>(nameof(Title));
+    }
+
+    public string Title { get; set; }
+    
+    // 弹窗关闭的委托
+    public event Action<IDialogResult> RequestClose;
+
+    private string _value = "value";
+
+    private DelegateCommand _confirmCommand;
+    public DelegateCommand ConfirmCommand => _confirmCommand ??= new DelegateCommand(ExecuteConfirmCommand);
+
+    void ExecuteConfirmCommand()
+    {
+        RequestClose?.Invoke(new DialogResult(ButtonResult.OK, new DialogParameters { { _value, "OK" } }));
+    }
+
+    private DelegateCommand _concelCommand;
+    public DelegateCommand ConcelCommand => _concelCommand ??= new DelegateCommand(ExecuteConcelCommand);
+
+    void ExecuteConcelCommand()
+    {
+        RequestClose?.Invoke(new DialogResult(ButtonResult.No, new DialogParameters { { _value, "No" } }));
+    }
+
+    public ViewDialogViewModel()
+    {
+        _concelCommand = new DelegateCommand(ExecuteConcelCommand);
+        _confirmCommand = new DelegateCommand(ExecuteConfirmCommand);
+    }
+}
+```
+
 
 
 # Attention
