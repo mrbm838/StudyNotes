@@ -554,7 +554,43 @@ new关键字的作用：
 
 1. 开辟内存空间（在内存的堆中开辟）
 2. 在开辟的内存空间中创建对象
-3. 调用对象的构造函数（意味着构造函数的访问修饰符必须为public）
+3. 调用对象的构造函数（此时构造函数的访问修饰符必须为public）
+
+构造函数的访问修饰符：
+
+一般情况下使用的是public。如果有特殊要求的情况下，可能使用private修饰。
+
+如果一般常见的单例模式:
+
+```C#
+public class Singlton
+{
+    private static Singleton _Instance;
+    provate static readonly object syslocker = new object();
+    //私有化构造函数
+    private Sinalton()
+    {
+    }
+    public static Singlton GetInstance()
+    {
+        if(_Instance == null)
+        {
+            lock(syslocker)
+            {
+                if(_Instance == null)
+                {
+                    _Instance = new Singlton();
+                }
+            }
+        }
+        return _Instance;
+    }
+}
+```
+
+这种形式就必须使用private将构造私有化，然后通过GetInstance()方法获得实例。这样能保存生成的实例是单一的。不允许用户使用构造函数重新构造。
+
+不管怎么说，==虽然我们可以对实例进行私有化，但必须有其他的静态方法来获得实例==。如果不通过静态方法或静态属性来获得得实例，那么这么类就没有存在的必要了。
 
 构造函数的特点：
 
