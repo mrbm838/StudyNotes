@@ -1368,6 +1368,53 @@ public void RegisterTypes(IContainerRegistry containerRegistry)
 }
 ```
 
+# Prism订阅
+
+在ModuleA下新建Event文件夹，文件夹内新建MessageEvent.cs
+
+```C#
+public class MessageEvent : PubSubEvent<string>
+{
+}
+```
+
+ViewAViewModel.cs，发布订阅
+
+```C#
+private readonly IEventAggregator _aggregator;
+
+public ViewAViewModel(IEventAggregator aggregator)
+{
+    Message = "View A from your Prism Module";
+    _aggregator = aggregator;
+}
+
+// Somewhere publish
+_aggregator.GetEvent<MessageEvent>().Publish("Hello");
+```
+
+ViewA.xaml.cs，收到信息后取消订阅
+
+```C#
+public partial class ViewA : UserControl
+{
+    private IEventAggregator _aggregator;
+
+    public ViewA(IEventAggregator aggregator)
+    {
+        InitializeComponent();
+        _aggregator = aggregator;
+        aggregator.GetEvent<MessageEvent>().Subscribe(SubMsg);
+    }
+
+    private void SubMsg(string arg)
+    {
+        MessageBox.Show(arg);
+        _aggregator.GetEvent<MessageEvent>().Unsubscribe(SubMsg);
+    }
+}
+```
+
 
 
 # Attention
