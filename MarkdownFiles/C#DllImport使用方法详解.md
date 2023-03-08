@@ -1,21 +1,9 @@
----
-created: 2023-03-02T10:37:46 (UTC +08:00)
-tags: [dllimport]
-source: https://blog.csdn.net/niudongling/article/details/120416823
-author: 成就一亿技术人!
----
-
-# (6条消息) C#的DllImport使用方法详解_牛小花❀的博客-CSDN博客
+# [C#的DllImport使用方法详解](https://blog.csdn.net/niudongling/article/details/120416823)
 
 > ## Excerpt
 > 1. 托管代码与非托管代码在学习DllImport方法之前，先了解下托管代码和非托管代码的概念。我们编写的C#代码（不只是C#，也包括.net平台上的其他语言，如VB，J#等），首先经过编译器把代码编译成中间语言（IL），当方法被调用时，公共语言运行库CLR把具体的方法编译成适合本地计算机运行的机器码，并且将编译好的机器码缓存起来，以备下次调用使用。托管代码的源代码在运行时分为两个阶段： 源代码编译为托管代码,（源代码可以有很多种，如VB,C#,J#) 托管代码编译为...
 
----
-![](https://csdnimg.cn/release/blogv2/dist/pc/img/original.png)
 
-[牛小花❀](https://blog.csdn.net/niudongling "牛小花❀") ![](https://csdnimg.cn/release/blogv2/dist/pc/img/newCurrentTime2.png) 于 2021-09-22 17:20:54 发布 ![](https://csdnimg.cn/release/blogv2/dist/pc/img/articleReadEyes2.png) 7858 ![](https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollectionActive2.png) 已收藏 58
-
-版权声明：本文为博主原创文章，遵循 [CC 4.0 BY-SA](http://creativecommons.org/licenses/by-sa/4.0/) 版权协议，转载请附上原文出处链接和本声明。
 
 ## 1\. 托管代码与非托管代码
 
@@ -56,13 +44,13 @@ DllImport是System.Runtime.InteropServices命名空间下的一个属性类，�
 
 ### （1）引入命名空间
 
-```
+```C#
 using System.Runtime.InteropServices;
 ```
 
 ###  （2）创建函数名称
 
-```
+```c#
 [DllImport("demo.dll")]public static extern bool OpenDemo();
 ```
 
@@ -74,8 +62,19 @@ using System.Runtime.InteropServices;
 
 ### （3）DllImportAttribute属性用法
 
-```
-[AttributeUsage(AttributeTargets.Method)] class DllImportAttribute: System.Attribute{lic DllImportAttribute(string dllName) {…}    //定位参数为dllNamelic CallingConvention CallingConvention;      //入口点调用约定lic CharSet CharSet;                              //入口点采用的字符接lic string EntryPoint;                //入口点名称lic bool ExactSpelling;               //是否必须与指示的入口点拼写完全一致，默认falselic bool PreserveSig;                 //方法的签名是被保留还是被转换lic bool SetLastError;                //FindLastError方法的返回值保存在这里lic string Value { get {…} }}
+```C#
+[AttributeUsage(AttributeTargets.Method)]
+public class DllImportAttribute: System.Attribute
+{
+   public DllImportAttribute(string dllName) {…}    //定位参数为dllName
+   public CallingConvention CallingConvention;      //入口点调用约定
+   public CharSet CharSet;                              //入口点采用的字符接
+   public string EntryPoint;                //入口点名称
+   public bool ExactSpelling;               //是否必须与指示的入口点拼写完全一致，默认false
+   public bool PreserveSig;                 //方法的签名是被保留还是被转换
+   public bool SetLastError;                //FindLastError方法的返回值保存在这里
+   public string Value { get {…} }
+}
 ```
 
 ## 4.DllImport详解
