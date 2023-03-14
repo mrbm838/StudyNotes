@@ -3586,7 +3586,7 @@ public class DbContext  //如果是泛型类 Db要扔到外面 ,DbContext<T>.Db�
 }
 ```
 
-**示例2 类调用方式**
+示例2 类调用方式
 
 ```C#
 public class TestManager 
@@ -3613,6 +3613,75 @@ public class DbContext //如果是泛型类 Db要扔到外面 ,DbContext<T>.Db�
                 Console.WriteLine(s);
             };
         });
+}
+```
+
+### 41.删除过期文件
+
+```C#
+public static void DeleteOldFiles(string dirPath, int days)
+{
+    try
+    {
+        if (!Directory.Exists(str))
+        {
+            return;
+        }
+
+        DirectoryInfo directoryInfo = new DirectoryInfo(dirPath);
+        DirectoryInfo[] directories = directoryInfo.GetDirectories();
+        // 按照修改时间排序
+        Array.Sort(directories, (x, y) => x.CreationTime.CompareTo(y.LastWriteTime));
+        DateTime now = DateTime.Now;
+        foreach (DirectoryInfo directoryInfo in directories)
+        {
+            if (now.Subtract(directoryInfo.LastWriteTime).TotalDays > (double)days)
+            {
+                FileInfo[] files = directoryInfo2.GetFiles();
+                foreach (FileInfo fileInfo in files)
+                {
+                    fileInfo.Delete();
+                }
+                // 该方法只有文件夹为空时才可删除文件夹
+                directoryInfo2.Delete();
+            }
+            else
+            {
+                // 排过序，后面文件均在时间范围内
+                break;
+            }
+        }
+    }
+    catch { }
+}
+```
+
+### 42.图片控件显示图片
+
+```C#
+Bitmap bmp = ReadImageFile(Program.StrBaseDic.Replace("\\DataBaseData\\CowainConfig\\ParamFile",@"\Cowain_AutoDispenser\bin\x64\Debug\FlatnessBackground.jpg"));
+PictureBox.Image = bmp;
+
+private Bitmap ReadImageFile(string path)
+{
+    FileStream fs = File.OpenRead(path);
+    int fileLength = (int)fs.Length;
+    byte[] image = new byte[fileLength];
+    fs.Read(image, 0, fileLength);
+    Image result = Image.FromStream(fs);
+    fs.Close();
+    Bitmap bit = new Bitmap(result);
+    return bit;
+}
+//-----------------------------------------------------------------------
+ViewImage(pictureBox1, path + "CCD1.bmp");
+public static void ViewImage(PictureBox picture, string path)
+{
+    Image image = Image.FromFile(path);
+    Bitmap bitmap = new Bitmap(picture.Width, picture.Height);
+    Graphics graphics = Graphics.FromImage(bitmap);
+    graphics.DrawImage(image, new Rectangle(0, 0, bitmap.Width, bitmap.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
+    picture.Image = bitmap;
 }
 ```
 
