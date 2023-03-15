@@ -3,17 +3,9 @@ created: 2023-01-20T23:18:30 (UTC +08:00)
 tags: []
 source: https://www.cnblogs.com/yilezhu/p/10555849.html
 author: 依乐祝
-            粉丝 - 1112
-            关注 - 33
-        
-    
-    
-    
-    
-                +加关注
 ---
 
-# C# 中的Async 和 Await 的用法详解 - 依乐祝 - 博客园
+# C# 中的Async 和 Await 的用法详解 
 
 > ## Excerpt
 > 众所周知C 提供Async和Await关键字来实现异步编程。在本文中，我们将共同探讨并介绍什么是Async 和 Await，以及如何在C 中使用Async 和 Await。 同样本文的内容也大多是翻译
@@ -76,15 +68,14 @@ class Program
   
     public static async Task Method1()
     {  
-a		wait Task.Run(() =>
+		await Task.Run(() =>
             {  
                 for (int i = 0; i < 100; i++)
                 {  
                     Console.WriteLine(" Method 1");  
                 }  
             });  
-    }  
-  
+    }
   
     public static void Method2()
     {  
@@ -102,7 +93,7 @@ a		wait Task.Run(() =>
 
 **输出**
 
-**![img](https://img2018.cnblogs.com/blog/1377250/201903/1377250-20190318225205912-696038953.jpg)**
+**![异步-1](https://gitee.com/mrbm868/graphic-bed/raw/master/img/异步-1.jpg)**
 
 现在来看第二个例子，假设我们有Method 3，它依赖于Method 1
 
@@ -114,7 +105,7 @@ a		wait Task.Run(() =>
 
 在控制台应用程序的Main方法中，因为不能使用async关键字而不能使用await 关键字，因为它会给出下面给出的错误。(但是如果你使用的是C#7.1及以上的方法是不会有问题的，因为C#7.1及以上的语法支持Mian方法前加async)
 
-![img](https://img2018.cnblogs.com/blog/1377250/201903/1377250-20190318225205653-2039239103.jpg)  
+![异步-2](https://gitee.com/mrbm868/graphic-bed/raw/master/img/异步-2.jpg)  
 我们将创建一个新的方法，作为CallMethod，在这个方法中，我们将调用我们的所有方法，分别为Method 1、Method 2和Method 3。
 
 ```C#
@@ -167,7 +158,7 @@ class Program
 
 **输出**
 
-**![img](https://img2018.cnblogs.com/blog/1377250/201903/1377250-20190318225205378-1554546298.jpg)**
+**![异步-3](https://gitee.com/mrbm868/graphic-bed/raw/master/img/异步-3.jpg)**
 
 ### 第三个例子
 
@@ -242,7 +233,7 @@ Console.WriteLine(" After work 2");
 
 **输出**
 
-**![img](https://img2018.cnblogs.com/blog/1377250/201903/1377250-20190318225204721-965583889.jpg)**
+![异步-4](https://gitee.com/mrbm868/graphic-bed/raw/master/img/异步-4.jpg)
 
 ### await 和task.Wait()
 
@@ -269,24 +260,27 @@ public class Example
       foreach (var value in urls)
       {
          var url = value;
-         tasks.Add(Task.Run(() =>
-                            {
-                                var png = new Ping();
-                                try {
-                                    var reply = png.Send(url);
-                                    if (! (reply.Status == IPStatus.Success)) {
-                                        Interlocked.Increment(ref failed);
-                                        throw new TimeoutException("Unable to reach " + url + ".");
-                                    }
-                                }
-                                catch (PingException) {
-                                    Interlocked.Increment(ref failed);
-                                    throw;
-                                }
-                            }));
+         tasks.Add(
+             Task.Run(() =>
+                      {
+                          var png = new Ping();
+                          try {
+                              var reply = png.Send(url);
+                              if (! (reply.Status == IPStatus.Success)) {
+                                  Interlocked.Increment(ref failed);
+                                  throw new TimeoutException("Unable to reach " + url + ".");
+                              }
+                          }
+                          catch (PingException) {
+                              Interlocked.Increment(ref failed);
+                              throw;
+                          }
+                      })
+         );
       }
       Task t = Task.WhenAll(tasks);
-      try {
+      try
+      {
          t.Wait();
       }
       catch {}   
