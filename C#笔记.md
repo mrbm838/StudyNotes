@@ -3144,6 +3144,38 @@ public int CopyFolder(string sourceFolder, string destFolder)
 
 [C#多线程 - 跨线程访问控件_道可盗经常盗-CSDN博客_c跨线程访问控件](https://blog.csdn.net/sy95122/article/details/110071147)
 
+```C#
+// First
+richTextBox.Invoke(
+    new Action(() =>
+               {
+                   richTextBox.SelectionColor = Color.Black;
+                   richTextBox.AppendText(DateTime.Now.ToString("MM-dd HH:mm:ss") + value);
+               }));
+
+// Second
+ManualBtn.Invoke(
+    new MethodInvoker(
+        delegate
+        {
+            if (ManualBtn.BackColor == Color.Green)
+            {
+                ManualBtn.PerformClick();
+            }
+            ManualBtn.Enabled = false;
+        }));
+
+// Third
+richTextBox.Invoke(
+    (EventHandler)delegate
+    {
+        richTextBox.SelectionColor = Color.Black;
+        richTextBox.AppendText(DateTime.Now.ToString("MM-dd HH:mm:ss") + value);
+    });
+```
+
+
+
 ##### 11.C# 中的delegate、event、Action、Func
 
 [C# 中的delegate、event、Action、Func_|刘钊|的博客-CSDN博客](https://blog.csdn.net/weixin_40200876/article/details/89335598)
