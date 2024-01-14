@@ -3858,3 +3858,128 @@ struct Pair<T> : IPair<T>
    ```
 
    
+
+### 13.定义值相等性：
+
+- 对于 `class` 类型，如果两个对象引用内存中的同一对象，则这两个对象相等。
+- 对于 `struct` 类型，如果两个对象是相同的类型并且存储相同的值，则这两个对象相等。
+- 对于具有 `record` 修饰符（`record class`、`record struct` 和 `readonly record struct`）的类型，如果两个对象是相同的类型并且存储相同的值，则这两个对象相等。
+
+`record struct` 的相等性定义与 `struct` 的相等性定义相同。 不同之处在于，对于 `struct`，实现处于` [ValueType.Equals(Object)`] 中并且依赖反射。 对于记录，实现由编译器合成，并且使用声明的数据成员。
+
+### 14.`record`类修饰符
+
+C# 9.0中引入了一个全新的类型——`record`。它是一种引用类型，可以定义为类（class）或者结构（struct）。`record`类型首先是不可变的，通过值比较进行相等性判断。而普通的类是可变的，通过引用比较进行相等性判断。
+这是一段简单的对比代码，先看一下普通类的行为:
+
+```c#
+public class Person
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+}
+Person person1 = new Person { FirstName = "John", LastName = "Doe" };
+Person person2 = new Person { FirstName = "John", LastName = "Doe" };
+
+Console.WriteLine(person1 == person2); // Output: False
+Console.WriteLine(Object.ReferenceEquals(person1, person2)); // Output: False
+```
+
+尽管person1和person2的属性值是一样的，但他们是两个不同的对象，所以判定为不相等。
+而record就不同了，看一下例子:
+
+```c#
+public record Person
+{
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+}
+Person person1 = new Person { FirstName = "John", LastName = "Doe" };
+Person person2 = new Person { FirstName = "John", LastName = "Doe" };
+
+Console.WriteLine(person1 == person2); // Output: True
+```
+
+这次person1和person2**虽然还是两个不同的对象，但他们的属性值是一样的，所以record就把他们判定为了相等**。另外，我们可以看到，`record`采用`init`关键字，只允许在对象初始化时设置属性值，不允许在初始化后修改，所以它们是不可变的。
+
+总结一下，record类型的特性：
+
+1. 提供值相等性比较
+2. 是不可变的。
+3. 自动生成一些方法，例如 ToString(), Equals(), GetHashCode() 等。
+4. 支持非破坏性的修改（non-destructive mutation），通过with关键字可以创建一个与现有对象属性值大部分相同的新对象。
+
+需要注意的是，并非所有场景都适合使用。比如在需要更改对象状态的场景下，还是应该选择使用普通的类。
+
+`readonly`修饰符修饰的变量只能在声明或所属类的构造函数中赋值。
+`init`访问器用于初始化属性的值，只能在对象初始化时使用。`init`只能被设置一次，设置后其值就不能再改变，其效果类似于`readonly`字段。
+`required`修饰符表示它所应用的字段或属性必须由对象初始值设定项进行初始化
+
+```c#
+record class Record
+{
+    public readonly int a = -1;
+    public int aa { get; init; } = -1;
+    public required int aaa { get; set; }
+
+    public Record()
+    {
+        this.a = 0;
+    }
+
+    public void M()
+    {
+        aa = 1;//Error
+        var o1 = new Record
+        {
+            aa = 1,
+            //aaa = 2, //Error
+        };        
+    }
+}
+
+class Class2
+{
+    public void M2()
+    {
+        var o1 = new Record
+        {
+            a = 1;//Error
+            aa = 11,
+            aaa = 111
+        };
+        o1.a = 2;//Error
+        o1.aa = 2;//Error
+        o1.aaa = 2;        
+    }
+}
+```
+
+### 15.add和remove关键字
+
+在C#中，add和remove关键字被用来创建自定义的事件访问器。事件是发布-订阅模型的一种实现，表示一类特殊的多路广播委托。一个事件可以有多个订阅者，对于订阅者而言可以自由地添加或者移除自己。
+当我们用标准的方式定义一个事件时，编译器会自动生成add和remove访问器（你并不能直接看到），用于实现对该事件的订阅和取消订阅。
+如果你希望改变事件的订阅和取消订阅的行为的话，可以自定义add和remove访问器。代码如下：
+
+```c#
+public sealed class MyClass
+{
+    private EventHandler myList;
+    public event EventHandler MyEvent
+    {
+        add
+        {
+            myList += value;
+            Console.WriteLine("Added event.");
+        }
+        remove
+        {
+            myList -= value;
+            Console.WriteLine("Removed event.");
+        }
+    }
+}
+```
+
+在上面的代码中，你可以看到add和remove访问器用于处理订阅事件和取消订阅事件的逻辑。当你对MyEvent事件做+=操作的时候，会调用add访问器；做-=操作的时候，会调用remove访问器。所以你可以在add和remove访问器里添加自定义的逻辑。
+需要注意add和remove关键字只能在事件(event)中使用，不能在常规的字段或者属性中使用。
