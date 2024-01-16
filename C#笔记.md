@@ -3859,7 +3859,7 @@ struct Pair<T> : IPair<T>
 
    
 
-### 13.定义值相等性：
+### 13.定义值相等性
 
 - 对于 `class` 类型，如果两个对象引用内存中的同一对象，则这两个对象相等。
 - 对于 `struct` 类型，如果两个对象是相同的类型并且存储相同的值，则这两个对象相等。
@@ -3983,3 +3983,113 @@ public sealed class MyClass
 
 在上面的代码中，你可以看到add和remove访问器用于处理订阅事件和取消订阅事件的逻辑。当你对MyEvent事件做+=操作的时候，会调用add访问器；做-=操作的时候，会调用remove访问器。所以你可以在add和remove访问器里添加自定义的逻辑。
 需要注意add和remove关键字只能在事件(event)中使用，不能在常规的字段或者属性中使用。
+
+### 16.`IAsyncEnumerable<T>`类型
+
+`IAsyncEnumerable<T> `是 .NET 中的一种接口类型，用于表示支持异步迭代的枚举式数据序列。
+异步迭代是异步编程和迭代器的结合。你可以利用 it 异步等待序列中的每个元素，而不用一次性获取整个集合。这在处理可能花费很长时间计算或检索每个元素的大型集合时非常有用，例如读取大文件或处理复杂的计算任务。
+
+```c#
+private static void Main(string[] args)
+{
+    Task.Run(DateTimeStyles).Wait();
+    System.Console.WriteLine("Main!");
+    Task.Run(ClearAwaitAsync).Wait();
+}
+
+private static Task ClearAwaitAsync()
+{
+    DoWorkAsync();  //  此调用不会等待
+    Console.WriteLine("After work");
+    return Task.CompletedTask;
+}
+
+public static async Task DoWorkAsync()
+{
+    await Task.Delay(2000);  // 模拟耗时操作
+    Console.WriteLine("Work finished");
+}
+
+private static async Task DateTimeStyles()
+{
+    await foreach (var item in GetItemsAsync())
+    {
+        Console.WriteLine(item);
+    }
+    System.Console.WriteLine("DateTimeStyles!");//await foreach 语句体后面的代码在整个循环执行完毕以后将会被执行
+}
+
+private static async IAsyncEnumerable<string> GetItemsAsync()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        await Task.Delay(500);
+        yield return $"The number is {i}";
+    }
+}
+
+//OUTPUT
+The number is 0
+The number is 1
+The number is 2
+DateTimeStyles!
+Main!
+After work
+```
+
+这种机制允许我们在数据准备好时立即处理，而不用等待所有数据都准备好。这在处理大型数据或需要长时间准备的数据时，可以提高应用的响应性和效率。
+
+Task 在运行时通常会使用线程池技术。
+在 .NET 中，Task 是一种表示异步操作的对象，而执行这些异步操作的线程通常来自线程池。线程池是一个线程管理的机制，它在程序启动时创建一些线程，并将这些线程保持在池中供需要的时候使用。使用线程池可以减少线程创建和销毁的开销，提升资源利用率。
+当你使用 Task.Run 或 Task.Factory.StartNew 等方法启动一个新的 Task 时，.NET 运行时会从线程池中获取一个线程来执行这个 Task。当该 Task 完成（或暂时阻塞）后，该线程会被归还给线程池，供后续的 Task 或其他并行操作使用。
+需要注意的是，async/await 异步操作可能并不会新开线程。例如，在 I/O 密集型操作（如文件读写、网络请求等）中，await 通常会利用操作系统的 I/O 完成端口（IOCP，即异步 I/O）机制进行异步操作，这些操作实际上并不需要额外的线程。在这种场景下，Task 更像是一种状态机，用于表示异步操作的完成情况，而实际的工作可能并不在另一个线程上执行。
+
+如果你的` DateTimeStyles`方法是一个 void 类型，这意味着这个方法不返回任何值，包括不返回 Task，那么你将无法在其上使用 await 关键字等待异步操作的完成，同时也无法在 Task.Run 中使用它。
+使用返回类型为 void 的异步方法（也称为 async void 方法）通常是不建议的，除非在特殊情况下（比如事件处理器）。这是因为 async void 方法会在它执行到第一个 await 表达式时立即返回，且你无法获取与其关联的 Task，这使得你无法追踪其生命周期，无法等待其完成，也无法处理由异步操作抛出的异常。这可能会导致程序的不确定行为和难以捕获的错误。
+所以，当你编写异步方法时，应尽量避免使用 async void，而应使用 async Task 或 async Task<T>。这样，其他代码就可以通过 await 关键字等待异步操作的完成，并通过 try-catch 语句处理可能的异常。
+
+### 17.async void 类型
+
+在C#中，async void 是专门为事件处理器设计的，因为事件处理器的签名通常没有返回类型（即，返回 void）。也就是说，你执行一个事件处理器，调用它时并不期待它有任何返回值。
+async void 方法允许你在事件处理器中使用 await 导致异步行为，这在面向用户的UI应用程序中非常有用。例如，当用户点击一个按钮时，你可能需要执行一项耗时的网络请求或数据库操作，通过 await，UI线程会被释放出来并保持响应。
+
+```C#
+public async void Button_Click(object sender, RoutedEventArgs e)
+{
+    var result = await LongRunningOperationAsync();
+    // 继续执行其他操作，比如更新UI
+}
+```
+
+然而，需要注意的是 async void 方法存在一些挑战：
+
+如果 async void 方法内部有未处理的异常，应用程序可能会崩溃。因为 async void 方法无法返回 Task，调用者不能捕获并处理异步操作中可能抛出的异常。
+无法追踪 async void 方法的生命周期。因为它们没有返回 Task，调用者不能等待这个异步操作的完成。
+
+因此在非事件处理的场合，尽量避免使用 async void，而是使用 async Task 或 async Task<T>，这样你可以持有一个 Task，通过它来追踪异步操作的完成，处理可能的异常，以及等待其完成。
+
+### 18.async  await  执行详解
+
+ 这里依旧先打印Work finished，是什么原因？
+
+```C#
+public async Task DoWorkAsync()
+{
+    await Task.Delay(2000); // 模拟耗时操作
+    Console.WriteLine("Work finished");
+}
+// 调用异步方法
+await DoWorkAsync();
+Console.WriteLine("After work");
+```
+
+在这个代码样例中，由于 `await` 关键字的存在，`DoWorkAsync` 方法内部的 `Console.WriteLine("Work finished");` 导致会先于 `Console.WriteLine("After work");` 执行。
+
+简单来说，当执行到 `await DoWorkAsync();` 这行代码时：
+
+1. `DoWorkAsync` 方法被调用，开始执行。
+2. 执行到 `await Task.Delay(2000);`，`DoWorkAsync` 方法会暂停执行，控制权回到调用它的方法（也就是 `Main` 方法）。但由于 `await` 关键字的存在，`Main` 方法在 `DoWorkAsync` 完成前也会暂停。
+3. 等待的 `Task.Delay(2000);` 完成之后，`DoWorkAsync` 恢复执行，打印出 "Work finished"。
+4. `DoWorkAsync` 方法执行完成，控制权归还给 `Main` 方法，继续执行剩下的部分，打印 "After work"。
+
+因此，尽管 `DoWorkAsync` 方法是异步的，但由于 `await` 关键字的使用，代码依然会保持 "Work finished" 先于 "After work" 打印出来的顺序。这就是 `await` 的一个主要优点 - 它能帮助我们在保持代码的读性（貌似同步的顺序性）同时进行异步操作。
