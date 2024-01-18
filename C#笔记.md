@@ -3182,6 +3182,67 @@ richTextBox.Invoke(
 
 ==可以通过`action()`或者`action.Invoke()`两种方式调用方法。==
 
+##### 11.EventHandler
+
+在C#中，EventHandler 是一个预定义的委托类型，通常用于处理没有提供事件数据的事件。其定义如下：
+
+```c#
+public delegate void EventHandler(object sender, EventArgs e);
+```
+
+两个参数的含义如下：
+
+sender：调用事件处理程序的对象。
+EventArgs e：包含事件数据的对象。对于没有事件数据的事件，你通常会使用 EventArgs.Empty。
+
+要定义一个 EventHandler 类型的事件，你可以这样操作：
+
+```c#
+public event EventHandler MyEvent;
+```
+
+然后当满足特定条件时触发这个事件：
+
+```c#
+if (MyEvent != null)
+{
+    MyEvent(this, EventArgs.Empty);
+}
+```
+
+如果你的事件有特定类型的数据需要传递，那就需要创建 EventArgs 的子类，将数据封装在里面。然后使用 EventHandler<TEventArgs> 来定义和触发事件。例如：
+
+```c#
+public class MyEventArgs : EventArgs
+{
+    public string Message { get; set; }
+}
+
+public event EventHandler<MyEventArgs> MyEvent;
+
+// 事件的订阅者可以这样处理这个事件
+foo.MyEvent += OnMyEvent;
+public void OnMyEvent(object sender, MyEventArgs e)
+{
+    Console.WriteLine(e.Message);
+}
+// 触发事件
+if (MyEvent != null)
+{
+    MyEvent(this, new MyEventArgs() { Message = "Hello" });
+}
+```
+
+在上面的代码中，OnMyEvent 方法被注册为 foo 对象的 MyEvent 事件的回调方法，当 MyEvent 事件被触发时，OnMyEvent 方法将会执行。
+
+
+在事件处理模型中，事件处理程序通常包含两个参数：
+
+1. `object sender`：这个参数代表了触发事件的对象，也就是事件源。多数情况下，我们会使用 `this` 关键字将当前对象作为事件源传递给事件处理器。
+2. `EventArgs e`：这个参数包含了事件相关的数据。如果没有额外的数据需要传递，我们通常使用 `EventArgs.Empty` 或直接使用 `EventArgs` 类代表没有传递任何额外数据。
+
+在 .NET 中，我们通常会通过创建 `EventArgs` 的子类来传递事件相关的数据。例如，你可能会创建一个叫做 `MyEventArgs` 的参数类来传递特定的数据：
+
 ##### 11.线程同步
 
 [C# EventWaitHandle类解析 - 冬音 - 博客园 (cnblogs.com)](https://www.cnblogs.com/wintertone/p/11657334.html)
@@ -4093,3 +4154,103 @@ Console.WriteLine("After work");
 4. `DoWorkAsync` 方法执行完成，控制权归还给 `Main` 方法，继续执行剩下的部分，打印 "After work"。
 
 因此，尽管 `DoWorkAsync` 方法是异步的，但由于 `await` 关键字的使用，代码依然会保持 "Work finished" 先于 "After work" 打印出来的顺序。这就是 `await` 的一个主要优点 - 它能帮助我们在保持代码的读性（貌似同步的顺序性）同时进行异步操作。
+
+### 18.Timer
+
+在C#中，`System.Threading.Timer`和`System.Timers.Timer`是两种常用的计时器，但它们接口不同，各具用途。
+
+`System.Threading.Timer`是用户提供一个`TimerCallback`委托给定时器，在特定的时间间隔调用此委托。此定时器则有更精简的接口，并且只适用于基于多线程的情况。
+
+```C#
+System.Threading.Timer t = new System.Threading.Timer(TimerCallback, null, 0, 2000);
+
+public void TimerCallback(Object o) {
+  // TODO: Handle timer event
+}
+```
+
+`System.Timers.Timer`侧重于组件模型支持，允许在多个线程间同步事件，并且可以配置为跨越应用程序的域。它还具有更多的功能，例如可以通过设置`AutoReset`属性来选择定时器触发一次或多次。
+
+```C#
+System.Timers.Timer t = new System.Timers.Timer(2000);
+t.Elapsed += new ElapsedEventHandler(OnElapsed);
+t.AutoReset = true;
+t.Enabled = true;
+
+public void OnElapsed(Object source, ElapsedEventArgs e)
+{
+    // TODO: Handle timer event
+}
+```
+
+如果你的程序是基于多线程的情况，那么`System.Threading.Timer`更合适你，如果你需要的是一个特性丰富并且可配置的定时器，那么`System.Timers.Timer`应当更适合你。
+
+`System.Threading.Timer` 类在 .NET 中会开启新的线程来执行与定时器关联的回调函数。你可以将其看作一种机制，能够在特定时间（只发生一次）或者特定的间隔（多次发生）触发一个操作。
+然而，你应该注意的是，此定时器使用的线程并不是你自己创建的，而是从线程池中获取的。当定时器到达指定的时间间隔，线程池会提供一个线程来执行回调方法。这种方式在开销管理和性能方面都更有效。
+针对这一点，以下是一个简单的示例：
+
+```C#
+public static void Main()
+{
+    Timer t = new Timer(TimerCallback, null, 0, 2000);
+    // 主线程休眠一段时间进行观察
+    Thread.Sleep(11000);
+    t.Dispose();
+}
+
+private static void TimerCallback(Object o) 
+{
+	Console.WriteLine("Timer callback executed on thread: {0}", 
+          				Thread.CurrentThread.ManagedThreadId);
+}
+```
+
+}
+
+在这个例子中，你可以看到回调函数是在不同的线程中被执行的，线程的 ID 由 `Thread.CurrentThread.ManagedThreadId`提供，你会发现，这并不是主线程的 ID，这是因为回调函数是由线程池中的线程执行的。
+
+`System.Timers.Timer`作为一种服务器基础计时器，它会在每次到达指定的间隔时产生一个事件。这个类的对象实际上使用一个`System.Threading.Timer`来实现定时功能，这意味着计时回调并不在创建计时器的线程（主线程）上执行。
+当一个时间间隔到达，Elapsed事件会被触发，而事件处理函数则默认在一个线程池线程中执行。
+不过，需要注意的是，如果你希望Elapsed事件在创建计时器的那个线程（例如 UI 线程）上执行，你可以给`System.Timers.Timer`对象的`SynchronizingObject`属性赋上一个与UI线程关联的对象（例如在Windows Forms中，这个对象通常是指一个Form，或者是某个UI控件）。
+这样，无论Elapsed事件何时被触发，都会在指定的线程，也就是SynchronizingObject所在的线程中运行。这在需要更新UI的情况下特别有用，因为UI元素通常只能在UI线程上被访问。
+
+在Windows Forms（WinForms）应用程序中，主线程也被视为用户界面（UI）线程。
+WinForms应用程序以单线程方式运行，所有UI操作（例如创建窗体、改变控件属性或响应用户操作等）都在这个线程上执行，因此在这种上下文中，主线程即为UI线程。
+但是，请注意，可以创建新的线程来执行耗时的运算或I/O操作，以避免阻塞UI线程，导致用户界面无响应。然后，在这些后台线程中，你不能直接访问或修改UI控件。如果你需要在这些线程中更新UI，你应当使用`Control.Invoke`或`Control.BeginInvoke`方法，将这些更新UI的操作交回给UI线程执行。这是因为在WinForms和许多其他UI框架中，UI控件（例如窗体、按钮等等）都不是线程安全的。
+
+`System.Timers.Timer`类的 `SynchronizingObject `属性默认是 null。
+如果你没有对 `SynchronizingObject `属性进行设置，定时器会在线程池线程中引发 `Elapsed `事件。这意味着如果你在 `Elapsed `事件处理函数中访问 UI（如 WinForm 或 WPF 的元素），可能会引发线程冲突。
+为了解决这个问题，你可以将主窗体（或者任何 Windows Form 控件）赋值给 `SynchronizingObject`。这样，定时器就会在 UI 线程上引发 Elapsed事件。
+以下是一个示例：
+
+```c#
+// 假设 this 是你的主窗体
+System.Timers.Timer myTimer = new System.Timers.Timer();
+myTimer.SynchronizingObject = this;
+```
+
+这样设置后，`myTimer `在引发 Elapsed 事件时，就会在 UI 线程而非线程池线程上执行回调方法。这就顺利避免了潜在的线程冲突问题。
+
+### 18.`Invoke`和`BeginInvoke `
+
+`Control.Invoke `和 `Control.BeginInvoke `都是用来在 UI 线程上执行指定的委托（delegate）。这在有多线程操作，并且需要在非 UI 线程上更新 UI 控件时是极其重要的，因为直接在非 UI 线程上操作 UI 控件是不安全的。
+两者的主要区别在于，它们对线程执行的控制方式不同：
+
+`Control.Invoke`: 调用该函数会导致调用线程阻塞，直到 UI 线程执行完该操作后调用线程才能继续执行。它是同步的，即调用线程会等待控制返回。
+
+```c#
+this.Invoke((MethodInvoker)delegate {
+   // 更新UI的代码
+});
+```
+
+`Control.BeginInvoke`: 调用该函数时，调用线程会立即返回，而 UI 线程会在空闲时执行该操作。它是异步的，即调用线程不会等待控制返回。
+
+```c#
+this.BeginInvoke((MethodInvoker)delegate {
+   // 更新UI的代码
+});
+```
+
+选择使用哪个函数主要取决于你的需求。如果你不需要等待 UI 操作完成，或者由于某种原因你需要避免阻塞你的线程（例如那可能会导致死锁），那么可以使用`BeginInvoke`。如果你需要等待 UI 操作完成才能进行下一步，那么你应该使用 Invoke。
+`Control.Invoke` 和 `Control.BeginInvoke` 方法可以在指定的 `Control` 控件所在的线程上执行特定的方法。而这个 `Control` 控件，无论是一个按钮、标签，还是整个的 Form 窗体，只要是在 UI 线程上创建的，就都可以被用来安全地在其他线程上更新 UI。
