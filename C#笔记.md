@@ -94,7 +94,12 @@ Console.ReadKey();
 //输出结果：0  false
 ```
 
-out的执行方式与ref一样，区别在于：out让方法返回多个值，且可以使用未赋值的变量，但out指定的参数在进入函数时会清空自己，必须在函数内部赋初值。而ref指定的参数不需要。
+out的执行方式与ref一样，区别在于：
+
+**赋值要求：**
+
+- `ref`关键字要求在传递给方法之前，参数必须被初始化。这意味着在调用方法之前，你需要为`ref`参数分配一个初始值。
+- `out`关键字不要求在传递给方法之前对参数进行初始化。在调用方法时，可以将未初始化的变量传递给`out`参数，但在方法内部，必须确保在离开方法之前给`out`参数赋值。
 
 ```c#
 int result;
@@ -671,7 +676,15 @@ internal(class default):只能在当前程序集中使用。
 
 ##### 7.StringBuilder
 
-String对象在声明之后在内存中的大小是不可修改的，每次操作字符串对象时，都会在堆中开辟新空间，故重复多次操作字符串时会产生很大的系统开销。System.Text.StringBuilder类对象则只在一个内存空间上操作，且可自由扩展大小，因此提升性能。
+在一般情况下，`StringBuilder` 的性能通常优于使用 `string` 的 `+=` 操作符来拼接字符串，主要是因为字符串是不可变的（immutable），String对象在声明之后在内存中的大小是不可修改的。
+
+当你使用 `string` 类型的 `+=` 操作符来拼接字符串时，每次进行拼接都会创建一个新的字符串对象，都会在堆中开辟新空间（引用类型），而原有的字符串对象并没有被修改，而是被丢弃。这意味着在循环或大量字符串拼接的情况下，会产生大量的临时字符串对象，造成额外的内存开销和性能损耗。
+
+`StringBuilder` 类通过维护一个可变的字符缓冲区来解决这个问题。它允许你在同一个对象上进行多次追加操作，而不需要创建新的对象。这样可以避免创建大量的中间字符串，提高字符串拼接的性能。
+
+然而，当涉及到 `Replace()` 方法时，`StringBuilder` 的性能可能受到影响。因为 `Replace()` 操作实际上也会创建一个新的 `StringBuilder` 对象，而不是在原有的对象上直接进行替换。这可能导致在使用 `Replace()` 方法时，`StringBuilder` 的性能不如 `string` 的 `Replace()` 方法。
+
+总的来说，`StringBuilder` 在大多数情况下提供了更好的性能，尤其是在循环或大量字符串拼接的情况下。但是，对于单次替换操作，可能 `string` 的 `Replace()` 方法更为直接。
 
 ```C#
 string str = "aa";
@@ -927,7 +940,7 @@ On the other hand, if we have to perform a few operations or a fixed number of o
 1. 创建对象
 2. 在子类中，隐藏从父类继承来的同名函数。（不用new效果一样）
 
-##### 4.`this`键字
+##### 4.`this`关键字
 
 1. 代表当前类对象
 
@@ -999,7 +1012,7 @@ On the other hand, if we have to perform a few operations or a fixed number of o
    }
    ```
 
-##### 7.var
+##### 7.`var`
 
 在C#中，使用 `var` 关键字进行隐式类型声明有几个原因和好处：
 
@@ -1036,6 +1049,61 @@ var person = new { Name = "John Doe", Age = 30 };
 在这个例子中，我们创建了一个拥有 `Name` 和 `Age` 属性的新对象。这个对象的类型是由编译器自动生成的，因此我们使用 `var` 来进行声明。
 
 匿名类型是只读的，这意味着一旦你创建了一个匿名类型的实例，就不能修改其属性的值。这些特性使得匿名类型在某些特定场景中非常有用。
+
+### 31.`dynamic`动态类型
+
+在C#中，`dynamic` 关键字是用于声明一个动态类型的变量。使用 `dynamic` 关键字的变量在编译时不具有静态类型检查，而是在运行时解析类型。这为一些特定的场景提供了灵活性，但也引入了一些潜在的运行时错误。
+
+以下是 `dynamic` 关键字的主要作用：
+
+1. **运行时类型解析：** 使用 `dynamic` 声明的变量允许在运行时确定其类型。这使得你可以绕过编译时的类型检查，将类型检查推迟到运行时。
+
+    ```csharp
+    dynamic dynamicVar = 10;
+    dynamicVar = "Hello, dynamic!";
+    ```
+
+2. **与COM对象交互：** `dynamic` 关键字在组件化编程中与COM（Component Object Model）对象交互时很有用，因为COM对象的类型信息可能不在编译时可用，而是在运行时动态获取。
+
+    ```csharp
+    dynamic comObject = GetCOMObject();
+    comObject.MethodName();
+    ```
+
+3. **简化反射代码：** 在一些需要使用反射的情境下，`dynamic` 关键字可以减少代码的复杂性，因为不再需要显式地使用 `Type` 和 `MethodInfo` 等反射类。
+
+    ```csharp
+    dynamic obj = GetObjectUsingReflection();
+    obj.SomeMethod();
+    ```
+
+4. **匿名类型：** `dynamic` 关键字还可以用于处理匿名类型，使得在运行时创建的匿名类型的实例更容易操作。
+
+    ```csharp
+    var person = new { Name = "John", Age = 30 };
+    dynamic dynamicPerson = person;
+    Console.WriteLine($"Name: {dynamicPerson.Name}, Age: {dynamicPerson.Age}");
+    ```
+
+需要注意的是，尽管 `dynamic` 提供了一些灵活性，但由于缺乏静态类型检查，可能会导致运行时错误。在大多数情况下，推荐使用静态类型，只有在特定的情况下才使用 `dynamic`。使用 `dynamic` 时应当谨慎，以免引入难以调试和理解的错误。
+
+在C#中，`dynamic` 关键字和 `object` 类型有一些相似之处，但它们之间存在关键的区别。
+
+1. **`dynamic` 类型：** 变量声明为 `dynamic` 类型时，它将被编译器视为动态类型，其类型信息在运行时确定。`dynamic` 类型的变量可以调用任何成员，而不进行编译时类型检查，而是在运行时解析类型。这使得 `dynamic` 类型更灵活，但也可能导致运行时错误。
+
+    ```csharp
+    dynamic dynamicVar = 10;
+    dynamicVar = "Hello, dynamic!";
+    ```
+
+2. **`object` 类型：** `object` 是一个静态类型，它是所有其他类型的基类。当变量声明为 `object` 类型时，它可以包含任何类型的值，但在使用这些值时需要进行显式的类型转换。`object` 类型的变量在编译时具有类型检查。
+
+    ```csharp
+    object obj = 10;
+    obj = "Hello, object!";
+    ```
+
+总的来说，`dynamic` 和 `object` 都允许在一个变量中存储不同类型的值，但它们的使用场景和行为不同。`dynamic` 更注重于运行时的灵活性，而 `object` 提供了一个通用的静态类型，需要显式转换来使用其中的值。
 
 ### 第十一天
 
@@ -1315,6 +1383,112 @@ Path类只能操作路径的字符串，并不能造成实际影响。
 
 ### 第十二天
 
+##### 1. `TextWriter`
+
+`TextWriter` 是 `System.IO` 命名空间中的一个抽象类，用于将字符或字符串数据写入输出流。它提供了用于写入格式化文本、行和其他类型数据的方法。一些常见的实现包括：
+
+- **`StreamWriter`：**
+  `StreamWriter` 是 `TextWriter` 的一个具体实现，允许你将文本写入指定的流，比如文件流。它支持各种构造函数，用于指定输出流和编码。
+
+    ```csharp
+    using (TextWriter writer = new StreamWriter("example.txt"))
+    {
+        writer.WriteLine("Hello, TextWriter!");
+    }
+    ```
+
+##### 2. `TextReader`
+
+`TextReader` 是 `System.IO` 命名空间中的一个抽象类，用于从输入流中读取字符或字符串数据。它提供了用于读取行、字符和其他类型数据的方法。一些常见的实现包括：
+
+- **`StreamReader`：**
+  `StreamReader` 是 `TextReader` 的一个具体实现，允许你从指定的流中读取文本，比如文件流。它支持各种构造函数，用于指定输入流和编码。
+
+    ```csharp
+    using (TextReader reader = new StreamReader("example.txt"))
+    {
+        string line = reader.ReadLine();
+        Console.WriteLine(line);
+    }
+    ```
+
+在 C# 中，`StringWriter` 和 `StringReader` 是用于在内存中进行字符串操作的类，它们都继承自 `TextWriter` 和 `TextReader`。
+
+##### 3.StringWriter
+
+这两个类对于处理字符串而不涉及文件或网络流的场景非常有用。它们允许你在内存中操作字符串，是在构建和处理文本数据时的有用工具。
+
+`StringWriter` 是一个实现了 `TextWriter` 抽象类的具体类，它允许你在内存中创建一个字符串缓冲区，并向该缓冲区写入文本。主要用途包括构建文本输出的字符串，而不必实际写入到文件或网络流。以下是一个简单的示例：
+
+```csharp
+static void Main()
+{
+    // 使用StringWriter创建一个字符串缓冲区
+    using (StringWriter stringWriter = new StringWriter())
+    {
+        // 向字符串缓冲区写入文本
+        stringWriter.WriteLine("Hello, StringWriter!");
+        stringWriter.WriteLine("This is another line.");
+
+        // 获取整个字符串内容
+        string result = stringWriter.ToString();
+
+        // 输出字符串内容
+        Console.WriteLine(result);
+    }
+}
+```
+
+在这个例子中，我们使用 `StringWriter` 来创建一个字符串缓冲区，然后通过 `WriteLine` 方法向缓冲区写入文本。最后，我们使用 `ToString` 方法获取整个字符串内容并输出。
+
+##### 4.StringReader
+
+`StringReader` 是一个实现了 `TextReader` 抽象类的具体类，它允许你从字符串中读取文本。主要用途包括从字符串中读取数据而不必从文件或网络流中读取。以下是一个简单的示例：
+
+```csharp
+static void Main()
+{
+    // 使用StringReader从字符串读取文本
+    string text = "Hello, StringReader!\nThis is another line.";
+    using (StringReader stringReader = new StringReader(text))
+    {
+        // 逐行读取并显示文本
+        //string line = stringReader.ReadToEnd();
+        string line;
+        while ((line = stringReader.ReadLine()) != null)
+        {
+            Console.WriteLine(line);
+        }
+    }
+}
+```
+
+在这个例子中，我们使用 `StringReader` 来从一个字符串中读取文本，然后使用 `ReadLine` 方法逐行读取并输出文本内容。
+
+##### 3. Stream
+
+`Stream` 是一个抽象类，同样位于 `System.IO` 命名空间中，用于处理字节流。它定义了基本的读取和写入字节的操作，适用于处理二进制数据。以下是 `Stream` 的一些常见实现类：
+
+- **`FileStream`：** `FileStream` 是 `Stream` 的具体实现之一，通常用于文件读写操作。它支持指定文件路径、文件模式等参数。
+
+  ```C#
+  using (Stream stream = new FileStream("example.dat", FileMode.Create))
+  {
+      byte[] data = Encoding.UTF8.GetBytes("Hello, Stream!");
+      stream.Write(data, 0, data.Length);
+  }
+  ```
+
+- **`MemoryStream`：** `MemoryStream` 是 `Stream` 的具体实现之一，用于在内存中进行读写操作。它提供了一个可变大小的内存缓冲区，适用于临时存储数据。
+
+  ```C#
+  using (MemoryStream memoryStream = new MemoryStream())
+  {
+      byte[] data = Encoding.UTF8.GetBytes("Hello, MemoryStream!");
+      memoryStream.Write(data, 0, data.Length);
+  }
+  ```
+
 ##### 1.FileStream文件流
 
 FileStream是操作字节的,因此可以操作所有类型的文件，适合操作大文件。
@@ -1375,7 +1549,9 @@ using (FileStream fsRead = new FileStream(source, FileMode.OpenOrCreate, FileAcc
 }
 ```
 
-##### 2.StreamWriter\StreamReader是操作字符的，适合操作小文件
+##### 2.StreamWriter\StreamReader
+
+是操作字符的，适合操作小文件
 
 ```c#
 using (StreamReader sr = new StreamReader(@"C:\抽象类特点.txt", Encoding.Default))
@@ -1659,39 +1835,237 @@ for (int i = 0; i < per.Length; i++)
 
 ##### 2.序列化与反序列化
 
-序列化：将对象转换为二进制
+序列化是将对象状态转换为可保持或传输的形式的过程。 序列化的补集是反序列化，后者将流转换为对象。 这两个过程一起保证能够存储和传输数据。
 
-反序列化：将二进制转换为对象
+.NET 具有以下序列化技术：
 
-作用：用于传输数据
+- [二进制序列化](https://learn.microsoft.com/zh-cn/dotnet/standard/serialization/binary-serialization)保持类型保真，这对于多次调用应用程序时保持对象状态非常有用。 例如，通过将对象序列化到剪贴板，可在不同的应用程序之间共享对象。 您可以将对象序列化到流、磁盘、内存和网络等。 远程处理使用序列化，“按值”在计算机或应用程序域之间传递对象。
+- [XML 和 SOAP 序列化](https://learn.microsoft.com/zh-cn/dotnet/standard/serialization/xml-and-soap-serialization)只序列化公共属性和字段，并且不保持类型保真。 当您希望提供或使用数据而不限制使用该数据的应用程序时，这一点非常有用。 由于 XML 是开放式的标准，因此它对于通过 Web 共享数据来说是一个理想选择。 SOAP 同样是开放式的标准，这使它也成为一个理想选择。
+- [JSON 序列化](https://learn.microsoft.com/zh-cn/dotnet/standard/serialization/system-text-json-overview)只序列化公共属性，并且不保持类型保真。 JSON 是开放式的标准，对于通过 Web 共享数据来说是一个理想选择。
 
-```C#
-[Serialize]
-Class Person
-{
-    public string Name{ get; set; }
-    public int Age{ get; set; }
-    public Person(string name, int age)
-    {
-        Name = name;
-        Age = age;
-    }
-}
+1. **XML 序列化：**
+   
+   - 使用 `XmlSerializer` 类可以将对象序列化为XML格式。需要标记类和属性以指示序列化的方式，通常使用 `XmlRootAttribute` 和 `XmlElementAttribute` 进行控制。
+   - 优点：人类可读，广泛支持。
+   - 缺点：相对冗长，可能不适合大型数据。
+   
+   ```csharp
+   XmlSerializer serializer = new XmlSerializer(typeof(MyClass));
+   serializer.Serialize(stream, obj);
+   ```
+   
+   <details>
+       <summary>XML序列化的例子</summary>
+       <pre><code>
+       public static void MethXmlSerializer()
+       {
+           // 创建一个Person对象
+           var person = new PersonXml { Name = "John", Age = 30, Both = new() };
+           // 序列化
+           var serializer = new XmlSerializer(typeof(PersonXml));
+           // xml字符串
+           string xml = string.Empty;
+           /* If the XML document has been altered with unknown
+               nodes or attributes, handle them with the
+               UnknownNode and UnknownAttribute events.*/
+           serializer.UnknownNode += new XmlNodeEventHandler(serializer_UnknownNode);
+           serializer.UnknownAttribute += new XmlAttributeEventHandler(serializer_UnknownAttribute);
+           using (var stream = new MemoryStream())
+           {
+               serializer.Serialize(stream, person);
+               Console.WriteLine("Serialized Data:");
+               // 输出序列化后的XML
+               Console.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+               // 使用streamReader输出序列化后的XML
+               stream.Position = 0;
+               using (var reader = new StreamReader(stream))
+               {
+                   Console.WriteLine(xml = reader.ReadToEnd());
+               }
+           }
+           // xml字符串反序列化为对象
+           using (TextReader reader = new StringReader(xml))
+           {
+               var deperson = (PersonXml)serializer.Deserialize(reader);
+               Console.WriteLine("\nDeserialized Person:");
+               Console.WriteLine($"Name: {deperson.Name}, Age: {deperson.Age}");
+           }
+           void serializer_UnknownNode(object sender, XmlNodeEventArgs e)
+           {
+               Console.WriteLine("Unknown Node:" + e.Name + "\t" + e.Text);
+           }
+           void serializer_UnknownAttribute(object sender, XmlAttributeEventArgs e)
+           {
+               System.Xml.XmlAttribute attr = e.Attr;
+               Console.WriteLine("Unknown attribute " + attr.Name + "='" + attr.Value + "'");
+           }
+       }
+       </code></pre>
+   </details>
+   
+2. **JSON 序列化：**
+   - 使用 `JsonSerializer` 类可以将对象序列化为JSON格式。无需显式标记类和属性，但可以使用 `JsonProperty` 特性进行更多的控制。
+   - 优点：轻量，易于阅读，广泛支持。
+   - 缺点：不支持所有数据类型，可能需要处理循环引用。
 
-// Serialize
-Person p = new Person("yjq", 22);
-using (FileStream fs = new FileStream(@"D:\1.txt", FileMode.OpenOrCreate, FileAccess.Write))
-{
-    BinaryFormatter bf = new BinaryFormatter();
-    bf.Serialize(fs, p);
-}
-Person per;
-using (FileStream fs = new FileStream(@"D\1.txt", FileMode.OpenOrCreate, FileAccess.Read))
-{
-    BinaryFormatter bf = new BinaryFormatter();
-    per = (Person)bf.Deserialize(fs);
-}
-```
+   ```csharp
+   JsonSerializer serializer = new JsonSerializer();
+   serializer.Serialize(stream, obj);
+   ```
+
+3. **二进制序列化：**
+   
+   - 使用 `BinaryFormatter` 类可以将对象序列化为二进制格式。通常需要标记类为 `[Serializable]`。
+   - 优点：紧凑，性能较好。
+   - 缺点：二进制格式对人类不可读，不适用于跨平台或跨语言。
+   
+   ```csharp
+   BinaryFormatter formatter = new BinaryFormatter();
+   formatter.Serialize(stream, obj);
+   ```
+   
+   <details>
+       <summary>二进制序列化的例子</summary>
+       <pre><code>
+       [Serialize]
+       Class Person
+       {
+           public string Name{ get; set; }
+           public int Age{ get; set; }
+           public Person(string name, int age)
+           {
+               Name = name;
+               Age = age;
+           }
+       }
+       // Serialize
+       Person p = new Person("yjq", 22);
+       using (FileStream fs = new FileStream(@"D:\1.txt", FileMode.OpenOrCreate, FileAccess.Write))
+       {
+           BinaryFormatter bf = new BinaryFormatter();
+           bf.Serialize(fs, p);
+       }
+       Person per;
+       using (FileStream fs = new FileStream(@"D\1.txt", FileMode.OpenOrCreate, FileAccess.Read))
+       {
+           BinaryFormatter bf = new BinaryFormatter();
+           per = (Person)bf.Deserialize(fs);
+       }
+       </code></pre>
+   </details>
+   
+4. **DataContract 序列化：**
+   
+   - 使用 `DataContractSerializer` 类可以将对象序列化为XML或JSON格式，类和属性需要标记为 `[DataContract]` 和 `[DataMember]`。
+   - 优点：支持多种格式，可以通过设置来控制序列化行为。
+   - 缺点：需要明确标记类和属性。
+   
+   ```csharp
+   DataContractSerializer serializer = new DataContractSerializer(typeof(MyClass));
+   serializer.WriteObject(stream, obj);
+   ```
+   
+   <details>
+       <summary>使用 DataContractSerializer类将对象序列化为XML和JSON的例子</summary>
+       <pre><code>
+       // 定义一个Person类用于序列化和反序列化
+       [DataContract]
+       public class Person
+       {
+           [DataMember]
+           public string Name { get; set; }
+           [DataMember]
+           public int Age { get; set; }
+       }
+       class Serialization
+       {
+           #region DataContract 序列化为XML格式
+           public static void MethXml()
+           {
+               // 创建一个Person对象
+               Person person = new Person { Name = "John", Age = 30 };
+               // 序列化
+               string serializedData = SerializeObject(person);
+               Console.WriteLine("Serialized Data:");
+               Console.WriteLine(serializedData);
+               // 反序列化
+               Person deserializedPerson = DeserializeObject<Person>(serializedData);
+               // 输出反序列化后的对象
+               Console.WriteLine("\nDeserialized Person:");
+               Console.WriteLine($"Name: {deserializedPerson.Name}, Age: {deserializedPerson.Age}");
+           }
+           // 将对象序列化为字符串
+           static string SerializeObject<T>(T obj)
+           {
+               using (MemoryStream memoryStream = new MemoryStream())
+               {
+                   DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+                   serializer.WriteObject(memoryStream, obj);
+                   memoryStream.Position = 0;
+                   using (StreamReader reader = new StreamReader(memoryStream))
+                   {
+                       return reader.ReadToEnd();
+                   }
+               }
+           }
+           // 将字符串反序列化为对象
+           static T DeserializeObject<T>(string serializedData)
+           {
+               using (MemoryStream memoryStream = new MemoryStream())
+               {
+                   using (StreamWriter writer = new StreamWriter(memoryStream))
+                   {
+                       writer.Write(serializedData);
+                       writer.Flush();
+                       memoryStream.Position = 0;
+                       DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+                       return (T)serializer.ReadObject(memoryStream);
+                   }
+               }
+           }
+           #endregion
+           #region DataContractJsonSerializer 序列化为Json格式
+           public static void MethJson()
+           {
+               // 创建一个Person对象
+               Person person = new Person { Name = "John", Age = 30 };
+               // 序列化为JSON
+               string json = SerializeToJson(person);
+               Console.WriteLine("Serialized JSON:");
+               Console.WriteLine(json);
+               // 反序列化JSON
+               Person deserializedPerson = DeserializeFromJson<Person>(json);
+               // 输出反序列化后的对象
+               Console.WriteLine("\nDeserialized Person:");
+               Console.WriteLine($"Name: {deserializedPerson.Name}, Age: {deserializedPerson.Age}");
+           }
+           // 将对象序列化为JSON字符串
+           static string SerializeToJson<T>(T obj)
+           {
+               using (MemoryStream memoryStream = new MemoryStream())
+               {
+                   DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+                   serializer.WriteObject(memoryStream, obj);
+                   memoryStream.Position = 0;
+                   using (StreamReader reader = new StreamReader(memoryStream))
+                   {
+                       return reader.ReadToEnd();
+                   }
+               }
+           }
+           // 将JSON字符串反序列化为对象
+           static T DeserializeFromJson<T>(string json)
+           {
+               using (MemoryStream memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json)))
+               {
+                   DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+                   return (T)serializer.ReadObject(memoryStream);
+               }
+           }
+           #endregion
+       }
+       </pre></code>
+   </details>
 
 ##### 3.简单工厂模式
 
@@ -3439,9 +3813,58 @@ string str1 = array?.First();
 
 [c#中字符串的比较方法-详解_玉珂鸣响的博客-CSDN博客_c#字符串比较](https://blog.csdn.net/m0_52390420/article/details/111233489)
 
-##### 22.根据类名获取类和方法
+##### 22.反射(reflection)
 
 [C#-反射-根据传入的类名，方法名，执行此方法，或者反射赋值给委托_HOLD ON!的博客-CSDN博客](https://blog.csdn.net/cxu123321/article/details/107711209)
+
+C#中的反射可以恢复数据，是因为反射可以访问对象的元数据。元数据是指关于对象的描述信息，包括对象的类型、属性、方法、构造函数等。反射可以通过这些元数据来访问对象的内部数据。反射允许你在运行时实例化对象。这意味着你可以动态地创建对象，而不需要在编译时知道确切的类型。
+
+例如，以下代码使用反射来获取对象的类型信息，假设有一个类 `Person`，它有两个属性 `name` 和 `age`：
+
+```C#
+object obj = new Person();
+Type type = obj.GetType();
+
+Console.WriteLine(type.Name); // 输出：Person
+```
+
+以下代码使用反射来获取对象的属性信息：
+
+```C#
+object obj = new Person();
+Type type = obj.GetType();
+
+PropertyInfo property = type.GetProperty("Name");
+
+Console.WriteLine(property.GetValue(obj)); // 输出：John Doe
+```
+
+以下代码使用反射来调用对象的方法：
+
+```C#
+object obj = new Person();
+Type type = obj.GetType();
+
+MethodInfo method = type.GetMethod("SayHello");
+
+method.Invoke(obj, null); // 输出：Hello, John Doe!
+```
+
+以下代码使用反射来多态生成对象的方法：
+
+```c#
+Type type = typeof(Person);
+dynamic? obj = Activator.CreateInstance(type);
+
+Type? type1 = Type.GetType("Person");
+// 获取当前程序集
+Assembly assembly = Assembly.GetExecutingAssembly();
+// 动态创建当前类型的对象
+if (type1 != null)
+{
+    dynamic? obj1 = assembly.CreateInstance(type1.FullName);
+}
+```
 
 <details>
     <summary>传递类</summary>
@@ -3484,6 +3907,7 @@ string str1 = array?.First();
     }
     </code></pre>
 </details>
+
 ##### 23.根据类获取其命名空间、方法等属性
 
 [C#获取类的名字、属性名字、方法名字的方式_C#气氛组队员的博客-CSDN博客_c# 获取类名](https://blog.csdn.net/ni996570734/article/details/123028203)
