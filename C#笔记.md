@@ -928,8 +928,9 @@ On the other hand, if we have to perform a few operations or a fixed number of o
 2. ==子类继承父类除私有成员和构造函数外的其它实例成员==。
 3. 由于子类继承父类的成员，因此需要初始化父类成员。故在默认情况下，子类在执行构造函数前，会生成一个父类对象，并调用父类的无参构造函数。
    当父类存在带参构造函数替换了无参构造函数时，以下解决办法：
-   1. 在父类中创建一个无参构造函数
-   2. 在子类构造函数后使用`base()`显示调用父类构造函数
+   1. 在父类中创建一个无参构造函数。
+   2. 在子类构造函数后使用`base()`显示调用父类构造函数；
+      基类的构造函数会首先执行，然后才是派生类的构造函数。
 4. ==在子类中，通过`base`只能调用父类的公有和保护的实例成员==。
 5. 继承的特性
    1. 单根性
@@ -4079,10 +4080,6 @@ int i3;              synchronized int geti3() {return i3;}
 
 [C#---#define条件编译 - 我喜欢大白 - 博客园 (cnblogs.com)](https://www.cnblogs.com/woxihuadabai/p/8005892.html)
 
-##### 36.C#特性
-
-[(2条消息) C#之特性_lz无痕的博客-CSDN博客_c# 特性](https://blog.csdn.net/weixin_39520967/article/details/122676703)
-
 ##### 37.获取程序当前路径
 
 [C#获取当前程序所在路径的各种方法 - 一年变大牛 - 博客园 (cnblogs.com)](https://www.cnblogs.com/adamgq/p/16580480.html)
@@ -4779,3 +4776,293 @@ this.BeginInvoke((MethodInvoker)delegate {
 
 选择使用哪个函数主要取决于你的需求。如果你不需要等待 UI 操作完成，或者由于某种原因你需要避免阻塞你的线程（例如那可能会导致死锁），那么可以使用`BeginInvoke`。如果你需要等待 UI 操作完成才能进行下一步，那么你应该使用 Invoke。
 `Control.Invoke` 和 `Control.BeginInvoke` 方法可以在指定的 `Control` 控件所在的线程上执行特定的方法。而这个 `Control` 控件，无论是一个按钮、标签，还是整个的 Form 窗体，只要是在 UI 线程上创建的，就都可以被用来安全地在其他线程上更新 UI。
+
+### 19.依赖注入
+
+依赖注入（Dependency Injection，简称DI）是一种设计模式，用于管理类之间的依赖关系。在依赖注入中，类的依赖关系不是在类内部直接创建或者硬编码，而是通过外部的机制来注入（传递）给类。这种方式有助于解耦类之间的依赖，提高代码的可维护性、可测试性和可扩展性。
+
+在C#中，依赖注入通常包括以下几个主要概念：
+
+1. **依赖（Dependency）：** 一个类需要使用其他类或服务，这个被使用的类或服务就是所谓的依赖。
+
+2. **服务（Service）：** 在依赖注入中，依赖通常是通过服务来提供的。服务可以是具体的类、接口、或者其他可被注入的对象。
+
+3. **注入（Injection）：** 将依赖通过构造函数、属性或方法参数等方式注入到类中的过程。
+
+4. **容器（Container）：** 依赖注入容器是一个管理和解析依赖关系的工具。它负责创建和维护依赖对象的实例，并在需要的时候将它们注入到需要的地方。
+
+在C#中，依赖注入通常使用第三方库（如.NET Core中的内置依赖注入容器）或者DI容器框架（如Autofac、Ninject、Unity等）来实现。这些工具提供了简化依赖注入的方式，开发者只需在代码中声明依赖，容器就会负责解析和注入。
+
+下面是一个简单的依赖注入的例子，使用.NET Core中内置的依赖注入容器：
+
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+
+public interface ILogger
+{
+    void Log(string message);
+}
+
+public class ConsoleLogger : ILogger
+{
+    public void Log(string message)
+    {
+        Console.WriteLine(message);
+    }
+}
+
+public class ConsoleLogger1 : ILogger
+{
+    public void Log(string message)
+    {
+        Console.WriteLine(message + "11111111111");
+    }
+}
+
+public class MyClass
+{
+    private readonly ILogger _logger;
+
+    public MyClass(ILogger logger)
+    {
+        _logger = logger;
+    }
+
+    public void DoSomething()
+    {
+        _logger.Log("Doing something...");
+    }
+}
+
+class DependencyInjection
+{
+    public static void Main11()
+    {
+        // 创建服务容器
+        var serviceProvider = new ServiceCollection()
+            .AddTransient<ILogger, ConsoleLogger>()
+            .AddTransient<ILogger, ConsoleLogger1>() // 会覆盖上面的注册
+            .AddTransient<MyClass>()
+            .BuildServiceProvider();
+
+        // 从容器中获取MyClass实例
+        var myClassInstance = serviceProvider.GetRequiredService<MyClass>();
+
+        // 调用MyClass中的方法，会自动注入ConsoleLogger
+        myClassInstance.DoSomething();
+    }
+}
+```
+
+在上述例子中，`MyClass`通过构造函数接收`ILogger`接口的实例。在`Main`方法中，我们使用.NET Core提供的`ServiceCollection`和`BuildServiceProvider`来设置依赖注入容器，并通过`.AddTransient`方法注册服务和使用服务的类。`.AddTransient`表示每次请求都会创建一个新的实例。
+
+这样，当我们从容器中获取`MyClass`的实例时，容器会自动解析并注入`ILogger`的实例（在此例中是`ConsoleLogger`），从而实现了依赖注入。
+
+以下是一些使用依赖注入的典型场景：
+
+1. **测试驱动开发（TDD）：** 依赖注入有助于实现更容易进行单元测试的代码。通过将依赖注入到类中，你可以更轻松地使用模拟对象（Mock objects）替代实际的依赖，从而使单元测试更加简单和可靠。
+2. **可维护性和可读性：** 依赖注入使得代码更易于理解和维护，因为它明确了类的依赖关系。通过查看构造函数或其他注入点，开发人员可以清晰地看到一个类所依赖的所有组件。
+3. **松耦合设计：** 依赖注入可以降低类之间的耦合度，使得代码更加灵活和易于扩展。类不再负责创建自己的依赖，而是通过外部注入，从而减少了类与具体实现之间的紧密关系。
+4. **配置灵活性：** 通过依赖注入容器，你可以在不修改代码的情况下更改组件的实现。这对于在不同环境中使用不同的实现（例如开发、测试和生产环境）非常有用。
+5. **插件和模块化开发：** 依赖注入促进了模块化开发，允许你更容易地替换、添加或删除系统的各个部分。这对于构建可插拔的架构和应用程序模块非常有帮助。
+6. **ASP.NET Core中的Web开发：** 在ASP.NET Core中，依赖注入是内置的，并被广泛用于控制器、服务以及其他应用程序组件的管理。这使得在Web应用程序中使用依赖注入变得非常方便。
+
+### 20.特性
+
+在C#中，特性（Attributes）是一种用于添加元数据和注释的机制。特性是一种声明性的标记，它们允许你在代码中添加元数据，这些元数据可以被反射读取，并在运行时或设计时提供一些额外的信息。特性是通过在代码中使用方括号 `[]` 来声明的。
+
+以下是一些常见的C#特性：
+
+1. **[Obsolete] 特性：** 用于标记已经过时的代码。编译器会在使用过时的成员时发出警告。
+
+    ```csharp
+    [Obsolete("This method is obsolete. Use NewMethod instead.")]
+    public void OldMethod()
+    {
+        // 方法实现
+    }
+    ```
+
+2. **[Serializable] 特性：** 用于指示一个类可以序列化，即可以在网络上传输或保存到文件中。
+
+    ```csharp
+    [Serializable]
+    public class SerializableClass
+    {
+        // 类的成员
+    }
+    ```
+
+3. **[AttributeUsage] 特性：** 用于指定特性的使用方式，例如可以应用于类、方法、属性等。
+
+    ```csharp
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    public class MyCustomAttribute : Attribute
+    {
+        // 特性的实现
+    }
+    ```
+
+4. **[Conditional] 特性：** 用于指定条件编译，只有在满足指定条件时，特性中的代码才会被编译进程序。这表示只有在定义了 `DEBUG` 符号（例如通过在 Visual Studio 的项目属性中选择 "Debug" 配置）时，这个方法的调用才会被编译进程序。
+
+    在发布（Release）配置中，`DEBUG` 符号通常不会定义，因此 `DebugMethod` 中的代码在 Release 模式下不会被编译进程序。
+
+    这种方法对于包含仅在调试时使用的代码非常有用，因为它允许在发布时轻松地排除这些代码，从而减小程序的大小。
+
+    需要注意的是，`Conditional` 特性只能用于方法、属性、索引器和事件。并且，它仅影响编译，而不是运行时行为。在运行时，即使在 Release 模式下，你仍然可以调用 `DebugMethod`，但调用会被忽略，因为相应的代码块在编译时已被排除。
+
+    ```csharp
+    [Conditional("DEBUG")]
+    public void DebugMethod()
+    {
+        // 只在 DEBUG 模式下编译
+    }
+    ```
+
+    你也可以自定义条件符号，并在编译时定义或取消定义这些符号。
+
+    例如，你可以使用 `#define` 指令在代码中定义符号：
+
+    ```csharp
+    #define MY_CONDITION
+    
+    using System;
+    using System.Diagnostics;
+    
+    class Program
+    {
+        static void Main()
+        {
+            DebugMethod();
+        }
+    
+        [Conditional("MY_CONDITION")]
+        public static void DebugMethod()
+        {
+            Console.WriteLine("This code is included only if MY_CONDITION is defined.");
+        }
+    }
+    ```
+
+    在这个例子中，只有在使用 `#define MY_CONDITION` 指令定义了 `MY_CONDITION` 符号时，`DebugMethod` 中的代码才会被编译进程序。
+
+5. **[Required] 特性（ASP.NET Core）：** 用于标记模型属性为必需的，通常在模型验证中使用。
+
+    ```csharp
+    public class MyModel
+    {
+        [Required]
+        public string Name { get; set; }
+    }
+    ```
+
+这只是一小部分C#中可用的特性，C#提供了许多内置的特性，并且你也可以创建自定义特性以满足特定需求。在实际开发中，特性通常用于提供元数据、配置和注释，以及在运行时进行自定义操作。
+
+当你在C#中使用特性时，你可以通过反射机制来获取特性的信息。以下是一个简单的例子，演示如何在运行时获取类的特性信息：
+
+```csharp
+[MyCustom123("SampleClass", Version = 0)]
+[MyCustom456Attribute(name: "SampleClass1", Version1 = 1)]// 会报错
+class SampleClass
+{
+    // 类的成员
+}
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.All)] // 限定该特性的使用范围：类
+public class MyCustom123Attribute(string name) : Attribute
+{
+    public string Name { get; set; } = name;
+    public double Version { get; set; }
+    public double ABC { get; set; }
+}
+
+public class MyCustom456Attribute(string name) : MyCustom123Attribute(name)
+{
+    public string Name1 { get; set; } = name + "111";
+    public double Version1 { get; set; }
+}
+
+public class AttributeTest
+{
+    public static void Main11()
+    {
+        // 检测某个特性是否应用到某个类上
+        SampleClass myClass = new SampleClass();
+        Type type = myClass.GetType();
+        // false表示不搜索SampleClass继承链上的特性
+        bool isDefined = type.IsDefined(typeof(MyCustom123Attribute), false);
+        if (isDefined)
+            Console.WriteLine(type.Name + "上使用了特性MyCustom123Attribute");
+
+        // 获取SampleClass上的所有特性
+        object[] attributes = typeof(SampleClass).GetCustomAttributes(true);
+        foreach (var attribute in attributes)
+        {
+            if (attribute is MyCustom123Attribute myCustomAttribute)
+            {
+                Console.WriteLine($"Class Name: {myCustomAttribute.Name}");
+                Console.WriteLine($"Version: {myCustomAttribute.Version}");
+            }
+            if (attribute is MyCustom456Attribute myCustomAttribute1)
+            {
+                Console.WriteLine($"Class Name1: {myCustomAttribute1.Name1}");
+                Console.WriteLine($"Version1: {myCustomAttribute1.Version1}");
+            }
+        }
+    }
+}
+//OUTPUT
+SampleClass上使用了特性MyCustom123Attribute
+Class Name: SampleClass
+Version: 0
+Class Name: SampleClass1
+Version: 0
+Class Name1: SampleClass1111
+Version1: 1
+```
+
+在这个例子中，我们定义了一个名为`MyCustomAttribute`的自定义特性，并在`SampleClass`上应用了这个特性。然后，通过反射的方式获取`SampleClass`上的特性，并输出特性的信息。
+
+在实际应用中，特性可以用于各种场景，例如在ASP.NET MVC中用于标记控制器和动作方法，在Entity Framework中用于配置数据库映射，以及在测试框架中用于标记测试方法等等。
+
+### 21.条件编译指令
+
+在 C# 中，`#if` 和 `#endif` 是条件编译指令，用于在编译时根据条件选择性地包含或排除代码块。这些指令使得你能够根据在编译时定义的条件来控制代码的编译。
+
+基本语法如下：
+
+```csharp
+#if condition
+    // 如果条件为真，则编译此部分代码
+#else
+    // 如果条件为假，则编译此部分代码
+#endif
+```
+
+- `#if`：用于开始一个条件编译块，后面跟着一个编译时的条件。
+- `#else`：用于指定在条件为假时要编译的代码块。
+- `#endif`：用于结束条件编译块。
+
+常见的使用情景包括根据不同的平台、调试模式或其他条件来控制代码的编译。
+
+例如，以下是一个简单的示例，演示如何使用条件编译来区分调试和发布模式：
+
+```csharp
+#define DEBUG
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+#if DEBUG
+        Console.WriteLine("Debug mode");
+#else
+        Console.WriteLine("Release mode");
+#endif
+    }
+}
+```
+
+在这个示例中，`#define DEBUG` 表示定义了一个名为 `DEBUG` 的编译时符号。在 `#if DEBUG` 中的代码块只有在定义了 `DEBUG` 符号时才会被编译，否则将编译到 `#else` 中的代码块。在实际的项目中，这种技术经常用于在调试和发布版本之间切换一些代码行为或日志记录。
