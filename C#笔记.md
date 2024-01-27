@@ -5066,3 +5066,204 @@ class Program
 ```
 
 在这个示例中，`#define DEBUG` 表示定义了一个名为 `DEBUG` 的编译时符号。在 `#if DEBUG` 中的代码块只有在定义了 `DEBUG` 符号时才会被编译，否则将编译到 `#else` 中的代码块。在实际的项目中，这种技术经常用于在调试和发布版本之间切换一些代码行为或日志记录。
+
+### 22.`yield`关键字
+
+在C#中，`yield` 关键字通常与迭代器（iterator）一起使用，用于创建一个可枚举集合（enumerable collection）。`yield` 允许你在循环中逐个返回元素，而不需要在内存中保存整个集合。
+
+具体来说，通过在方法中使用 `yield return` 语句，你可以按需生成集合的元素。当调用方通过迭代器请求下一个元素时，方法会在 `yield return` 处暂停执行，返回一个值给调用方，并保留当前的状态。下次调用方请求下一个元素时，方法会从暂停的地方继续执行，直到再次遇到 `yield return` 或者执行完毕。
+
+下面是一个简单的示例，展示了 `yield` 的基本用法：
+
+```csharp
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        foreach (var number in GenerateNumbers())
+        {
+            Console.WriteLine(number);
+        }
+    }
+
+    static IEnumerable<int> GenerateNumbers()
+    {
+        for (int i = 1; i <= 5; i++)
+        {
+            // 使用 yield return 逐个返回元素
+            yield return i;
+        }
+    }
+}
+```
+
+在上述示例中，`GenerateNumbers` 方法使用 `yield return` 逐个返回数字 1 到 5。在 `Main` 方法中，我们使用 `foreach` 循环遍历生成的集合，而不必将所有元素存储在内存中。
+
+`yield` 的使用使得代码更加简洁，同时允许按需生成元素，从而提高性能和资源利用率。需要注意的是，`yield` 只能在返回类型为 `IEnumerable<T>`、`IEnumerator<T>`、`IEnumerable` 或 `IEnumerator` 的方法中使用。
+
+23.`IEnumerable` 和 `IEnumerator` 
+
+`IEnumerable` 和 `IEnumerator` 是 C# 中用于实现枚举（enumeration）的接口。它们是 .NET 中集合类的基础，提供了一种迭代集合元素的标准方法。
+
+1. **IEnumerable 接口：**
+   - `IEnumerable` 接口定义了一个方法 `GetEnumerator()`，该方法返回一个实现了 `IEnumerator` 接口的对象。
+   - 该接口是集合类（如数组、列表、集合等）实现的基础接口，使得这些集合类可以被 `foreach` 循环遍历。
+
+   ```csharp
+   public interface IEnumerable
+   {
+       IEnumerator GetEnumerator();
+   }
+   ```
+
+2. **IEnumerator 接口：**
+   - `IEnumerator` 接口定义了在集合上进行迭代的标准方法。它包含两个主要成员：`MoveNext()` 和 `Current`。
+     - `MoveNext()`：将指针移动到集合的下一个元素，如果存在下一个元素，则返回 `true`，否则返回 `false`。
+     - `Current`：获取当前指针所在位置的元素。
+
+   ```csharp
+   public interface IEnumerator
+   {
+       bool MoveNext();
+       object Current { get; }
+       void Reset();
+   }
+   ```
+
+   注意：在实际的代码中，通常会使用泛型版本的 `IEnumerable<T>` 和 `IEnumerator<T>`，其中 `T` 是集合中元素的类型，这样可以避免在使用时进行类型转换。
+
+   ```csharp
+   public interface IEnumerable<out T>
+   {
+       IEnumerator<T> GetEnumerator();
+   }
+   
+   public interface IEnumerator<out T>
+   {
+       bool MoveNext();
+       T Current { get; }
+       void Reset();
+   }
+   ```
+
+通过实现 `IEnumerable` 和 `IEnumerator` 接口，可以使集合类具备可枚举的特性，使得它们可以被 `foreach` 循环遍历，也可以使用 LINQ 查询语句等对其进行操作。这种模式在 C# 中广泛应用于集合的迭代和操作。
+
+此外，为了更好地理解 `IEnumerator` 的工作原理，我们可以进一步说明其在 `foreach` 循环中的使用。`foreach` 循环实际上通过 `IEnumerator` 接口的实现来进行迭代。上述代码中的 `foreach` 循环可以被展开为以下伪代码：
+
+```csharp
+IEnumerable<int> numbers = GenerateNumbers();
+IEnumerator<int> enumerator = numbers.GetEnumerator();
+
+while (enumerator.MoveNext())
+{
+    int number = enumerator.Current;
+    Console.WriteLine(number);
+}
+```
+
+在这个伪代码中，首先通过 `GetEnumerator` 方法获取了一个 `IEnumerator<int>` 对象，然后通过 `MoveNext` 和 `Current` 属性来迭代集合中的元素。这展示了 `IEnumerator` 在背后的工作方式，以及为什么实现这个接口对于支持 `foreach` 循环是如此重要。
+
+总体而言，`IEnumerable` 和 `IEnumerator` 接口是 C# 中实现集合迭代的核心机制，它们使得集合可以被统一地遍历和操作。
+
+<details>
+    <summary>实现IEnumerable和IEnumerator接口的例子</summary>
+    <pre><code>
+    class CustomCollection<T> : IEnumerable<T>
+    {
+        private T[] items;    
+        public CustomCollection(T[] collection)
+        {
+            items = collection;
+        }
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new CustomEnumerator(items);
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        private class CustomEnumerator : IEnumerator<T>
+        {
+            private T[] items;
+            private int currentIndex = -1;
+            public CustomEnumerator(T[] collection)
+            {
+                items = collection;
+            }
+            public T Current
+            {
+                get { return items[currentIndex]; }
+            }
+            object IEnumerator.Current
+            {
+                get { return Current; }
+            }
+            public bool MoveNext()
+            {
+                currentIndex++;
+                return currentIndex < items.Length;
+            }
+            public void Reset()
+            {
+                currentIndex = -1;
+            }
+            public void Dispose()
+            {
+                // 如果有需要，在这里进行资源的释放
+            }
+        }
+    }
+    class Program
+    {
+        static void Main()
+        {
+            int[] numbers = { 1, 2, 3, 4, 5 };
+            var customCollection = new CustomCollection<int>(numbers);
+            foreach (var number in customCollection)
+            {
+                Console.WriteLine(number);
+            }
+        }
+    }
+    </code></pre>
+</details>
+
+### 23.闭包
+
+在C#中，闭包（closure）是指一个函数（或者方法）以及其相关的引用环境（外部变量）的组合。闭包允许函数访问其定义时所在的词法作用域中的变量，即使函数在其他地方执行也能访问这些变量。这使得在函数内部可以引用外部的变量，而不必把这些变量作为参数传递给函数。
+
+在C#中，闭包通常涉及到匿名方法、Lambda 表达式或者委托。以下是一个简单的闭包的例子：
+
+```csharp
+class Program
+{
+    static void Main()
+    {
+        // 外部变量
+        int externalVariable = 10;
+
+        // 使用 Lambda 表达式创建闭包
+        Action closure = () => 
+        {
+            // 在闭包中引用外部变量
+            Console.WriteLine(externalVariable);
+        };
+
+        // 调用闭包
+        closure(); // 输出：10
+
+        // 修改外部变量
+        externalVariable = 20;
+
+        // 再次调用闭包
+        closure(); // 输出：20
+    }
+}
+```
+
+在这个例子中，Lambda 表达式创建了一个闭包，其中引用了外部变量 `externalVariable`。即使在 Lambda 表达式被创建后，外部变量的值发生变化，闭包仍然能够访问并使用新的值。
+
+闭包在异步编程、LINQ 查询、事件处理等场景中经常被使用，它能够简化代码并使得逻辑更加清晰。在使用闭包时，需要注意引用的外部变量的生命周期，以避免潜在的问题，比如在异步操作中，确保引用的外部变量是可预测的。
