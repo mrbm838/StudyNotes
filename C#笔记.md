@@ -4779,7 +4779,7 @@ this.BeginInvoke((MethodInvoker)delegate {
 
 ### 19.依赖注入
 
-依赖注入（Dependency Injection，简称DI）是一种设计模式，用于管理类之间的依赖关系。在依赖注入中，类的依赖关系不是在类内部直接创建或者硬编码，而是通过外部的机制来注入（传递）给类。这种方式有助于解耦类之间的依赖，提高代码的可维护性、可测试性和可扩展性。
+依赖注入（Dependency Injection，简称DI）是一种设计模式，用于管理类之间的依赖关系。在依赖注入中，类的依赖关系不是在类内部直接创建或者硬编码，而是通过外部的机制来注入（传递）给类。这种方式有助于解耦类之间的依赖，提高代码的可维护性、可测试性和可扩展性。控制反转通过将控制权从调用者转移到框架或容器，从而降低了类之间的直接依赖性，通过依赖注入实现。
 
 在C#中，依赖注入通常包括以下几个主要概念：
 
@@ -4962,7 +4962,7 @@ class DependencyInjection
 
 ```csharp
 [MyCustom123("SampleClass", Version = 0)]
-[MyCustom456Attribute(name: "SampleClass1", Version1 = 1)]// 会报错
+[MyCustom456Attribute(name: "SampleClass123", Version1 = 1)]// 没有找到SampleClass123，会报错
 class SampleClass
 {
     // 类的成员
