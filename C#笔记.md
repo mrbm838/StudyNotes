@@ -4483,7 +4483,7 @@ Person person2 = new Person { FirstName = "John", LastName = "Doe" };
 Console.WriteLine(person1 == person2); // Output: True
 ```
 
-这次person1和person2**虽然还是两个不同的对象，但他们的属性值是一样的，所以record就把他们判定为了相等**。另外，我们可以看到，`record`采用`init`关键字，只允许在对象初始化时设置属性值，不允许在初始化后修改，所以它们是不可变的。
+这次person1和person2**虽然还是两个不同的对象，但他们的属性值是一样的，所以record就把他们判定为了相等**。另外，我们可以看到，`record`采用`init`访问器，只允许在对象初始化时设置属性值，不允许在初始化后修改，所以它们是不可变的。
 
 总结一下，record类型的特性：
 
@@ -4494,16 +4494,16 @@ Console.WriteLine(person1 == person2); // Output: True
 
 需要注意的是，并非所有场景都适合使用。比如在需要更改对象状态的场景下，还是应该选择使用普通的类。
 
-`readonly`修饰符修饰的变量只能在声明或所属类的构造函数中赋值。
-`init`访问器用于初始化属性的值，只能在对象初始化时使用。`init`只能被设置一次，设置后其值就不能再改变，其效果类似于`readonly`字段。
-`required`修饰符表示它所应用的字段或属性必须由对象初始值设定项进行初始化
+`readonly`修饰符修饰的字段只能在声明时或所属类的构造函数中赋值。
+`init`访问器用于初始化属性的值，该属性的值只能在`init`访问器中、构造函数中或对象初始值设定项中设置。设置后其值就不能再改变，其效果类似于`readonly`字段。
+`required`修饰符表示它所应用的字段或属性==必须==由对象初始值设定项进行初始化。
 
 ```c#
 record class Record
 {
     public readonly int a = -1;
     public int aa { get; init; } = -1;
-    public required int aaa { get; set; }
+    public required int aaa { get; set; };
 
     public Record()
     {
@@ -4512,12 +4512,14 @@ record class Record
 
     public void M()
     {
+        a = 1;//Error
         aa = 1;//Error
         var o1 = new Record
         {
+        	a = 1;//Error
             aa = 1,
             //aaa = 2, //Error
-        };        
+        };
     }
 }
 
