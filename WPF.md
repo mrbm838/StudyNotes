@@ -1247,7 +1247,10 @@ class NotificationObject : INotifyPropertyChanged
 
     public void RaisePropertyChanged(string propertyName)
     {
-        if (PropertyChanged != null) { this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));}
+        if (PropertyChanged != null)
+        {
+            this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
 ```
@@ -1277,13 +1280,15 @@ class DelegateCommand : ICommand
 
     public bool CanExecute(object? parameter)
     {
-        if (CanExecuteFunc == null) return true;
+        if (CanExecuteFunc == null)
+            return true;
         return this.CanExecuteFunc(parameter);
     }
 
     public void Execute(object? parameter)
     {
-        if (ExecuteAction == null) return;
+        if (ExecuteAction == null)
+            return;
         this.ExecuteAction(parameter);
     }
 
@@ -1296,7 +1301,8 @@ public DelegateCommand AddCommand { get; set; }
 
 private void Add(object parameter) => this.Result = this.Input1 + this.Input2;
 
-this.AddCommand = new DelegateCommand { ExecuteAction = this.Add };
+this.AddCommand = new DelegateCommand
+{ ExecuteAction = this.Add };
 ```
 
 ##### 3.Region
@@ -1401,7 +1407,7 @@ protected override void ConfigureRegionAdapterMappings(RegionAdapterMappings reg
 
 ##### 4.Module
 
-对于一个应用程序而言，特定功能的所有View、Login、Service都可以独立存在，每个功能都可称之为模块，每个模块以项目的型式存在。
+对于一个应用程序而言，特定功能的所有View、Login、Service都可以独立存在，每个功能都可称之为模块，每个模块以项目的形式存在。
 
 创建Module的方式
 

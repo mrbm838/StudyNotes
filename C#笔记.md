@@ -4871,7 +4871,7 @@ class DependencyInjection
 
 ### 20.特性
 
-在C#中，特性（Attributes）是一种用于添加元数据和注释的机制。特性是一种声明性的标记，它们允许你在代码中添加元数据，这些元数据可以被反射读取，并在运行时或设计时提供一些额外的信息。特性是通过在代码中使用方括号 `[]` 来声明的。
+在 C# 中，Attributes（特性）是一种用于向程序中添加元数据（metadata）（描述程序实体的特性、行为、用途等信息）的机制。它们提供了一种将附加信息和元数据与程序实体（类、方法、属性等）关联起来的方式。这些元数据可以被反射读取，并在运行时或设计时提供一些额外的信息。特性是通过在代码中使用方括号 `[]` 来声明的。
 
 以下是一些常见的C#特性：
 
@@ -5269,3 +5269,339 @@ class Program
 在这个例子中，Lambda 表达式创建了一个闭包，其中引用了外部变量 `externalVariable`。即使在 Lambda 表达式被创建后，外部变量的值发生变化，闭包仍然能够访问并使用新的值。
 
 闭包在异步编程、LINQ 查询、事件处理等场景中经常被使用，它能够简化代码并使得逻辑更加清晰。在使用闭包时，需要注意引用的外部变量的生命周期，以避免潜在的问题，比如在异步操作中，确保引用的外部变量是可预测的。
+
+### 24.泛型约束
+
+在C#中，泛型约束（Generic Constraints）是指在定义泛型类型或泛型方法时，对泛型参数施加的条件，以限制允许传递给泛型参数的类型。泛型约束可以分为主要约束（Primary Constraints）和次要约束（Secondary Constraints）。
+
+1. **主要约束（Primary Constraints）：**
+   主要约束指定了泛型参数必须满足的基本条件，其中包括：
+   - **class约束：** 指定泛型参数必须是引用类型（类、接口、委托或数组），不能是值类型。使用 `where T : class` 来指定该约束。
+   - **struct约束：** 指定泛型参数必须是值类型。使用 `where T : struct` 来指定该约束。
+   - **new()约束：** 指定泛型参数必须具有无参的公共构造函数。使用 `where T : new()` 来指定该约束。
+
+2. **次要约束（Secondary Constraints）：**
+   次要约束是在主要约束的基础上，进一步对泛型参数施加的条件，以增加灵活性。次要约束包括：
+   - **接口约束：** 指定泛型参数必须实现指定的接口。使用 `where T : 接口名` 来指定该约束。
+   - **基类约束：** 指定泛型参数必须派生自指定的基类。使用 `where T : 基类名` 来指定该约束。
+   - **其他类型约束：** 指定泛型参数必须是指定类型或其派生类。使用 `where T : 类型名` 来指定该约束。
+
+下面是一个泛型方法的示例，展示了主要约束和次要约束的用法：
+```csharp
+public class Example
+{
+    public void GenericMethod<T>(T obj) where T : class, IComparable, new()
+    {
+        // 泛型参数必须满足class、IComparable和new()约束
+        T newObj = new T(); // 调用泛型参数类型的无参构造函数
+        // 对象必须实现IComparable接口
+        int result = newObj.CompareTo(obj);
+        // 其他逻辑...
+    }
+}
+```
+在这个示例中，`GenericMethod` 是一个泛型方法，它的泛型参数 `T` 必须满足class、IComparable和new()约束。这意味着 `T` 必须是引用类型、必须实现 `IComparable` 接口，而且必须具有无参的公共构造函数。
+
+### 25.协变和逆变
+
+在 C# 中，协变（Covariance）和逆变（Contravariance）是与泛型相关的概念，用于描述类型参数在继承关系中的行为。这两个概念主要与接口和委托相关，用于提高泛型的灵活性和可用性。
+
+1. **协变（Covariance）：**
+   - 协变指的是类型参数的子类型可以替代父类型，即可以向上转型。
+   - 在 C# 中，协变通常发生在返回类型或接口的泛型参数中。
+   - 用于标识协变的关键字是 `out`。
+
+   例如：
+   ```csharp
+   interface IMyInterface<out T>
+   {
+       T GetItem();
+   }
+   ```
+   在这个示例中，`IMyInterface` 接口中的泛型参数 `T` 声明为协变，表示可以将返回类型 `T` 替换为 `T` 的派生类型。
+
+2. **逆变（Contravariance）：**
+   - 逆变指的是类型参数的父类型可以替代子类型，即可以向下转型。
+   - 在 C# 中，逆变通常发生在参数的泛型类型中。
+   - 用于标识逆变的关键字是 `in`。
+
+   例如：
+   ```csharp
+   interface IMyInterface<in T>
+   {
+       void AddItem(T item);
+   }
+   ```
+   在这个示例中，`IMyInterface` 接口中的泛型参数 `T` 声明为逆变，表示可以将参数 `T` 替换为 `T` 的基类型。
+
+协变和逆变提高了泛型类型的灵活性，允许派生类型和基类型在泛型类型参数中进行替换，从而使代码更具通用性和可复用性。然而，需要注意的是，协变和逆变只能应用于接口和委托，而不能应用于类。
+
+16.`IEnumerable`和`IEnumerator`
+
+在C#中，`IEnumerable` 和 `IEnumerator` 是用于遍历集合的接口，它们提供了一种统一的方式来访问集合中的元素，从而使得集合的实现可以被迭代器访问。
+
+1. **`IEnumerable` 接口：**
+   - `IEnumerable` 接口定义了一个单独的方法 `GetEnumerator()`，该方法返回一个实现了 `IEnumerator` 接口的迭代器对象。
+   - 实现了 `IEnumerable` 接口的对象可以被 `foreach` 循环或 LINQ 查询等迭代器访问。
+   - `IEnumerable` 接口只包含一个方法：
+     ```csharp
+     public interface IEnumerable
+     {
+         IEnumerator GetEnumerator();
+     }
+     ```
+
+2. **`IEnumerator` 接口：**
+   - `IEnumerator` 接口定义了用于在集合中移动的方法和属性，它允许逐个访问集合中的元素。
+   - `IEnumerator` 接口包含以下成员：
+     - `Current` 属性：获取集合中当前位置的元素。
+     - `MoveNext()` 方法：将迭代器移到集合中的下一个元素。
+     - `Reset()` 方法：将迭代器重置到集合的起始位置。
+     - `Dispose()` 方法：释放迭代器占用的资源。
+   - `IEnumerator` 接口通常用于实现迭代器模式，允许逐个访问集合中的元素。
+
+通常情况下，使用 `foreach` 循环遍历集合时，编译器会自动调用 `IEnumerable` 接口中的 `GetEnumerator()` 方法获取一个迭代器，然后使用 `IEnumerator` 接口中的方法和属性来逐个访问集合中的元素。
+
+例如：
+```csharp
+IEnumerable collection = GetCollection(); // 返回一个实现了 IEnumerable 接口的集合
+IEnumerator enumerator = collection.GetEnumerator(); // 获取迭代器
+while (enumerator.MoveNext()) // 遍历集合中的元素
+{
+    object element = enumerator.Current; // 获取当前元素
+    // 处理当前元素...
+}
+```
+
+总的来说，`IEnumerable` 接口表示一个可以枚举的集合，而 `IEnumerator` 接口表示在集合中进行迭代的迭代器。这两个接口结合在一起，提供了一种统一的方式来访问集合中的元素。
+
+### 26.内存存储区
+
+在计算机内存管理中，通常将内存分为以下几个区域：
+
+1. **栈（Stack）**：
+   - 栈是一种自动分配和释放内存的区域，用于存储函数的局部变量、函数参数、返回地址等。
+   - 栈内存的分配和释放由编译器自动生成的代码来管理，栈内存的分配和释放操作非常高效。
+   - 栈内存的生命周期与函数调用的生命周期相同，函数返回时栈上的局部变量会被自动释放。
+
+2. **堆（Heap）**：
+   - 堆是一种动态分配和释放内存的区域，通常用于存储动态分配的对象和数据结构。
+   - 堆内存的分配和释放由程序员手动管理，需要通过特定的内存分配函数（如 `malloc`、`new` 等）来申请堆内存，并通过相应的释放函数（如 `free`、`delete` 等）来释放已分配的堆内存。
+   - 堆内存的分配和释放效率较低，因为需要考虑内存分配的连续性和内存泄漏的问题。
+
+3. **全局/静态区（Global/Static Area）**：
+   - 全局/静态区是用于存储全局变量、静态变量和常量的区域，这些变量在程序的整个生命周期内存在。
+   - 全局/静态区的内存分配在程序启动时完成，内存释放在程序结束时完成。
+
+4. **常量区（Constant Area）**：
+   - 常量区是用于存储字符串常量和其他不可变常量的区域。
+   - 常量区的内存分配在程序编译时完成，这些常量的值在程序运行期间不可修改。
+
+5. **代码区（Code Area）**：
+   - 代码区是用于存储程序的执行代码的区域，也称为文本区或代码段。
+   - 代码区的内存分配在程序加载到内存时完成，其中包含了程序的机器指令。
+
+### 27.设计模式的使用场景
+
+设计模式是针对软件设计中常见问题的解决方案，可以帮助开发人员更有效地设计和实现软件系统。设计模式通常分为三类：创建型模式（Creational Patterns）、结构型模式（Structural Patterns）和行为型模式（Behavioral Patterns）。不同的设计模式适用于不同的场景和问题，以下是它们的使用时机：
+
+1. **创建型模式（Creational Patterns）：**
+   
+   - 创建型模式用于处理对象的创建过程，目标是尽可能地灵活、可扩展和解耦对象的创建和初始化过程。
+   - 适用于在创建对象时需要灵活选择创建方式、隐藏对象的创建逻辑、减少耦合度等场景。
+   - 典型的创建型模式包括工厂方法模式、抽象工厂模式、建造者模式、原型模式和单例模式。
+   
+   **使用时机：** 
+   - 当需要灵活地实例化对象，并且希望将对象的创建逻辑与使用者解耦时。
+   - 当需要控制对象的创建过程、隐藏创建细节或者实现对象的复用时。
+   - 当需要确保系统中某个类只有一个实例时，可以考虑使用单例模式。
+   
+2. **结构型模式（Structural Patterns）：**
+   - 结构型模式用于描述如何将类或对象组合成更大的结构，以解决系统中的子系统之间的关系和依赖问题。
+   - 适用于改善现有系统的结构，提高系统的灵活性和可扩展性，减少系统的耦合度。
+   - 典型的结构型模式包括适配器模式、桥接模式、组合模式、装饰器模式、外观模式、享元模式和代理模式。
+
+   **使用时机：**
+   - 当需要将一个系统中的类或对象组织成更大的结构，并且希望结构中的各个部分能够独立地变化时。
+   - 当需要将接口与实现分离、减少类之间的耦合度或者实现系统的复用时。
+   - 当需要对现有对象的行为进行扩展或修改时，可以考虑使用装饰器模式。
+
+3. **行为型模式（Behavioral Patterns）：**
+   - 行为型模式用于描述对象之间的通信模式，以及如何分配职责和行为。
+   - 适用于解决对象之间的通信和协作问题，提高系统的灵活性和可维护性，降低系统的耦合度。
+   - 典型的行为型模式包括责任链模式、命令模式、解释器模式、迭代器模式、中介者模式、备忘录模式、观察者模式、状态模式、策略模式、模板方法模式和访问者模式。
+
+   **使用时机：**
+   - 当需要在对象之间建立灵活的通信机制，并且希望对象之间的耦合度较低时。
+   - 当需要实现对象之间的复杂协作、分配职责和行为、或者对系统的状态和行为进行封装时。
+   - 当需要在不同的对象之间实现相同的行为，但又希望行为能够根据对象的状态和类型而变化时，可以考虑使用策略模式或状态模式。
+
+总的来说，设计模式是一种通用的解决方案，可以帮助开发人员更好地组织和管理软件系统，提高系统的可维护性、可扩展性和可重用性。选择合适的设计模式需要根据具体的需求和问题场景来决定，以便最大程度地发挥设计模式的优势。
+
+### 28.Socket编程
+
+C#中的Socket编程是指使用Socket类来实现网络通信。Socket类提供了一种在应用程序之间进行通信的方法，它允许在网络上发送和接收数据。下面是一个简单的示例，演示了如何使用C#进行Socket编程：
+
+```csharp
+using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        // 设置服务器的IP地址和端口号
+        string serverIP = "127.0.0.1";
+        int port = 8888;
+
+        try
+        {
+            // 创建Socket对象
+            Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            // 连接到服务器
+            clientSocket.Connect(serverIP, port);
+            Console.WriteLine("连接到服务器成功！");
+
+            // 发送数据到服务器
+            string messageToSend = "Hello from client!";
+            byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+            clientSocket.Send(dataToSend);
+
+            // 接收来自服务器的数据
+            byte[] dataReceived = new byte[1024];
+            int bytesReceived = clientSocket.Receive(dataReceived);
+            string messageReceived = Encoding.ASCII.GetString(dataReceived, 0, bytesReceived);
+            Console.WriteLine("服务器返回消息: " + messageReceived);
+
+            // 关闭Socket连接
+            clientSocket.Shutdown(SocketShutdown.Both);
+            clientSocket.Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("发生异常: " + ex.Message);
+        }
+    }
+}
+```
+
+在这个示例中，我们创建了一个客户端Socket，并连接到指定的服务器IP地址和端口号。然后，我们发送一个字符串消息到服务器，并等待服务器的响应。一旦收到服务器的响应，我们将其打印出来，并关闭Socket连接。
+
+在实际应用中，服务器端代码类似，但会监听指定端口并接受来自客户端的连接请求。然后，服务器会处理客户端发送的数据，并返回相应的结果。
+
+需要注意的是，在实际应用中，Socket编程可能会涉及到更多的异常处理、数据格式化和网络安全等方面的考虑。此外，还可以考虑使用异步操作（如`BeginConnect`、`BeginSend`、`BeginReceive`等方法）来提高性能和响应能力。
+
+### 29.网络通信
+
+在 C# 中，`HttpClient`、`HttpListener` 和 `Socket` 都是用于进行网络通信的类，但它们在功能和使用方式上有所不同，适用于不同的场景：
+
+1. **HttpClient**：
+   - `HttpClient` 是一个用于发送 HTTP 请求和接收 HTTP 响应的高级类。它是基于 HTTP 协议的高级抽象，适用于与 Web 服务器进行通信。
+   - `HttpClient` 提供了异步的方法来发送请求，并自动处理了一些与 HTTP 相关的细节，如连接管理、请求头的处理、响应解析等。
+   - 适用于通过 HTTP 协议与远程 Web 服务进行通信，如调用 RESTful API、下载文件等。
+
+```csharp
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main()
+    {
+        using (HttpClient httpClient = new HttpClient())
+        {
+            HttpResponseMessage response = await httpClient.GetAsync("https://example.com");
+            string content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+        }
+    }
+}
+```
+
+2. **HttpListener**：
+   - `HttpListener` 是一个用于创建 HTTP 服务器的类。它可以监听指定的端口，并接受来自客户端的 HTTP 请求。
+   - `HttpListener` 允许你编写自定义的 HTTP 服务器，处理来自客户端的请求，并返回相应的响应。
+   - 适用于创建自定义的 HTTP 服务器，如 Web API、Webhook 等。
+
+```csharp
+using System;
+using System.Net;
+
+class Program
+{
+    static void Main()
+    {
+        HttpListener listener = new HttpListener();
+        listener.Prefixes.Add("http://localhost:8080/");
+        listener.Start();
+        Console.WriteLine("Listening...");
+        
+        HttpListenerContext context = listener.GetContext();
+        HttpListenerRequest request = context.Request;
+        HttpListenerResponse response = context.Response;
+
+        string responseString = "<html><body>Hello World!</body></html>";
+        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+        response.ContentLength64 = buffer.Length;
+        System.IO.Stream output = response.OutputStream;
+        output.Write(buffer, 0, buffer.Length);
+        output.Close();
+        
+        listener.Stop();
+    }
+}
+```
+
+3. **Socket**：
+   - `Socket` 是一个底层的通用网络通信类，支持多种网络协议（如 TCP、UDP）。它可以用于创建各种类型的网络连接，包括 HTTP 连接。
+   - `Socket` 提供了更底层、更灵活的 API，可以完全控制数据的发送和接收过程，适用于实现自定义的网络通信协议。
+   - 适用于实现更复杂的网络通信需求，如实时数据传输、自定义协议的实现等。
+
+```csharp
+using System;
+using System.Net;
+using System.Net.Sockets;
+
+class Program
+{
+    static void Main()
+    {
+        byte[] bytes = new byte[1024];
+
+        IPHostEntry host = Dns.GetHostEntry("www.example.com");
+        IPAddress ipAddress = host.AddressList[0];
+        IPEndPoint remoteEP = new IPEndPoint(ipAddress, 80);
+
+        Socket sender = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+        try
+        {
+            sender.Connect(remoteEP);
+            Console.WriteLine("Socket connected to {0}", sender.RemoteEndPoint.ToString());
+
+            byte[] requestBytes = System.Text.Encoding.ASCII.GetBytes("GET / HTTP/1.1\r\nHost: www.example.com\r\n\r\n");
+            sender.Send(requestBytes);
+
+            int bytesReceived = sender.Receive(bytes);
+            Console.WriteLine("Response from server: ");
+            Console.WriteLine(System.Text.Encoding.ASCII.GetString(bytes, 0, bytesReceived));
+
+            sender.Shutdown(SocketShutdown.Both);
+            sender.Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An exception occurred: " + ex.Message);
+        }
+    }
+}
+```
+
+总结：
+- `HttpClient` 适用于向远程 Web 服务发送 HTTP 请求。
+- `HttpListener` 适用于创建自定义的 HTTP 服务器，处理客户端的请求。
+- `Socket` 提供了更底层、更灵活的 API，适用于实现自定义的网络通信协议。
